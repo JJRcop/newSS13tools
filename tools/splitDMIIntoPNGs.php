@@ -6,12 +6,12 @@ if(!isset($_GET['icon'])) {
 }
 
 $icon = $_GET['icon'];
-if(!is_file($icon)) {
+if(!is_file("../".$icon)) {
   die(json_encode(array('msg'=>"Invalid icon file: $icon",'failed'=>TRUE)));
 }
 
 $png = new PNGMetadataExtractor();
-$image = $png->loadImage($icon);
+$image = $png->loadImage("../".$icon);
 
 $dirname = explode('/', $_GET['icon']);
 $dirname = end($dirname);
