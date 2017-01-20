@@ -1,0 +1,9 @@
+{
+    "config": {
+        "vendor-dir": "inc/vendor"
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^6.2",
+        "phpunit/php-timer": "^1.0"
+    }
+}

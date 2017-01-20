@@ -1,0 +1,6 @@
+inc/vendor/*
+composer.lock
+tgstation/
+icons/
+tmp/
+config.php
