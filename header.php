@@ -38,7 +38,7 @@
           </a>
           <ul class="dropdown-menu" role="menu">
             <li><a href="<?php echo APP_URL;?>renderDMI.php">RenderDMI</a></li>
-            <li><a href="<?php echo APP_URL;?>tools/generateAllPNGs.php">Generate all mob PNGs</a></li>
+            <li><a href="<?php echo APP_URL;?>tools/generateallPNGs.php">Generate all mob PNGs</a></li>
             <li><a href="<?php echo APP_URL;?>tools/generateIconMetadata.php">Generate Icon Metadata</a></li>
 
           </ul>

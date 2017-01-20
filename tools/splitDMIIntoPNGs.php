@@ -7,7 +7,7 @@ if(!isset($_GET['icon'])) {
 
 $icon = $_GET['icon'];
 if(!is_file($icon)) {
-  die(json_encode(array('msg'=>"Invalid icon file",'failed'=>TRUE)));
+  die(json_encode(array('msg'=>"Invalid icon file: $icon",'failed'=>TRUE)));
 }
 
 $png = new PNGMetadataExtractor();
