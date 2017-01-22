@@ -11,6 +11,7 @@ define('DB_NAME', 'changeme');
 define('DB_USER', 'changeme');
 define('DB_PASS', 'changeme');
 define('DB_HOST', 'localhost');//Probably won't need to change
+define('DB_PORT', 3306);
 define('TBL_PREFIX','ss13');
 
 define("DMEDIR",'tgstation');

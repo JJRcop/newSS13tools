@@ -6,6 +6,7 @@ class database {
   private $dbname = DB_NAME;
   private $dbuser = DB_USER;
   private $dbpass = DB_PASS;
+  private $dbport = DB_PORT;
   private $dbmethod = DB_METHOD;
   private $prefix = TBL_PREFIX;
 
@@ -17,6 +18,7 @@ class database {
   public function __construct() {
     $dbs = $this->dbmethod.":
     host=".$this->dbhost.";
+    port=".$this->dbport.";
     dbname=".$this->dbname.";charset=utf8mb4;collation=utf8mb4_unicode_ci;";
 
     $options = array(
