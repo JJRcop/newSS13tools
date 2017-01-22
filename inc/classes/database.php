@@ -16,10 +16,7 @@ class database {
   private $stmt;
 
   public function __construct() {
-    $dbs = $this->dbmethod.":
-    host=".$this->dbhost.";
-    port=".$this->dbport.";
-    dbname=".$this->dbname.";charset=utf8mb4;collation=utf8mb4_unicode_ci;";
+    $dbs = $this->dbmethod.":host=".$this->dbhost.";port=".$this->dbport.";dbname=".$this->dbname.";charset=utf8mb4;collation=utf8mb4_unicode_ci;";
 
     $options = array(
       \PDO::ATTR_PERSISTENT => true,
