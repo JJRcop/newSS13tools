@@ -35,7 +35,7 @@ class user {
     $db = new database();
     $db->query("SELECT ckey, lastadminrank
       FROM tbl_player
-      WHERE lastadminrank != 'Player' OR 'Coder'
+      WHERE lastadminrank != 'Player'
       AND lastseen > DATE_SUB(CURDATE(), INTERVAL 1 DAY)
       AND ip = ?
       LIMIT 0,1");
