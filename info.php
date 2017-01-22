@@ -1,5 +1,6 @@
 <?php require_once('header.php'); ?>
 
+<?php $app = new app(); ?>
 <div class="page-header">
 <h1>Information and status</h1>
 </div>
@@ -15,6 +16,19 @@
     <tr>
       <td>PHP Version</td>
       <td><?php echo PHP_VERSION;?></td>
+    </tr>
+    <tr class="<?php echo ($app->doesLocalRepoExist)?'success':'danger';?>">
+      <td><code>tgstation/</code></td>
+      <td><?php echo ($app->doesLocalRepoExist)?'Yes':'No';?></td>
+    </tr>
+    <tr class="<?php echo ($app->reposSynced)?'success':'danger';?>">
+      <td>Local Repo Version</td>
+      <td><code><?php echo $app->localRepoVersion;?></code>
+      <?php echo ($app->doesLocalRepoExist)?"<span class='label label-danger'>OUT OF SYNC</span>":'';?></td>
+    </tr>
+    <tr>
+      <td>Remote Repo Version</td>
+      <td><code><?php echo $app->remoteRepo->object->sha;?></code></td>
     </tr>
   </tbody>
 </table>

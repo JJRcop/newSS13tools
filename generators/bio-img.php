@@ -25,6 +25,7 @@ $data->shoes = FALSE;
 $data->lhand = FALSE;
 $data->rhand = FALSE;
 $data->back = FALSE;
+$data->neck = FALSE;
 $data->text1 = "A. Spaceman";
 $data->text2 = "Line 3";
 $data->text3 = "Employee of Nanotrasen";
@@ -357,6 +358,12 @@ if (!$clothing) {
   if ($clothing && $data->back){
     $back = imagecreatefrompng(ICON_PATH."/back/".$data->back."-".$data->dir.".png");
     if (null != $back) imagecopy($body, $back, 0, 0, 0, 0, 32, 32); imagedestroy($back);
+  }
+
+  //NECK
+  if ($clothing && $data->neck){
+    $neck = imagecreatefrompng(ICON_PATH."/neck/".$data->neck."-".$data->dir.".png");
+    if (null != $neck) imagecopy($body, $neck, 0, 0, 0, 0, 32, 32); imagedestroy($neck);
   }
 
   //SUIT

@@ -1,4 +1,5 @@
-<?php require_once('config.php');?>
+<?php require_once('config.php');
+$user = new user();?>
 
 <!DOCTYPE html>
 <html>
@@ -31,18 +32,18 @@
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
+        <?php if ($user->legit): ?>
         <li><a href="<?php echo APP_URL;?>info.php">System Info</a></li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Icons
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Icon Tools
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="<?php echo APP_URL;?>renderDMI.php">RenderDMI</a></li>
+            <li><a href="<?php echo APP_URL;?>tools/listDMIs.php">List DMIs</a></li>
             <li><a href="<?php echo APP_URL;?>tools/generateallPNGs.php">Generate all mob PNGs</a></li>
-            <li><a href="<?php echo APP_URL;?>tools/generateIconMetadata.php">Generate Icon Metadata</a></li>
-
           </ul>
         </li>
+        <?php endif; ?>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Image Generators
             <span class="caret"></span>
@@ -52,6 +53,9 @@
           </ul>
         </li>
       </ul>
+      <p class="navbar-text navbar-right">
+        <?php echo $user->label;?>
+      </p>
 <!--       <p class="navbar-text pull-right">
         You are not logged in
       </p> -->

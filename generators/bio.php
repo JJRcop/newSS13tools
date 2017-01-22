@@ -48,6 +48,7 @@ label {
 }
 </style>
 <div class="row">
+<?php if (!file_exists("../".GENERATED_ICONS)) die("Can't find icons/. Did you generate mob icons?"); ?>
   <div class="col-md-12" id="output">
     <img src="../resources/bio/bg/fresh.png" width="320" height="65" class="render" />
     <img src="../icons/mob/m-none-0.png" width="64" height="64" class="body" />
@@ -326,6 +327,20 @@ label {
                 </span>
             </div>
         </div>
+        <div class="form-group">
+          <label for="neck" class="col-md-2">Neck</label>
+          <div class="typeahead__container col-md-4">
+              <div class="typeahead__field">
+                  <span class="typeahead__query">
+                      <input name="neck" id='neck' type="search" placeholder="Neck" autocomplete="off" class='form-control field c'>
+                  </span>
+                  <span class="typeahead__button">
+                      <button type="submit">
+                          <i class="typeahead__search-icon"></i>
+                      </button>
+                  </span>
+              </div>
+          </div>
 
       </div>
 
@@ -619,6 +634,27 @@ $.typeahead({
     // },
     source: {
       head: "../icons/back/back.json"
+    }
+});
+
+$.typeahead({
+    input: '#neck',
+    minLength: 0,
+    order: "asc",
+    mustSelectItem: true,
+    searchOnFocus: true,
+    dynamic: true,
+    maxItem: 0,
+    // matcher: function(item, displayKey){
+    //   if (item.display.includes('hair') || item.display.includes('bald') || item.display.includes('debrained')){
+    //     return true;
+    //   } else {
+    //     return undefined;
+    //   }
+    //   return true;
+    // },
+    source: {
+      head: "../icons/neck/neck.json"
     }
 });
 
