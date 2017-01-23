@@ -11,12 +11,18 @@ class death {
     //Hey! Listen! This query SHOULD only show deaths from rounds that were
     //completed and had an entry added to `ss13feedback`. This will prevent 
     //people from seeing deaths from rounds that are currenty ongoing.
+    
+    $db->query("SELECT ss13feedback.time FROM ss13feedback WHERE var_name = 'round_end' LIMIT 0,1");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $time = $db->single()->time;
+
     $db->query("SELECT *
       FROM ss13death
-      WHERE ss13death.tod < (SELECT ss13feedback.time
-      FROM ss13feedback
-      WHERE var_name = 'round_end'
-      LIMIT 0,1)
+      WHERE ss13death.tod < '$time'
       ORDER BY ss13death.tod DESC
       LIMIT 0,$count;");
     try {
