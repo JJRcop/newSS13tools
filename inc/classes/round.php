@@ -18,8 +18,9 @@
   public function listRounds($offset=0, $count=30){
     $db = new database();
     $database = $db->query("SELECT round_id,
-      details AS roundend FROM tbl_feedback
+      details AS roundend FROM ss13feedback
       WHERE var_name = 'round_end'
+      ORDER BY round_id DESC
       LIMIT 0,30;");
     try {
       $db->execute();

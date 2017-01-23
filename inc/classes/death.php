@@ -49,9 +49,9 @@ class death {
     $death->HTML.= "<td>$death->tod</td>";
     $death->HTML.= "<td>$death->pod</td>";
     $death->HTML.= "<td><code>$death->coord</code></td>";
-    $death->bruteHTML = "<span class='label brute'>Brute: $death->bruteloss</span>";
-    $death->brainHTML = "<span class='label brain'>Brain: $death->brainloss</span>";
-    $death->fireHTML = "<span class='label fire'>Fire: $death->fireloss</span>";
+    $death->bruteHTML = "<span class='label brute'>Brute: $death->bruteloss</span> ";
+    $death->brainHTML = "<span class='label brain'>Brain: $death->brainloss</span> ";
+    $death->fireHTML = "<span class='label fire'>Fire: $death->fireloss</span> ";
     $death->oxyHTML = "<span class='label oxy'>Oxygen: $death->oxyloss</span>";
     $death->HTML.= "<td>".$death->bruteHTML.$death->brainHTML.$death->fireHTML.$death->oxyHTML."</td>";
     $death->HTML.= "<td>".ucfirst($death->special)."</td>";
