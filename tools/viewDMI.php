@@ -1,4 +1,5 @@
 <?php require_once('../header.php'); ?>
+<?php require_once('../auth_check.php'); ?>
 
 <div class="page-header">
   <h1>DMI List</h1>

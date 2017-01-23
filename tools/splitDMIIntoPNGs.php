@@ -1,4 +1,5 @@
 <?php require_once('../config.php');
+
 PHP_Timer::start();
 header('Content-Type: application/json');
 if(!isset($_GET['icon'])) {

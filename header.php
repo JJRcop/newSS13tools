@@ -1,4 +1,5 @@
 <?php require_once('config.php');
+PHP_Timer::start();
 $user = new user();?>
 
 <!DOCTYPE html>
@@ -14,6 +15,49 @@ $user = new user();?>
   }
   td, th {
     vertical-align: middle !important;
+  }
+  .text-brute {color: orange;}
+  .text-brain {color: green;}
+  .text-fire  {color: red;}
+  .text-oxy   {color: blue;}
+  .brute {background-color: orange;}
+  .brain {background-color: green;}
+  .fire  {background-color: red;}
+  .oxy   {background-color: blue;}
+  .censored { color: #bbbbbb; font-size: small; }
+  .ooc      { color: #002eb8; }
+  .admin    { color: #b82e00; font-weight: bold; }
+  .say      { color: #008000; }
+  .access   { color: #ff5050; }
+  .whisper  { font-style: italic; }
+  .emote    { font-style: italic; }
+  .game     { color: #00c000; font-weight: bold; }
+  .pda      { color: #800000; }
+  .log-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .logs {
+    font-family: Monospace;
+    width: auto;
+    border: 1px solid grey;
+  }
+  .logs td {
+    vertical-align: top !important;
+  }
+  .logs td:first-child {
+    background: rgb(225,225,225);
+  }
+  .logs tr:target{
+    background: yellow;
+  }
+  .logs tr:hover {
+    background: rgba(255,255,0,.5);
+  }
+  .ln,
+  .ts {
+    text-align: left;
+    padding: 0 5px;
   }
   </style>
 </head>
@@ -50,6 +94,19 @@ $user = new user();?>
           </a>
           <ul class="dropdown-menu" role="menu">
             <li><a href="<?php echo APP_URL;?>generators/bio.php">Bio</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Stats
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="<?php echo APP_URL;?>stats/listRounds.php">Round List</a></li>
+            <li><a href="<?php echo APP_URL;?>stats/deaths.php">Deaths</a></li>
+            <?php if ($user->legit): ?>
+            <li class="divider">
+            <li><a href="<?php echo APP_URL;?>tools/importLogs.php">Import Logs</a></li>
+            <?php endif; ?>
           </ul>
         </li>
       </ul>

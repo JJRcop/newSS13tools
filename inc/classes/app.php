@@ -8,7 +8,7 @@
   public function __construct() {
     $this->doesLocalRepoExist = $this->doesLocalRepoExist();
     $this->localRepoVersion = $this->getLocalRepoVersion();
-    $this->remoteRepo = json_decode($this->getRemoteRepoVersion());
+    $this->remoteRepo = $this->getRemoteRepoVersion();
     $this->reposSynced = TRUE;
     if ($this->localRepoVersion != $this->remoteRepo->object->sha){
       $this->reposSynced = FALSE;
@@ -21,8 +21,7 @@
 
   public function getLocalRepoVersion(){
     if ($this->doesLocalRepoExist){
-      exec('git rev-parse --verify HEAD 2> /dev/null', $output);
-      return $output[0];
+      return shell_exec('git rev-parse --verify HEAD 2> /dev/null');
     }
   }
 
@@ -45,7 +44,7 @@
     $client = new GuzzleHttp\Client();
     $json['timestamp'] = time();
     $res = $client->request('GET',$repo);
-    $json['data'] = $res->getBody()->getContents();
+    $json['data'] = json_decode($res->getBody()->getContents());
     $jsonfile = fopen('tmp/githubversion.json', 'w+');
     fwrite($jsonfile, json_encode($json));
     fclose($jsonfile);

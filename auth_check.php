@@ -4,4 +4,10 @@
   You could not be authenticated as a game administrator. If you are a game administrator, log in to the game, then come back and refresh this page.
   </div>
 
-<?php die(); endif;?>
+<?php die(); else:?>
+
+<div class="alert alert-info">
+  <strong>## CLASSIFIED ## GA+//NP</strong> This page is classified and should only be available to players with GameAdmin and above
+</div>
+
+<?php endif;?>

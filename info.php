@@ -30,6 +30,10 @@
       <td>Remote Repo Version</td>
       <td><code><?php echo $app->remoteRepo->object->sha;?></code></td>
     </tr>
+    <tr>
+      <td>Whoami</td>
+      <td><?php echo $user->label;?></td>
+    </tr>
   </tbody>
 </table>
 
