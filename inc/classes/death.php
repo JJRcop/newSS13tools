@@ -13,7 +13,7 @@ class death {
     //people from seeing deaths from rounds that are currenty ongoing.
     $db->query("SELECT *
       FROM ss13death
-      WHERE ss13death.tod > (SELECT ss13feedback.time
+      WHERE ss13death.tod < (SELECT ss13feedback.time
       FROM ss13feedback
       WHERE var_name = 'round_end'
       LIMIT 0,1)
