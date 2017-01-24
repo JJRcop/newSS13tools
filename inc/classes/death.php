@@ -22,7 +22,7 @@ class death {
 
     $db->query("SELECT *
       FROM ss13death
-      WHERE ss13death.tod < '$time'
+      WHERE ss13death.tod < (SELECT ss13feedback.time FROM ss13feedback WHERE var_name = 'round_end' ORDER BY ss13feedback.time DESC LIMIT 1)
       ORDER BY ss13death.tod DESC
       LIMIT 0,$count;");
     try {
