@@ -34,7 +34,7 @@
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
       LEFT JOIN ss13feedback AS `end` ON ss13feedback.round_id = end.round_id AND end.var_name = 'round_end'
       WHERE ss13feedback.var_name='round_end'
-      ORDER BY `end` desc
+      ORDER BY ss13feedback.time DESC
       LIMIT $offset, $count;");
     try {
       $db->execute();
