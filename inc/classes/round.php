@@ -117,7 +117,8 @@
     $logs = str_replace("-\r\n", '', $logs);
     $logs = str_replace("<span class='boldannounce'>",'',$logs);
     $logs = str_replace('</spam>', '', $logs);
-    $logs = str_replace(' *no key*/', '', $logs);
+    $logs = str_replace('*no key*/', '', $logs);
+    $logs = str_replace(')) : ',') : ',$logs);
     $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT)(:\s)/","$2#-#$4#-#", $logs);
     $logs = utf8_encode($logs);
     $logs = explode("\r\n",$logs);
