@@ -9,13 +9,18 @@
     <tr>
       <th>Round ID</th>
       <th>Round ended</th>
+      <th>Mode</th>
+      <th>Server</th>
     </tr>
   </thead>
   <tbody>
     <?php 
     $round = new round();
     foreach($round->listRounds() as $round){
-      echo "<tr><td><a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td><td>".date('r',strtotime($round->roundend))."</td></tr>";
+      echo "<tr><td>";
+      echo "<a href='viewRound.php?round=$round->round_id'>$round->round_id</a>";
+      echo "</td><td>".date('r',strtotime($round->end))."</td>";
+      echo "<td>$round->game_mode</td><td>$round->server</td></tr>";
     }
     ?>
   </tbody>
