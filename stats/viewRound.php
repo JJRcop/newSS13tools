@@ -1,24 +1,30 @@
 <?php require_once('../header.php'); ?>
 
 <?php
-if(!$_GET['round']) die("No round specified");
-$round = filter_input(INPUT_GET, 'round');
-$logs = false;
-if(isset($_GET['logs'])) $logs = filter_input(INPUT_GET, 'logs');
-$round = new round($round,$logs);
+if (!isset($_GET['round'])) die("No round ID specified!");
+$round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
+$round = new round($round,TRUE);
 ?>
 
 <div class="page-header">
-  <h1>Round #<?php echo $round->roundid;?>
-    <small>Ended <?php echo $round->roundend;?>
-      <a href='viewRound.php?round=<?php echo $round->roundid;?>&logs=true'
+  <h1>Round #<?php echo $round->round_id;?>
+    <small>Ended <?php echo $round->end;?>
+    <?php if ($round->logs): ?>
+      <a href='viewRoundLogs.php?round=<?php echo $round->round_id;?>'
     class='btn btn-info btn-xs'>
         <span class='glyphicon glyphicon-search'></span>
         View logs
       </a>
+    <?php endif; ?>
     </small>
   </h1>
 </div>
+
+<?php if (!$round->logs): ?>
+  <p class="lead">Unable to accurately locate logs for round #<?php echo $round->round_id;?>, because either the server or round start time could not be located.</p>
+<?php endif;?>
+
+
   <p class="lead pull-center text-center">
 <?php
 if (isset($round->data->game_mode)){ 
@@ -63,18 +69,6 @@ if (isset($round->data->round_end_result)) {
   <p class="lead pull-center text-center">The crew evacuated aboard <em><?php echo str_replace('_', ' ', $round->data->emergency_shuttle['details']);?></em></p>
 <?php endif;?>
 
-<?php if ($logs) :?>
-<div class='log-wrap'>
-  <table class="logs">
-  <?php $i = 0; foreach ($round->logrange as $log){
-    echo "<tr id='L-$i'><td class='ln'>#$i</td><td class='ts'>[".date('H:i:s',strtotime($log->timestamp))."]</td><td class='ld'>
-      <span class='log ".strtolower($log->logtype)."'><strong>$log->logtype: </strong>$log->content</span>
-    </td></tr>";
-    $i++;
-  }?>
-  </table>
-</div>
-<?php else: ?>
 
 <?php if (isset($round->data->export_sold_amount) || isset($round->data->cargo_imports)) {
   include 'statspages/econ.php';
@@ -82,6 +76,10 @@ if (isset($round->data->round_end_result)) {
 
 <?php if (isset($round->data->ore_mined)){
   include 'statspages/mining.php';
+} ?>
+
+<?php if (isset($round->data->job_preferences)){
+  include 'statspages/jobprefs.php';
 } ?>
 
 <div class="page-header">
@@ -109,14 +107,16 @@ if (isset($round->data->round_end_result)) {
             var_dump($v['details']);
             } else {
               echo $v['details'];
-            }?></td>
-        
+            }?>
+        </td>
       </tr>
     <?php endforeach;?>
     </tbody>
   </table>
 </div>
 
+<?php if ($round->deaths) :?>
+<?php var_dump($round->deaths);?>
 <?php endif;?>
 
 <?php require_once('../footer.php'); ?>

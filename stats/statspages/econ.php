@@ -4,38 +4,55 @@
       View
     </a> Cargo Operations</h2>
 </div>
-<div class="row collapse" id="cargoOps">
-  <?php if (isset($round->data->export_sold_cost)):?>
-  <div class="col-md-6">
-    <h3>Cargo exports</h3>
-    <ul class="list-unstyled">
-    <?php
-      $total = 0;
-      $cost = $round->data->export_sold_cost['details'];
-      foreach ($cost as $item => $amount){
-        $item = explode('|',$item);
-        echo "<li>Sold ".$amount." ".$item[0]." for ".($item[1]*$amount)." cr.</li>";
-        $total += $item[1]*$amount;
-      } 
-      echo "<hr><p>The crew made $total credits.</p>";?>
-    </ul>
-  </div>
-  <?php endif;?>
+<div class="collapse" id="cargoOps">
+  <div class="row">
+    <?php if (isset($round->data->export_sold_cost)):?>
+    <div class="col-md-6">
+      <h3>Cargo exports</h3>
+      <ul class="list-unstyled">
+      <?php
+        $totalSold = 0;
+        $totalItems = 0;
+        foreach ($round->data->export_sold_cost['details'] as $item => $amount){
+          $item = explode('|',$item);
+          echo "<li>Sold ".$amount." ".$item[0]." for ".($item[1]*$amount)." cr.</li>";
+          $totalItems+= $amount;
+          $totalSold += ($item[1]*$amount);
+        } 
+        ?>
+      </ul>
+    </div>
+    <?php endif;?>
 
-  <?php if (isset($round->data->cargo_imports)):?>
-  <div class="col-md-6">
-    <h3>Cargo imports</h3>
-    <ul class="list-unstyled">
-    <?php
-      $total = 0;
-      $import = $round->data->cargo_imports['details'];
-      foreach ($import as $item => $amount){
-        $item = explode('|',$item);
-        echo "<li>Bought ".$amount." ".str_replace('_', ' ', $item[1])." for ".($item[2]*$amount)." cr.</li>";
-        $total += $item[2]*$amount;
-      } 
-      echo "<hr><p>The crew spent $total credits.</p>";?>
-    </ul>
+    <?php if (isset($round->data->cargo_imports)):?>
+    <div class="col-md-6">
+      <h3>Cargo imports</h3>
+      <ul class="list-unstyled">
+      <?php
+        $totalImport = 0;
+        foreach ($round->data->cargo_imports['details'] as $item => $amount){
+          $item = explode('|',$item);
+          echo "<li>Bought ".$amount." ".str_replace('_', ' ', $item[1])." for ".($item[2]*$amount)." cr.</li>";
+          $totalImport += ($item[2]*$amount);
+        } 
+        ?>
+      </ul>
+    </div>
+    <?php endif;?>
   </div>
-  <?php endif;?>
+  <div class="row">
+  <?php if (isset($round->data->export_sold_cost)):?>
+    <div class="col-md-6">
+      <hr>
+      <p><?php echo "Cargo sold $totalItems items for $totalSold cr.";?></p>
+    </div>
+    <?php endif;?>
+    <?php if (isset($round->data->cargo_imports)):?>
+    <div class="col-md-6">
+      <hr>
+      <p><?php echo "Cargo bought ".count($round->data->cargo_imports['details'])." items for $totalImport cr.";?>
+      </p>
+    </div>
+    <?php endif; ?>
+  </div>
 </div>

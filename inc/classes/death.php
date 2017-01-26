@@ -7,11 +7,11 @@ class death {
   }
 
   public function getDeaths($count=30,$short=false){
-    $db = new database();
     //Hey! Listen! This query SHOULD only show deaths from rounds that were
     //completed and had an entry added to `ss13feedback`. This will prevent 
     //people from seeing deaths from rounds that are currenty ongoing.
-    
+  
+    $db = new database();
     $db->query("SELECT ss13feedback.time FROM ss13feedback WHERE var_name = 'round_end' LIMIT 0,1");
     try {
       $db->execute();
@@ -32,6 +32,20 @@ class death {
     }
     foreach ($deaths = $db->resultset() as &$death) {
       $this->parseDeath($death,$short);
+    }
+    return $deaths;
+  }
+
+  public function getDeathsInRange($start,$end) {
+    $db = new database();
+    $db->query("SELECT * FROM tbl_death WHERE tod BETWEEN '$start' AND '$end'");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    foreach ($deaths = $db->resultset() as &$death) {
+      $this->parseDeath($death);
     }
     return $deaths;
   }

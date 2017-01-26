@@ -5,5 +5,10 @@
     </div>
   </footer>
 </div>
+<script>
+$('document').ready(function(){
+   $('.sort').tablesorter();
+ });
+</script>
 </body>
 </html>

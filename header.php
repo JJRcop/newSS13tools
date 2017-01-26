@@ -5,10 +5,13 @@ $user = new user();?>
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SS13 Tools</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.7/js/jquery.tablesorter.min.js"></script>
   <style>
   body {
     padding-top: 60px;
@@ -25,14 +28,14 @@ $user = new user();?>
   .fire  {background-color: red;}
   .oxy   {background-color: blue;}
   .censored { color: #bbbbbb; font-size: small; }
-  .ooc      { color: #002eb8; }
-  .admin    { color: #b82e00; font-weight: bold; }
-  .say      { color: #008000; }
-  .access   { color: #ff5050; }
-  .whisper  { font-style: italic; }
-  .emote    { font-style: italic; }
-  .game     { color: #00c000; font-weight: bold; }
-  .pda      { color: #800000; }
+  .OOC      { color: #002eb8; }
+  .ADMIN    { color: #b82e00; font-weight: bold; }
+  .SAY      { color: #008000; }
+  .ACCESS   { color: #ff5050; }
+  .WHISPER  { font-style: italic; }
+  .EMOTE    { font-style: italic; }
+  .GAME     { color: #00c000; font-weight: bold; }
+  .PDA      { color: #800000; }
   .log-wrap {
     width: 100%;
     overflow-x: auto;
@@ -59,6 +62,25 @@ $user = new user();?>
     text-align: left;
     padding: 0 5px;
   }
+  .lt {
+    text-align: right;
+    padding-right: 5px;
+  }
+  .sort {
+    width: 100%;
+  }
+  .sort thead tr th {
+    background-repeat: no-repeat;
+    background-position: right center;
+  }
+  .tablesorter-headerUnSorted {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); }
+
+  .tablesorter-headerAsc {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); }
+
+  .tablesorter-headerDesc {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); }
   </style>
 </head>
 <body>
@@ -103,10 +125,6 @@ $user = new user();?>
           <ul class="dropdown-menu" role="menu">
             <li><a href="<?php echo APP_URL;?>stats/listRounds.php">Round List</a></li>
             <li><a href="<?php echo APP_URL;?>stats/deaths.php">Deaths</a></li>
-            <?php if ($user->legit): ?>
-            <li class="divider">
-            <li><a href="<?php echo APP_URL;?>tools/importLogs.php">Import Logs</a></li>
-            <?php endif; ?>
           </ul>
         </li>
       </ul>
