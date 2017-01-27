@@ -7,6 +7,9 @@
   public $logURL = false;
   public $logs = false;
   public $deaths = false;
+  public $duration = false;
+  public $hasObjectives = false;
+  public $game_mode = false;
 
   public function __construct($round=null,$data=false,$logs=false){
     if ($round) {
@@ -15,8 +18,11 @@
       foreach ($round as $key => $value){
         $this->$key = $value;
       }
-      if ($this->start && $this->server){
-        $this->logs = true;
+      if ($this->start) {
+        if ($this->server){
+          $this->logs = true;
+        }
+        $this->duration = floor((strtotime($round->end) - strtotime($round->start))/60);
       }
       if ($data){
         $this->data = new stdClass;
@@ -26,6 +32,14 @@
           $name = $data->var_name;
           $this->data->$name['value'] = $data->var_value;
           $this->data->$name['details'] = $data->details;
+        }
+        if ( isset($this->data->traitor_objective)
+          || isset($this->data->wizard_objective)
+          || isset($this->data->changeling_objective)) {
+          $this->hasObjectives = true;
+        }
+        if (isset($this->data->game_mode)){
+          $this->game_mode = $this->data->game_mode['details'];
         }
         //Commented out. Right now, this polls deaths from both servers,
         //which isn't super useful.
@@ -39,7 +53,7 @@
           $this->logs = false;
         } else {
           $this->logs = $this->getLogs($round);
-          $this->logs = $this->parseLogs($this->logs);
+          $this->logs = $this->parseLogs($this->logs,$round);
         }
       }
     }
@@ -119,7 +133,7 @@
     $logs = str_replace('</spam>', '', $logs);
     $logs = str_replace('*no key*/', '', $logs);
     $logs = str_replace(')) : ',') : ',$logs);
-    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT)(:\s)/","$2#-#$4#-#", $logs);
+    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE)(:\s)/","$2#-#$4#-#", $logs);
     $logs = utf8_encode($logs);
     $logs = explode("\r\n",$logs);
     array_filter($logs);
@@ -176,17 +190,38 @@
     return $logs;
   }
 
-  public function parseLogs(&$logs){
+  public function parseLogs(&$logs, $round){
     $i = 0;
     foreach ($logs as &$log){
       $i++;
       $ld = explode('#-#',$log);
-      @$log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'>#$i</td><td class='ts'>[".$ld[0]."]";
+      if (strpos($ld[2],' has renamed the station as ')){
+        $this->attachStationNameToRoundID($ld[2],$round);
+      }
+      @$log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>#$i</a></td><td class='ts'>[".$ld[0]."]";
       @$log.= "</td><td class='lt'>".$ld[1].": </td><td>";
       @$log.= $ld[2];
       @$log.="</td></tr>";
     }
     return $logs;
+  }
+
+  public function attachStationNameToRoundID($log, $round){
+    $log = str_replace(' has renamed the station as ', '', $log);
+    $log = str_replace(')', '/', $log);
+    $log = str_replace('(', '', $log);
+    $db = new database(TRUE);
+    $db->query("INSERT INTO round_logs (round, `start`, `end`, server, station_name) VALUES(?,?,?,?,?)");
+    $db->bind(1,$round->round_id);
+    $db->bind(2,$round->start);
+    $db->bind(3,$round->end);
+    $db->bind(4,$round->server);
+    $db->bind(5,explode('/',$log)[2]);
+    try {
+      //$db->execute();
+    } catch (Exception $e) {
+      return "Database error: ".$e->getMessage();
+    }
   }
 
   public function listRounds($offset=0, $count=30){
@@ -301,11 +336,28 @@
         case 'mining_voucher_redeemed':
         case 'export_sold_amount':
         case 'export_sold_cost':
+        case 'pick_used_mining':
           $data->details = array_count_values(explode(' ',$data->details));
         break;
 
         case 'ban_job':
           $data->details = explode('-_',trim($data->details));
+        break;
+
+        case 'radio_usage':
+          $data->details = explode(' ',$data->details);
+          $radio = array();
+          foreach ($data->details as &$channel){
+            $channel = explode('-',$channel);
+          }
+          $total = 0;
+          foreach ($data->details as $c) {
+            $radio[$c[0]] = $c[1]+0;
+            $total+= $c[1];
+          }
+          arsort($radio);
+          $radio['total'] = $total;
+          $data->details = $radio;
         break;
 
         case 'job_preferences':

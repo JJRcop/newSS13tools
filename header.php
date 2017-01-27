@@ -58,9 +58,13 @@ $user = new user();?>
     background: rgba(255,255,0,.5);
   }
   .ln,
-  .ts {
+  .ts,
+  .lt {
     text-align: left;
     padding: 0 5px;
+    color: black;
+    font-weight: normal;
+    font-style: normal;
   }
   .lt {
     text-align: right;
