@@ -8,7 +8,7 @@
   <thead>
     <tr>
       <th>Round ID</th>
-      <th>Round ended</th>
+      <th>Duration</th>
       <th>Mode</th>
       <th>Server</th>
     </tr>
@@ -17,11 +17,19 @@
     <?php 
     $rounds = new round();
     foreach($rounds->listRounds() as $round){
-      echo "<tr>";
+      if ($round->duration){
+        echo "<tr>";
+      } else {
+        echo "<tr class='bad-round'>";
+      }
       echo "<td><a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td>";
-      echo "<td>".date('r',strtotime($round->end))."</td>";
-      echo "<td>".ucfirst($round->game_mode)."</td>";
-      echo "<td>".$rounds->mapServer($round->server)."</td>";
+      if ($round->duration){
+        echo "<td>$round->duration minutes</td>";
+        echo "<td>".ucfirst($round->game_mode)."</td>";
+        echo "<td>".$rounds->mapServer($round->server)."</td>";
+      } else {
+        echo "<td colspan='3'>Something went wrong and stats for this round are incomplete.</td>";
+      }
       echo "</tr>";
     }
     ?>

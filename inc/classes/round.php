@@ -10,6 +10,7 @@
   public $duration = false;
   public $hasObjectives = false;
   public $game_mode = false;
+  public $integrity = false;
 
   public function __construct($round=null,$data=false,$logs=false){
     if ($round) {
@@ -22,7 +23,8 @@
         if ($this->server){
           $this->logs = true;
         }
-        $this->duration = floor((strtotime($round->end) - strtotime($round->start))/60);
+        $this->duration = $round->duration;
+        $this->integrity = true;
       }
       if ($data){
         $this->data = new stdClass;
@@ -65,6 +67,8 @@
     if ($round->start) $round->start = date("Y-m-d H:i:s",strtotime($round->start));
     $round->end = date("Y-m-d H:i:s",strtotime($round->end));
     $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/".date('Y/m-F/d-l',strtotime($round->end)).".txt";
+    $round->duration = false;
+    if ($round->start)$round->duration = floor((strtotime($round->end) - strtotime($round->start))/60);
     return $round;
   }
 
@@ -229,11 +233,13 @@
     $database = $db->query("SELECT ss13feedback.round_id,
       server.details AS `server`,
       mode.details AS game_mode,
-      end.details AS `end`
+      end.details AS `end`,
+      start.details AS `start`
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
       LEFT JOIN ss13feedback AS `end` ON ss13feedback.round_id = end.round_id AND end.var_name = 'round_end'
+      LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
       WHERE ss13feedback.var_name='round_end'
       ORDER BY ss13feedback.time DESC
       LIMIT $offset, $count;");
@@ -242,7 +248,11 @@
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
+    $rounds = $db->resultset();
+    foreach ($rounds as $round){
+      $this->parseRound($round);
+    }
+    return $rounds;
   }
 
   public function getLogRange($roundend,$server,$offset=0,$count=10000) {
@@ -337,6 +347,7 @@
         case 'export_sold_amount':
         case 'export_sold_cost':
         case 'pick_used_mining':
+        case 'clockcult_scripture_recited':
           $data->details = array_count_values(explode(' ',$data->details));
         break;
 

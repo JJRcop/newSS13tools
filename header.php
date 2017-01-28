@@ -19,6 +19,11 @@ $user = new user();?>
   td, th {
     vertical-align: middle !important;
   }
+  tr.bad-round {
+    color: grey;
+    font-size: 10px;
+    background: #eeeeee;
+  }
   .text-brute {color: orange;}
   .text-brain {color: green;}
   .text-fire  {color: red;}
