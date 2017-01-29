@@ -21,7 +21,7 @@ $user = new user();?>
   }
   tr.bad-round {
     color: grey;
-    font-size: 10px;
+    font-size: 8px;
     background: #eeeeee;
   }
   .text-brute {color: orange;}

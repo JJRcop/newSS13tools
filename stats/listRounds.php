@@ -24,7 +24,7 @@
       }
       echo "<td><a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td>";
       if ($round->duration){
-        echo "<td>$round->duration minutes</td>";
+        echo "<td>$round->duration minutes <small>(ended at $round->end GMT)</td>";
         echo "<td>".ucfirst($round->game_mode)."</td>";
         echo "<td>".$rounds->mapServer($round->server)."</td>";
       } else {
