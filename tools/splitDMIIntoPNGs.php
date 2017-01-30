@@ -31,6 +31,7 @@ foreach($image as $icon) {
   if(isset($icon['dir'])){
     foreach ($icon['dir'] as $dir => $img){
       $i++;
+      $fileprefix = str_replace('/', '-', $fileprefix);
       $file = fopen("../".GENERATED_ICONS."/$dirname/$fileprefix-$dir.png",'w+');
       fwrite($file, base64_decode($img));
       fclose($file);
