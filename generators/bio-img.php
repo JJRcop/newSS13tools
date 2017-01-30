@@ -1,4 +1,5 @@
 <?php require_once('../config.php');
+$user = new user();
 //Setup and defaults
 //
 header('Content-Type: application/json');
@@ -52,8 +53,11 @@ imagesavealpha($image, true);
 $alpha = imagecolorallocatealpha($image, 0, 0, 0, 127);
 imagefill($image,0,0,$alpha);
 
-//BIO BACKGROUND IMAGE
+if ($data->bg === 'centcom' && !$user->legit){
+  $data->bg = 'default';
+}
 
+//BIO BACKGROUND IMAGE
 $useborder = false;
 switch($data->bg){
   case 'default':
@@ -70,9 +74,20 @@ switch($data->bg){
 
   case 'head':
     $bg = BIO_RESOURCES."/bg/$data->bg.png";
-    $text_color_title = imagecolorallocate( $image, 0x3b, 0x3b, 0x3b);
+    $text_color_title = imagecolorallocate( $image, 0xf5, 0xce, 0x68);
     $text_color_title_b = imagecolorallocate( $image, 0x93, 0x93, 0x93);
-    $text_color1 = imagecolorallocate( $image, 0x3b, 0x3b, 0x3b);
+    $text_color1 = imagecolorallocate( $image, 0xf5, 0xce, 0x68);
+    $text_color1_b = imagecolorallocate( $image, 0x93, 0x93, 0x93);
+    $text_color2 = imagecolorallocate( $image, 0x93, 0x93, 0x93);
+    $text_color2_b = imagecolorallocate( $image, 0x3b, 0x3b, 0x3b);
+    $useborder = 1;
+  break;
+
+  case 'centcom':
+    $bg = BIO_RESOURCES."/bg/$data->bg.png";
+    $text_color_title = imagecolorallocate( $image, 0x5d, 0x00, 0x00);
+    $text_color_title_b = imagecolorallocate( $image, 0x93, 0x93, 0x93);
+    $text_color1 = imagecolorallocate( $image, 0x5d, 0x00, 0x00);
     $text_color1_b = imagecolorallocate( $image, 0x93, 0x93, 0x93);
     $text_color2 = imagecolorallocate( $image, 0x93, 0x93, 0x93);
     $text_color2_b = imagecolorallocate( $image, 0x3b, 0x3b, 0x3b);

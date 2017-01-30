@@ -11,10 +11,14 @@
   public $hasObjectives = false;
   public $game_mode = false;
   public $integrity = false;
+  public $hash;
 
   public function __construct($round=null,$data=false,$logs=false){
     if ($round) {
       $round = $this->getRound($round);
+      if (!$round){
+        return false;
+      }
       $round = $this->parseRound($round);
       foreach ($round as $key => $value){
         $this->$key = $value;
@@ -49,6 +53,7 @@
         //   $death = new death();
         //   $this->deaths = $death->getDeathsInRange($round->start, $round->end);
         // }
+        $this->hash = sha1(json_encode($data));
       }
       if ($logs){
         if (!$this->start && !$this->server){
@@ -67,8 +72,6 @@
     if ($round->start) $round->start = date("Y-m-d H:i:s",strtotime($round->start));
     $round->end = date("Y-m-d H:i:s",strtotime($round->end));
     $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/".date('Y/m-F/d-l',strtotime($round->end)).".txt";
-    $round->duration = false;
-    if ($round->start)$round->duration = floor((strtotime($round->end) - strtotime($round->start))/60);
     return $round;
   }
 
@@ -77,7 +80,8 @@
     $db->query("SELECT ss13feedback.details AS `end`,
         start.details AS `start`,
         server.details AS `server`,
-        ss13feedback.round_id
+        ss13feedback.round_id,
+        TIMESTAMPDIFF(MINUTE,STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(ss13feedback.details,'%a %b %d %H:%i:%s %Y')) AS duration
         FROM ss13feedback
         LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
         LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
@@ -228,13 +232,15 @@
     }
   }
 
-  public function listRounds($offset=0, $count=30){
+  public function listRounds($page=1, $count=30){
+    $page = ($page*$count) - $count;
     $db = new database();
     $database = $db->query("SELECT ss13feedback.round_id,
       server.details AS `server`,
       mode.details AS game_mode,
-      end.details AS `end`,
-      start.details AS `start`
+      STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
+      STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y') AS `start`,
+      TIMESTAMPDIFF(MINUTE,STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y')) AS duration
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
@@ -242,7 +248,9 @@
       LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
       WHERE ss13feedback.var_name='round_end'
       ORDER BY ss13feedback.time DESC
-      LIMIT $offset, $count;");
+      LIMIT ?,?;");
+    $db->bind(1,$page);
+    $db->bind(2,$count);
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -253,6 +261,17 @@
       $this->parseRound($round);
     }
     return $rounds;
+  }
+
+  public function countRounds() {
+    $db = new database();
+    $db->query("SELECT count(DISTINCT round_id) AS total FROM ss13feedback;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->single()->total;
   }
 
   public function getLogRange($roundend,$server,$offset=0,$count=10000) {
@@ -291,6 +310,17 @@
       return returnError("Database error: ".$e->getMessage());
     }
     return $db->resultset();
+  }
+
+  public function getRoundsByMonth() {
+    $db = new database();
+    $db->query("SELECT count(DISTINCT round_id) AS rounds,
+      concat(MONTH(ss13feedback.time),'-',YEAR(ss13feedback.time)) AS `date`,
+      MIN(round_id) AS firstround,
+      MAX(round_id) AS lastround
+      FROM ss13feedback
+      WHERE ss13feedback.time BETWEEN '2011-01-01' AND NOW()
+      GROUP BY YEAR(ss13feedback.time), MONTH(ss13feedback.time) ASC;");
   }
 
   public function mapServer($ip) {

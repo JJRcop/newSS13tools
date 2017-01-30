@@ -1,10 +1,9 @@
 <?php require_once('../header.php'); ?>
-
+<?php require_once('../user_check.php'); ?>
 <?php
-$rounds = new round();
-$total = $rounds->countRounds();
+$books = new library();
+$total = $books->countBooks();
 $pages = floor($total/30);
-
 if (isset($_GET['page'])){
   $page = filter_input(INPUT_GET, 'page',FILTER_VALIDATE_INT,array(
     'min_range' => 1,
@@ -13,18 +12,16 @@ if (isset($_GET['page'])){
 } else {
   $page = 1;
 }
-
 ?>
-
 <div class="page-header">
-  <h1>Rounds</h1>
+  <h1>The Library</h1>
 </div>
 
 <nav aria-label="Page navigation">
   <ul class="pagination">
     <?php if ($page > 1):?>
     <li>
-      <a href="listRounds.php?page=<?php echo $page-1;?>" aria-label="Previous">
+      <a href="catalog.php?page=<?php echo $page-1;?>" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
       </a>
     </li>
@@ -38,7 +35,7 @@ if (isset($_GET['page'])){
         } else {
           echo "<li>";
         }
-        echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+        echo "<a href='catalog.php?page=$i'>$i</a></li>";
       }
     } else if ($page <= 5) {
       for ($i = 1; $i <= 5; $i++){
@@ -47,7 +44,7 @@ if (isset($_GET['page'])){
         } else {
           echo "<li>";
         }
-        echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+        echo "<a href='catalog.php?page=$i'>$i</a></li>";
       }
     } else {
       for ($i = ($pages-5); $i <= $pages; $i++){
@@ -56,7 +53,7 @@ if (isset($_GET['page'])){
         } else {
           echo "<li>";
         }
-        echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+        echo "<a href='catalog.php?page=$i'>$i</a></li>";
       }
     }
 
@@ -64,7 +61,7 @@ if (isset($_GET['page'])){
     <li>
       <?php if ($page < $pages):?>
       <li>
-        <a href="listRounds.php?page=<?php echo $page+1;?>" aria-label="Next">
+        <a href="catalog.php?page=<?php echo $page+1;?>" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>
       </li>
@@ -73,36 +70,39 @@ if (isset($_GET['page'])){
   </ul>
 </nav>
 
-<table class="table table-bordered table-condensed">
+<p class="lead">Welcome to the library. Blank books aren't being shown. I want to die.</p>
+
+<table class="table table-bordered table-condensed sort">
   <thead>
     <tr>
-      <th>Round ID</th>
-      <th>Duration</th>
-      <th>Mode</th>
-      <th>Server</th>
+      <th>NTBN</th>
+      <th>Author</th>
+      <th>Title</th>
+      <th>Category</th>
     </tr>
   </thead>
   <tbody>
-    <?php 
-
-    foreach($rounds->listRounds($page) as $round){
-      if ($round->duration){
-        echo "<tr>";
+    <?php
+    $books = $books->getCatalog($page);
+    foreach ($books as $book) {
+      if ($book->category == 'Adult') {
+        echo "<tr class='library-adult book' id='$book->id'>";
       } else {
-        echo "<tr class='bad-round'>";
+        echo "<tr class='book' id='$book->id'>";
       }
-      echo "<td><a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td>";
-      if ($round->duration){
-        echo "<td>$round->duration minutes <small>(ended at $round->end GMT)</td>";
-        echo "<td>".ucfirst($round->game_mode)."</td>";
-        echo "<td>".$rounds->mapServer($round->server)."</td>";
-      } else {
-        echo "<td colspan='3'>Something went wrong and stats for this round are incomplete.</td>";
-      }
-      echo "</tr>";
+      echo "<td>#$book->id</td>";
+      echo "<td>$book->author</td>";
+      echo "<td>$book->title</td>";
+      echo "<td>$book->category</td>";
+      echo "</tr></a>";
     }
     ?>
   </tbody>
 </table>
-
+<script>
+$('.book').click(function(e){
+  book = $(this).attr('id');
+  window.location.href = "viewBook.php?book="+book;
+})
+</script>
 <?php require_once('../footer.php'); ?>

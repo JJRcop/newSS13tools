@@ -6,6 +6,14 @@ $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 $round = new round($round,TRUE);
 ?>
 
+<?php if (!$round->round_id):?>
+  <div class="alert alert-danger">Round not found: #<?php echo $_GET['round'];?></div>
+<?php die(); endif;?>
+
+<?php if(DEBUG):?>
+<div class="alert alert-info">The hash for this round is <code><?php echo $round->hash; ?></code></div>
+<?php endif;?>
+
 <div class="page-header">
   <h1>Round #<?php echo $round->round_id;?>
     <small>Ended <?php echo $round->end;?>

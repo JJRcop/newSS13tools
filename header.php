@@ -1,6 +1,7 @@
 <?php require_once('config.php');
 PHP_Timer::start();
-$user = new user();?>
+$user = new user();
+?>
 
 <!DOCTYPE html>
 <html>
@@ -75,6 +76,21 @@ $user = new user();?>
     text-align: right;
     padding-right: 5px;
   }
+  .book {
+    color: #337ab7;
+  }
+  .book:hover {
+    cursor: poiner;
+    text-decoration: underline;
+  }
+  .library-adult {
+    background: grey;
+    color: grey;
+  }
+  .library-adult:hover {
+    background: transparent;
+    color: inherit;
+  }
   .sort {
     width: 100%;
   }
@@ -136,9 +152,17 @@ $user = new user();?>
             <li><a href="<?php echo APP_URL;?>stats/deaths.php">Deaths</a></li>
           </ul>
         </li>
+        <?php if ($user->valid):?>
+          <li><a href="<?php echo APP_URL;?>library/catalog.php">Library</a></li>
+        <?php endif;?>
+        <li class="label-danger">
+          <a style="color: white;" href="https://github.com/nfreader/newSS13tools/issues" target="_blank"><span class="glyphicon glyphicon-alert"></span> I found a bug!</a>
+        </li>
       </ul>
       <p class="navbar-text navbar-right">
-        <?php echo $user->label;?>
+      <?php if($user->legit):?>
+        Identified as <?php echo $user->label;?>
+      <?php endif;?>
       </p>
 <!--       <p class="navbar-text pull-right">
         You are not logged in

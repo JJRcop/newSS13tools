@@ -17,6 +17,9 @@
     </ul>
     <p class="pull-right"><a href='stats/deaths.php'>See more...</a></p>
   </div>
+  <div class="col-md-6">
+    <p class="lead">We're talking to the main /tg/station database. There is no cause for alarm.</p>
+  </div>
 </div>
 
 <?php require_once('footer.php');

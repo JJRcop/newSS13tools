@@ -66,8 +66,11 @@ label {
             <option value="ocean">Ocean</option>
             <option value="old">Old</option>
             <option value="ice">Ice</option>
-            <option value="captain">Captain</option>
             <option value="head">Head of Staff</option>
+            <option value="captain">Captain</option>
+            <?php if ($user->legit):?>
+            <option value="centcom">Central Command</option>
+            <?php endif;?>
           </select>
         </div>
       </div>
