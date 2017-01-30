@@ -394,9 +394,9 @@ if (!$clothing) {
   }
 }
 
+//Generic mob without clothing
 if($body != null){
   imagecopyresized( $image , $body , 10 , 13 , 8 , 0 , 45 , 42 , 15 , 14 );
-  //imagecopyresized(dst_image, src_image, dst_x, dst_y, src_x, src_y, dst_w, dst_h, src_w, src_h)
 }
 
 //CARD TEXT

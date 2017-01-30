@@ -7,12 +7,14 @@ if(!isset($_GET['icon'])) {
 }
 
 $icon = $_GET['icon'];
-if(!is_file("../".$icon)) {
+$icon = str_replace('../', '', $icon);
+$icon = ROOTPATH."/".$icon;
+if(!is_file($icon)) {
   die(json_encode(array('msg'=>"Invalid icon file: $icon",'failed'=>TRUE)));
 }
 
 $png = new PNGMetadataExtractor();
-$image = $png->loadImage("../".$icon);
+$image = $png->loadImage($icon);
 
 if (!is_dir("../".GENERATED_ICONS)){
   mkdir("../".GENERATED_ICONS);
