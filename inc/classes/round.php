@@ -24,7 +24,7 @@
         $this->$key = $value;
       }
       if ($this->start) {
-        if ($this->server){
+        if ($this->server){ //Cause we're using start for other stuff too
           $this->logs = true;
         }
         $this->duration = $round->duration;
@@ -81,7 +81,7 @@
         start.details AS `start`,
         server.details AS `server`,
         ss13feedback.round_id,
-        TIMESTAMPDIFF(MINUTE,STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(ss13feedback.details,'%a %b %d %H:%i:%s %Y')) AS duration
+        TIMEDIFF(STR_TO_DATE(ss13feedback.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration
         FROM ss13feedback
         LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
         LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
@@ -240,7 +240,7 @@
       mode.details AS game_mode,
       STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
       STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y') AS `start`,
-      TIMESTAMPDIFF(MINUTE,STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y')) AS duration
+      TIMEDIFF(STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'

@@ -19,5 +19,5 @@ if ($round->game_mode) {
 ?>
 
 <p class="lead">
-A round of <?php echo "$game_mode took place";?><?php if ($round->server) echo " on $round->server";?><?php if ($round->duration && $round->server) echo " and ";?><?php if ($round->duration) echo "lasted $round->duration minutes";?>. <?php if (isset($round->data->round_end_result)) echo "The result was: ".ucfirst($round->data->round_end_result['details']);?><?php if($round->hasObjectives) echo " This resulted in the following:";?>
+A round of <?php echo "$game_mode took place";?><?php if ($round->server) echo " on $round->server";?><?php if ($round->duration && $round->server) echo " and ";?><?php if ($round->duration) echo "lasted $round->duration ";?>. <?php if (isset($round->data->round_end_result)) echo "The result was: ".ucfirst($round->data->round_end_result['details']);?><?php if($round->hasObjectives) echo " This resulted in the following:";?>
 </p>
