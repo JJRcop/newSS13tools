@@ -4,7 +4,7 @@ $user = new user();
 //
 header('Content-Type: application/json');
 define("BIO_RESOURCES",'../resources/bio/');
-define("ICON_PATH","../".GENERATED_ICONS);
+define("ICON_PATH",ROOTPATH."/".GENERATED_ICONS);
 define("CONSOLAS_FONT","../".FONTS."/cnr.otf");
 
 $data = new stdClass;
@@ -230,6 +230,16 @@ switch($data->species){
 
   case 'imp':
     $body = ICON_PATH."/mob/imp-$data->dir.png";
+    $clothing = FALSE;
+  break;
+
+  case 'techPara':
+    $body = ICON_PATH."/guardian/$data->techparacolor-$data->dir.png";
+    $clothing = FALSE;
+  break;
+
+  case 'magicPara':
+    $body = ICON_PATH."/guardian/$data->magicparacolor-$data->dir.png";
     $clothing = FALSE;
   break;
 }

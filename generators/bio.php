@@ -12,15 +12,6 @@
 
 ?>
 <style>
-#output{
-  margin-bottom: 20px;
-  image-rendering: -moz-crisp-edges;         /* Firefox */
-  image-rendering:   -o-crisp-edges;         /* Opera */
-  image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
-  image-rendering: crisp-edges;
-  -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
-  text-align: center;
-}
 .skintone-sel {
   padding: 10px;
 }
@@ -97,11 +88,32 @@ label {
             <option value="jelly">Jellyperson</option>
             <option value="slime">Slimeperson</option>
             <option value="golem">Golem</option>
-            <option value="parasite">Holoparasite</option>
+            <option value="magicPara">Magic Parasite</option>
+            <option value="techPara">Tech Parasite</option>
             <option value="daemon">Daemon</option>
             <option value="bowmon">Bowmon</option>
             <option value="honkmon">Honkmon</option>
             <option value="imp">Imp</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="species" class="col-md-2">Tech Parasite Color</label>
+        <div class="col-md-10">
+          <select name="techparacolor" disabled="true" class="form-control field techparacolor">
+          <option value="techRose">Rose</option>
+          <option value="techPeony">Peony</option>
+          <option value="techLily">Lily</option>
+          <option value="techDaisy">Daisy</option>
+          <option value="techZinnia">Zinnia</option>
+          <option value="techIvy">Ivy</option>
+          <option value="techIris">Iris</option>
+          <option value="techPetunia">Petunia</option>
+          <option value="techViolet">Violet</option>
+          <option value="techLotus">Lotus</option>
+          <option value="techLilac">Lilac</option>
+          <option value="techOrchid">Orchid</option>
           </select>
         </div>
       </div>
@@ -745,6 +757,11 @@ $('.field').on('change',function(e){
     $('.c').attr('disabled',true);
   } else {
     $('.c').attr('disabled',false);
+  }
+  if ('techPara' == $('.species').val()){
+    $('.techparacolor').attr('disabled',false);
+  } else {
+    $('.techparacolor').attr('disabled',true);
   }
 })
 $('#generator').submit(function(e){

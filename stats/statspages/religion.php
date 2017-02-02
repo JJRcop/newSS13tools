@@ -1,0 +1,1 @@
+<p>The crew practiced <?php echo $round->data->religion_name['details'];?> and worshipped <?php echo $round->data->religion_deity['details'];?>

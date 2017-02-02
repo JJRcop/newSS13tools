@@ -6,7 +6,7 @@
 
 <div class="row">
   <div class="col-md-6">
-    <h2>Recent deaths</h2>
+    <h2>Recent deaths <small><a href='stats/deaths.php'>See more</a></small></h2>
     <ul class="list-unstyled">
       <?php 
       $death = new death();
@@ -15,7 +15,6 @@
       }
       ?>
     </ul>
-    <p class="pull-right"><a href='stats/deaths.php'>See more...</a></p>
   </div>
   <div class="col-md-6">
     <p class="lead">We're talking to the main /tg/station database. There is no cause for alarm.</p>
