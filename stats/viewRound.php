@@ -1,9 +1,19 @@
-<?php require_once('../header.php'); ?>
-
 <?php
+$json = false;
+if (isset($_GET['json'])) $json = filter_input(INPUT_GET, 'json', FILTER_VALIDATE_BOOLEAN);
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
-$round = new round($round,TRUE);
+
+if($json) {
+  require_once('../config.php');
+  header('Content-Type: application/json');
+  $round = new round($round,TRUE,FALSE,TRUE);
+  echo json_encode($round);
+  die();
+} else{
+  require_once('../header.php');
+  $round = new round($round,TRUE);
+}
 ?>
 
 <?php if (!$round->round_id):?>

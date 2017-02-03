@@ -24,6 +24,10 @@ $user = new user();
     image-rendering: crisp-edges;
     -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
   }
+  #output {
+    text-align: center;
+    margin: 0 0 20px 0;
+  }
   td, th {
     vertical-align: middle !important;
   }

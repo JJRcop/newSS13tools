@@ -13,7 +13,7 @@
   public $integrity = false;
   public $hash;
 
-  public function __construct($round=null,$data=false,$logs=false){
+  public function __construct($round=null,$data=false,$logs=false,$json=false){
     if ($round) {
       $round = $this->getRound($round);
       if (!$round){
@@ -47,20 +47,18 @@
         if (isset($this->data->game_mode)){
           $this->game_mode = $this->data->game_mode['details'];
         }
-        //Commented out. Right now, this polls deaths from both servers,
-        //which isn't super useful.
-        // if ($this->start){
-        //   $death = new death();
-        //   $this->deaths = $death->getDeathsInRange($round->start, $round->end);
-        // }
         $this->hash = sha1(json_encode($data));
       }
       if ($logs){
         if (!$this->start && !$this->server){
           $this->logs = false;
         } else {
-          $this->logs = $this->getLogs($round);
-          $this->logs = $this->parseLogs($this->logs,$round);
+          if ($json){
+            $this->logs = $this->getLogs($round,TRUE);
+          } else {
+            $logs = $this->getlogs($round,FALSE);
+            $this->logs = $this->parselogs($logs,$round);
+          }
         }
       }
     }
@@ -108,17 +106,45 @@
     return  $db->resultset();
   }
 
-  public function getLogs($round){
-    $logs = $this->getRemoteLogs($round->logURL);
-    $lines = $this->findRoundBounds($logs,$round);
-    $logs = $this->getLinesFromLogs($logs,$lines);
+  public function getLogs($round,$json=false){
+    if ($round->start && $round->end && $round->server){
+      $round->start = date('H:i:s',strtotime($round->start));
+      $round->end = date('H:i:s',strtotime($round->end));
+    } else {
+      return false;
+    }
+    $logsavefile = "../".TMPDIR."/".$round->round_id."-".$round->server."-logs.json";
+    $this->fromCache = FALSE;
+    //Check if we've already saved logs for this round
+    if (file_exists($logsavefile)){
+      $this->fromCache = TRUE;
+      //If so, spew em out
+      if($json){
+        $logs = file_get_contents($logsavefile);
+      } else {
+        $logs = json_decode(file_get_contents($logsavefile));
+      }
+    } else {
+      //If not, retrieve them
+      $this->fromCache = FALSE;
+      $logs = $this->getRemoteLogs($round->logURL);
+      $logs = $this->cleanUpLogs($logs);
+      $lines = $this->findRoundBounds($logs,$round);
+      $logs = $this->getLinesFromLogs($logs,$lines);
+      foreach ($logs as &$log){
+        $log = explode('#-#',$log);
+      }
+      //Cache locally
+      $logsavefile = fopen($logsavefile,"w+");
+      fwrite($logsavefile,json_encode($logs,JSON_UNESCAPED_UNICODE));
+      fclose($logsavefile);
+    }
     return $logs;
   }
 
   public function getRemoteLogs($url){
     $file = str_replace(REMOTE_LOG_SRC, '', $url);
     $file = str_replace("/", '-', $file);
-    if (!is_file("../".TMPDIR."/".$file.".json")){
     $curl = curl_init();
     curl_setopt_array($curl, array(
       CURLOPT_RETURNTRANSFER => TRUE,
@@ -130,71 +156,85 @@
       CURLOPT_REFERER => "atlantaned.space",
       CURLOPT_ENCODING => 'gzip',
     ));
-
     $logs = curl_exec($curl);
     curl_close($curl);
+    return $logs;
+  }
 
+  public function cleanUpLogs(&$logs){
     $logs = str_replace("-censored(misc)-\r\n",'',$logs);
     $logs = str_replace("-censored(asay/apm/ahelp/notes/etc)-\r\n",'',$logs);
+    $logs = str_replace(" from -censored(ip/cid)- ",' ',$logs);
+    $logs = str_replace(" : ",': ',$logs);
     $logs = str_replace("-\r\n", '', $logs);
     $logs = str_replace("<span class='boldannounce'>",'',$logs);
-    $logs = str_replace('</spam>', '', $logs);
+    $logs = str_replace('</span>', '', $logs);
     $logs = str_replace('*no key*/', '', $logs);
     $logs = str_replace(')) : ',') : ',$logs);
     $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE)(:\s)/","$2#-#$4#-#", $logs);
     $logs = utf8_encode($logs);
     $logs = explode("\r\n",$logs);
     array_filter($logs);
-
-    $file = fopen("../".TMPDIR."/".$file.".json","w+");
-    fwrite($file,json_encode($logs,JSON_UNESCAPED_UNICODE));
-    fclose($file);
-    } else {
-      $logs = json_decode(file_get_contents("../".TMPDIR."/".$file.".json"));
-    }
+    array_pop($logs);
     return $logs;
   }
 
   public function findRoundBounds($logs,$round){
     function diffSort($a, $b) {
-      return ($a[3] < $b[3]) ? -1 : 1;
+      return ($a['diff'] < $b['diff']) ? -1 : 1;
     }
-    
-    $startTime = strtotime(explode(' ', $round->start)[1]);
-    $endTime = strtotime(explode(' ', $round->end)[1]);
-    $i = -1;
-    $bounds = array();
+    $starts = array();
+    $ends = array();
+    $i = 0;
     foreach ($logs as $log){
       $i++;
-      if (strpos($log,'Loading Banlist')) {
-        $bounds['start'][$i] = explode('#-#',$log);
+      $log = explode('#-#',$log);
+      $log['line'] = $i;
+      $log[4] = strtotime($log[0]);
+      if ('Loading Banlist' == $log[2]) {
+        $starts[] = $log;
       }
-      if (strpos($log,'Rebooting World. Round ended.')) {
-        $bounds['end'][$i] = explode('#-#',$log);
+
+      if (strpos($log[2],'Rebooting World. ') !== FALSE) {
+        $ends[] = $log;
       }
     }
 
-    foreach ($bounds['start'] as $line => &$start){
-      $start[3] = abs($startTime - strtotime($start[0]));
-      $start[4] = $line;
+    $bounds['start'] = $starts;
+    $bounds['end'] = $ends;
+
+
+    foreach ($bounds['start'] as &$start){
+      $start['diff'] = strtotime($round->start) - $start[4];
     }
 
-    foreach ($bounds['end'] as $line => &$end){
-      $end[3] = abs($endTime - strtotime($end[0]));
-      $end[4] = $line;
+    foreach ($bounds['end'] as &$end){
+      $end['diff'] = abs(strtotime($round->end) - $end[4]);
     }
 
     usort($bounds['start'],'diffsort');
     usort($bounds['end'],'diffsort');
 
-    $return = array();
-    $return['start'] = $bounds['start'][0][4];
-    $return['end'] = $bounds['end'][0][4];
+    $startline = 0;
+    $endline = 0;
+    foreach ($bounds['start'] as $start){
+      if ($start['diff'] > 0) {
+        $startline = $start['line'];
+        break;
+      }
+    }
+
+    foreach ($bounds['end'] as $end){
+      $endline = $end['line'];
+      break;
+    }
+    $return['start'] = $startline;
+    $return['end'] = $endline-$startline;
     return $return;
   }
 
   public function getLinesFromLogs($logs, $lines){
-    $logs = array_slice($logs, $lines['start']+1,$lines['end']-$lines['start']-1);
+    $logs = array_slice($logs, $lines['start']+1,$lines['end']);
     return $logs;
   }
 
@@ -202,10 +242,10 @@
     $i = 0;
     foreach ($logs as &$log){
       $i++;
-      $ld = explode('#-#',$log);
-      if (strpos($ld[2],' has renamed the station as ')){
-        $this->attachStationNameToRoundID($ld[2],$round);
-      }
+      $ld = $log;
+      // if (strpos($ld[2],' has renamed the station as ') !== FALSE){
+      //   $this->attachStationNameToRoundID($ld[2],$round);
+      // }
       @$log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>#$i</a></td><td class='ts'>[".$ld[0]."]";
       @$log.= "</td><td class='lt'>".$ld[1].": </td><td>";
       @$log.= $ld[2];
@@ -272,44 +312,6 @@
       return returnError("Database error: ".$e->getMessage());
     }
     return $db->single()->total;
-  }
-
-  public function getLogRange($roundend,$server,$offset=0,$count=10000) {
-    $db = new database(TRUE);
-    //Finding the round's roundend starting logline
-    $db->query("SELECT id FROM tglogs
-      WHERE logtype = 'game'
-      AND content LIKE '%Rebooting World. Round ended.%'
-      AND `timestamp` > DATE_SUB('$roundend',INTERVAL 10 MINUTE) LIMIT 1;");
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    $roundend = $db->single()->id;
-    //Finding the round's roundstart line
-    $db->query("SELECT MAX(id) AS start
-      FROM tglogs
-      WHERE `id` < ?
-      AND logtype = 'ADMIN'
-      AND content LIKE '%Loading Banlist%'
-      LIMIT 1");
-    $db->bind(1,$roundend);
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    $roundstart = $db->single()->start;
-
-    //Pull down logs
-    $db->query("SELECT * FROM tglogs WHERE `id` <= $roundend AND `id` >= $roundstart LIMIT $offset, $count");
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    return $db->resultset();
   }
 
   public function getRoundsByMonth() {

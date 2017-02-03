@@ -79,4 +79,21 @@ class death {
     return $death;
   }
 
+  public function getDeathMap($count){
+    $db = new database();
+    $db->query("SELECT COUNT(coord) AS number,
+      coord
+      FROM ss13death
+      WHERE coord != '0, 0, 0'
+      GROUP BY coord ORDER BY `number` DESC
+      LIMIT 0,?;");
+    $db->bind(1,$count);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultset();
+  }
+
 }
