@@ -63,35 +63,29 @@
         <?php endif;?>
         </p>
         <p>With the following attempted objectives:</p>
-        <?php
-        $objs = array();
-        foreach ($tatorO['details'] as $obj => $count){
-          $obj = explode('|',$obj);
-          $objective = $obj[0];
-          $status = $obj[1];
-          if (array_key_exists($objective, $objs)){
-            $objs[$objective][$status] = $count;
-          } else {
-            $objs[$objective][$status] = $count;
-          }
-        }?>
-        <ul class="list-group">
-          <?php foreach ($objs as $objective => $count): ?>
-            <li class="list-group-item">
-            <strong><?php echo str_replace('/datum/objective/', '',$objective);?></strong>
-              <?php if (isset($count['SUCCESS'])):?>
-                <span class='label label-success'>
-                  Success: <?php echo $count['SUCCESS'];?>
-                </span>&nbsp;
-              <?php endif;?>
-              <?php if (isset($count['FAIL'])):?>
-                <span class='label label-danger'>
-                  Fail: <?php echo $count['FAIL'];?>
-                </span> 
-              <?php endif;?>
-            </li>
+        <table class="table table-bordered table-condensed">
+          <?php foreach ($tatorO['details'] as $objective => $count): ?>
+            <tr>
+              <th>
+                <?php echo $objective;?>
+              </th>
+              <td class="success">
+                <?php if (isset($count['SUCCESS'])):?>
+                  <span class='label label-success'>
+                    Success: <?php echo $count['SUCCESS'];?>
+                  </span>&nbsp;
+                <?php endif;?>
+              </td>
+              <td class="danger">
+                <?php if (isset($count['FAIL'])):?>
+                  <span class='label label-danger'>
+                    Fail: <?php echo $count['FAIL'];?>
+                  </span> 
+                <?php endif;?>
+              </td>
+            </tr>
           <?php endforeach;?>
-        </ul>
+        </table>
       </div>
     <?php endif;?>
 
@@ -112,35 +106,29 @@
         <?php endif;?>
         </p>
         <p>With the following attempted objectives:</p>
-        <?php
-        $objs = array();
-        foreach ($lingO['details'] as $obj => $count){
-          $obj = explode('|',$obj);
-          $objective = $obj[0];
-          $status = $obj[1];
-          if (array_key_exists($objective, $objs)){
-            $objs[$objective][$status] = $count;
-          } else {
-            $objs[$objective][$status] = $count;
-          }
-        }?>
-        <ul class="list-group">
-          <?php foreach ($objs as $objective => $count): ?>
-            <li class="list-group-item">
-            <strong><?php echo str_replace('/datum/objective/', '',$objective);?></strong>
-              <?php if (isset($count['SUCCESS'])):?>
-                <span class='label label-success'>
-                  Success: <?php echo $count['SUCCESS'];?>
-                </span>&nbsp;
-              <?php endif;?>
-              <?php if (isset($count['FAIL'])):?>
-                <span class='label label-danger'>
-                  Fail: <?php echo $count['FAIL'];?>
-                </span> 
-              <?php endif;?>
-            </li>
+        <table class="table table-bordered table-condensed">
+          <?php foreach ($lingO['details'] as $objective => $count): ?>
+            <tr>
+              <th>
+                <?php echo $objective;?>
+              </th>
+              <td class="success">
+                <?php if (isset($count['SUCCESS'])):?>
+                  <span class='label label-success'>
+                    Success: <?php echo $count['SUCCESS'];?>
+                  </span>&nbsp;
+                <?php endif;?>
+              </td>
+              <td class="danger">
+                <?php if (isset($count['FAIL'])):?>
+                  <span class='label label-danger'>
+                    Fail: <?php echo $count['FAIL'];?>
+                  </span> 
+                <?php endif;?>
+              </td>
+            </tr>
           <?php endforeach;?>
-        </ul>
+        </table>
       </div>
     <?php endif;?>
 
@@ -162,35 +150,29 @@
         <?php endif;?>
         </p>
         <p>With the following attempted objectives:</p>
-        <?php
-        $objs = array();
-        foreach ($wizardO['details'] as $obj => $count){
-          $obj = explode('|',$obj);
-          $objective = $obj[0];
-          $status = $obj[1];
-          if (array_key_exists($objective, $objs)){
-            $objs[$objective][$status] = $count;
-          } else {
-            $objs[$objective][$status] = $count;
-          }
-        }?>
-        <ul class="list-group">
-          <?php foreach ($objs as $objective => $count): ?>
-            <li class="list-group-item">
-            <strong><?php echo str_replace('/datum/objective/', '',$objective);?></strong>
-              <?php if (isset($count['SUCCESS'])):?>
-                <span class='label lead label-success'>
-                  Success: <?php echo $count['SUCCESS'];?>
-                </span>&nbsp;
-              <?php endif;?>
-              <?php if (isset($count['FAIL'])):?>
-                <span class='label lead label-danger'>
-                  Fail: <?php echo $count['FAIL'];?>
-                </span> 
-              <?php endif;?>
-            </li>
+        <table class="table table-bordered table-condensed">
+          <?php foreach ($wizardO['details'] as $objective => $count): ?>
+            <tr>
+              <th>
+                <?php echo $objective;?>
+              </th>
+              <td class="success">
+                <?php if (isset($count['SUCCESS'])):?>
+                  <span class='label label-success'>
+                    Success: <?php echo $count['SUCCESS'];?>
+                  </span>&nbsp;
+                <?php endif;?>
+              </td>
+              <td class="danger">
+                <?php if (isset($count['FAIL'])):?>
+                  <span class='label label-danger'>
+                    Fail: <?php echo $count['FAIL'];?>
+                  </span> 
+                <?php endif;?>
+              </td>
+            </tr>
           <?php endforeach;?>
-        </ul>
+        </table>
       </div>
     <?php endif;?>
   </div>

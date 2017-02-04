@@ -24,6 +24,8 @@ if($json) {
 <div class="alert alert-info">The hash for this round is <code><?php echo $round->hash; ?></code></div>
 <?php endif;?>
 
+<?php require_once('statspages/pagination.php');?>
+
 <div class="page-header">
   <h1>Round #<?php echo $round->round_id;?>
     <small>Ended <?php echo $round->end;?>
@@ -38,15 +40,13 @@ if($json) {
   </h1>
 </div>
 
-<?php if (!$round->logs): ?>
-  <p class="lead">Unable to accurately locate logs for round #<?php echo $round->round_id;?>, because either the server or round start time could not be located.</p>
-<?php endif;?>
+<?php include('statspages/loginfo.php');?>
 
 <?php include('statspages/game_mode.php');?>
 
 <?php
 
-if (isset($round->data->round_end_ghosts) && isset($round->data->survived_total)) {
+if (isset($round->data->round_end_ghosts) || isset($round->data->survived_total)) {
   include 'statspages/population.php';
 }
 
@@ -105,8 +105,6 @@ if (isset($round->data->radio_usage)){
   </table>
 </div>
 
-<?php if ($round->deaths) :?>
-<?php var_dump($round->deaths);?>
-<?php endif;?>
+<?php require_once('statspages/pagination.php');?>
 
 <?php require_once('../footer.php'); ?>

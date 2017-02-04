@@ -30,12 +30,15 @@
         $this->duration = $round->duration;
         $this->integrity = true;
       }
+
+      //Full round data
       if ($data){
         $this->data = new stdClass;
         $feedback = $this->getRoundFeedback($this->round_id);
         $feedback = $this->parseRoundFeedback($feedback);
         foreach($feedback as $data){
           $name = $data->var_name;
+          if (!$name) continue; //Fixes round #65941 which had an empty var
           $this->data->$name['value'] = $data->var_value;
           $this->data->$name['details'] = $data->details;
         }
@@ -48,7 +51,10 @@
           $this->game_mode = $this->data->game_mode['details'];
         }
         $this->hash = sha1(json_encode($data));
+        $this->neighbors = $this->getRoundNeighbors($this->round_id);
       }
+
+      //Or we're pulling down logs
       if ($logs){
         if (!$this->start && !$this->server){
           $this->logs = false;
@@ -65,12 +71,49 @@
     return $round;
   }
 
+  public function getRoundNeighbors($id){
+    $db = new database();
+    $db->query("SELECT MAX(next.round_id) AS `next`,
+      MIN(prev.round_id) AS `prev`
+      FROM ss13feedback
+      LEFT JOIN ss13feedback AS `next` ON next.round_id = ss13feedback.round_id + 1
+      LEFT JOIN ss13feedback AS `prev` ON prev.round_id = ss13feedback.round_id - 1
+      WHERE ss13feedback.round_id = ?");
+    $db->bind(1, $id);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->single();
+  }
+
   public function parseRound(&$round){
     $round->server = $this->mapServer($round->server);
     if ($round->start) $round->start = date("Y-m-d H:i:s",strtotime($round->start));
     $round->end = date("Y-m-d H:i:s",strtotime($round->end));
     $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/".date('Y/m-F/d-l',strtotime($round->end)).".txt";
+    // $round->status = $this->mapStatus($round->status);
     return $round;
+  }
+
+  public function mapStatus($status = null){
+    if(!$status) return false;
+    if(strpos($status, 'admin reboot - ')!==FALSE) return false;
+    switch ($status){
+      case 'proper completion':
+      default:
+        return TRUE;
+      break;
+
+      case 'nuke':
+        return TRUE;
+      break;
+
+      case 'restart vote':
+        return FALSE;
+      break;
+    }
   }
 
   public function getRound($round){
@@ -280,12 +323,15 @@
       mode.details AS game_mode,
       STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
       STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y') AS `start`,
-      TIMEDIFF(STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration
+      TIMEDIFF(STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration,
+      IF (proper.details IS NULL, error.details, proper.details) AS `status`
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
       LEFT JOIN ss13feedback AS `end` ON ss13feedback.round_id = end.round_id AND end.var_name = 'round_end'
       LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
+      LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
+      LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
       WHERE ss13feedback.var_name='round_end'
       ORDER BY ss13feedback.time DESC
       LIMIT ?,?;");
@@ -326,17 +372,19 @@
   }
 
   public function mapServer($ip) {
-    switch ($ip){
-      case '172.93.110.246:2337':
+    $ip = explode(':',$ip);
+    if (!isset($ip[1])) return 'Unknown';
+    switch ($ip[1]){
+      case '2337':
         return 'Basil';
       break;
 
-      case '172.93.110.246:1337':
+      case '1337':
         return 'Sybil';
       break;
 
       default: 
-        return $ip;
+        return 'Unknown Server';
       break;
     }
   }
@@ -344,12 +392,32 @@
   public function parseRoundFeedback(&$feedback){
     foreach($feedback as &$data){
       switch($data->var_name){
+
+        case 'traitor_objective':
+        case 'wizard_objective':
+        case 'changeling_objective':
+          $data->details = array_count_values(explode(' ',$data->details));
+          $objs = array();
+          foreach ($data->details as $obj => $count){
+            $obj = explode('|',$obj);
+            $objective = str_replace('/datum/objective/', '',$obj[0]);
+            $status = $obj[1];
+
+            if (array_key_exists($objective, $objs)){
+              $objs[$objective][$status] = $count;
+            } else {
+              $objs[$objective][$status] = $count;
+            }
+          }
+          $data->details = $objs;
+        break;
+
         case 'slime_core_harvested':
         case 'handcuffs':
         case 'zone_targeted':
         case 'admin_verb':
         case 'traitor_success':
-        case 'traitor_objective':
+        // case 'traitor_objective':
         case 'cargo_imports':
         case 'gun_fired':
         case 'food_harvested':
@@ -366,11 +434,9 @@
         case 'item_printed':
         case 'mining_equipment_bought':
         case 'cult_runes_scribed':
-        case 'changeling_objective':
         case 'changeling_success':
         case 'changeling_powers':
         case 'wizard_success':
-        case 'wizard_objective':
         case 'event_ran':
         case 'wizard_spell_learned':
         case 'admin_secrets_fun_used':
@@ -380,6 +446,7 @@
         case 'export_sold_cost':
         case 'pick_used_mining':
         case 'clockcult_scripture_recited':
+        case 'engine_started':
           $data->details = array_count_values(explode(' ',$data->details));
         break;
 
@@ -425,7 +492,6 @@
             $prefs[$job[0]]['YOUNG'] = $job[6][1];
           }
           $data->details = $prefs;
-          
         break;
       }
     }

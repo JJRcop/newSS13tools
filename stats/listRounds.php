@@ -80,29 +80,92 @@ if (isset($_GET['page'])){
       <th>Duration</th>
       <th>Mode</th>
       <th>Server</th>
+      <th>Status</th>
     </tr>
   </thead>
   <tbody>
     <?php 
 
     foreach($rounds->listRounds($page) as $round){
-      if ($round->duration){
-        echo "<tr>";
-      } else {
+      if (!$round->duration){
         echo "<tr class='bad-round'>";
+        $status = "<span class='glyphicon glyphicon-flag'></span>";
+      } elseif ($round->status == 'nuke') {
+        echo "<tr class='warning'>";
+        $status = "<span class='glyphicon glyphicon-asterisk'></span>";
+      } elseif ($round->status != 'proper completion'){
+        echo "<tr class='danger'>";
+        $status = "<span class='glyphicon glyphicon-remove'></span>";
+      } else {
+        echo "<tr>";
+        $status = "<span class='glyphicon glyphicon-ok'></span>";
       }
-      echo "<td><a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td>";
+      echo "<td>$status <a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td>";
       if ($round->duration){
         echo "<td>$round->duration <small>(ended at $round->end GMT)</td>";
         echo "<td>".ucfirst($round->game_mode)."</td>";
-        echo "<td>".$rounds->mapServer($round->server)."</td>";
+        echo "<td>$round->server</td>";
       } else {
         echo "<td colspan='3'>Something went wrong and stats for this round are incomplete.</td>";
       }
+      echo "<td>$round->status</td>";
       echo "</tr>";
     }
     ?>
   </tbody>
 </table>
+
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    <?php if ($page > 1):?>
+    <li>
+      <a href="listRounds.php?page=<?php echo $page-1;?>" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <?php endif;?>
+    <?php 
+
+    if ($page > 5 && $page < ($pages-5)){      
+      for ($i = ($page-5); $i <= ($page+5); $i++){
+        if ($page == $i){
+          echo "<li class='active'>";
+        } else {
+          echo "<li>";
+        }
+        echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+      }
+    } else if ($page <= 5) {
+      for ($i = 1; $i <= 5; $i++){
+        if ($page == $i){
+          echo "<li class='active'>";
+        } else {
+          echo "<li>";
+        }
+        echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+      }
+    } else {
+      for ($i = ($pages-5); $i <= $pages; $i++){
+        if ($page == $i){
+          echo "<li class='active'>";
+        } else {
+          echo "<li>";
+        }
+        echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+      }
+    }
+
+    ?>
+    <li>
+      <?php if ($page < $pages):?>
+      <li>
+        <a href="listRounds.php?page=<?php echo $page+1;?>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+      <?php endif;?>
+    </li>
+  </ul>
+</nav>
 
 <?php require_once('../footer.php'); ?>

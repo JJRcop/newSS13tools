@@ -1,16 +1,20 @@
 <?php
 
-$endClients = $round->data->round_end_clients['value'];
-$dead = $round->data->round_end_ghosts['value'];
-$survivors = $round->data->survived_total['value'];
-$survivingHumans = $round->data->survived_human['value'];
-$escaped = false;
-$escapedH = false;
-if (isset($round->data->escaped_total) && isset($round->data->escaped_human)) {
-  $escaped  = $round->data->escaped_total['value'];
-  $escaped = $survivors - $escaped;
-  $escapedH = $round->data->escaped_human['value'];
-}
+$dead = 0;
+$endClients = 0;
+$survivors = 0;
+$survivingHumans = 0;
+$escaped = 0;
+$escapedH = 0;
+
+if(isset($round->data->round_end_clients)) $endClients = $round->data->round_end_clients['value'];
+if(isset($round->data->round_end_ghosts)) $dead = $round->data->round_end_ghosts['value'];
+if(isset($round->data->survived_total)) $survivors = $round->data->survived_total['value'];
+if(isset($round->data->survived_human)) $survivingHumans = $round->data->survived_human['value'];
+if(isset($round->data->escaped_total)) $escaped = $round->data->escaped_total['value'];
+if(isset($round->data->escaped_human)) $escapedH = $round->data->escaped_human['value'];
+
+$escaped = $survivors - $escaped;
 $total = $dead + $survivors; ?>
 
 <div class="progress">

@@ -8,7 +8,6 @@ if(!isset($_GET['icon'])) {
 
 $icon = $_GET['icon'];
 $icon = str_replace('../', '', $icon);
-$icon = ROOTPATH."/".$icon;
 if(!is_file($icon)) {
   die(json_encode(array('msg'=>"Invalid icon file: $icon",'failed'=>TRUE)));
 }
