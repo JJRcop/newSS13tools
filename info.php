@@ -34,6 +34,10 @@
       <td>Whoami</td>
       <td><?php echo $user->label;?></td>
     </tr>
+    <tr>
+      <td>rootpath</td>
+      <td><?php var_dump(ROOTPATH);?></td>
+    </tr>
   </tbody>
 </table>
 

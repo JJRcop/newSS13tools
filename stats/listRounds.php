@@ -88,22 +88,22 @@ if (isset($_GET['page'])){
 
     foreach($rounds->listRounds($page) as $round){
       if (!$round->duration){
-        echo "<tr class='bad-round'>";
+        echo "<tr id='$round->round_id' class='round bad-round'>";
         $status = "<span class='glyphicon glyphicon-flag'></span>";
       } elseif ($round->status == 'nuke') {
-        echo "<tr class='warning'>";
+        echo "<tr id='$round->round_id' class='round warning'>";
         $status = "<span class='glyphicon glyphicon-asterisk'></span>";
       } elseif ($round->status != 'proper completion'){
-        echo "<tr class='danger'>";
+        echo "<tr id='$round->round_id' class='round danger'>";
         $status = "<span class='glyphicon glyphicon-remove'></span>";
       } else {
-        echo "<tr>";
+        echo "<tr id='$round->round_id' class='round'>";
         $status = "<span class='glyphicon glyphicon-ok'></span>";
       }
       echo "<td>$status <a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td>";
       if ($round->duration){
         echo "<td>$round->duration <small>(ended at $round->end GMT)</td>";
-        echo "<td>".ucfirst($round->game_mode)."</td>";
+        echo "<td class='mode $round->game_mode'>".ucfirst($round->game_mode)."</td>";
         echo "<td>$round->server</td>";
       } else {
         echo "<td colspan='3'>Something went wrong and stats for this round are incomplete.</td>";
@@ -167,5 +167,12 @@ if (isset($_GET['page'])){
     </li>
   </ul>
 </nav>
+
+<script>
+$('.round').click(function(e){
+  round = $(this).attr('id');
+  window.location.href = "viewRound.php?round="+round;
+})
+</script>
 
 <?php require_once('../footer.php'); ?>

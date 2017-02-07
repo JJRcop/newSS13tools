@@ -1,4 +1,4 @@
-<?php
+  <?php
 $json = false;
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);

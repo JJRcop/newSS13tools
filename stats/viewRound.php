@@ -21,7 +21,7 @@ if($json) {
 <?php die(); endif;?>
 
 <?php if(DEBUG):?>
-<div class="alert alert-info">The hash for this round is <code><?php echo $round->hash; ?></code></div>
+<div class="alert alert-info">The hash for this round is <code><?php echo sha1(json_encode($round->data)); ?></code></div>
 <?php endif;?>
 
 <?php require_once('statspages/pagination.php');?>
@@ -56,6 +56,10 @@ if($round->hasObjectives) {
 
 if (isset($round->data->export_sold_amount) || isset($round->data->cargo_imports)) {
   include 'statspages/econ.php';
+}
+
+if (isset($round->data->gun_fired)){
+  include 'statspages/combat.php';
 }
 
 if (isset($round->data->ore_mined) || isset($round->data->mobs_killed_mining)){

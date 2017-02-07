@@ -2,98 +2,87 @@
 
   public $start = false;
   public $end = false;
-  public $server = false;
-  public $round_id = false;
-  public $logURL = false;
-  public $logs = false;
-  public $deaths = false;
   public $duration = false;
-  public $hasObjectives = false;
+  public $round_id = false;
   public $game_mode = false;
-  public $integrity = false;
-  public $hash;
+  public $server = false;
+  public $logs = false;
+  public $logURL = false;
+  public $status = false;
+  public $next = false;
+  public $prev = false;
+  public $hasObjectives = false;
+  public $fromCache = false;
 
-  public function __construct($round=null,$data=false,$logs=false,$json=false){
-    if ($round) {
-      $round = $this->getRound($round);
-      if (!$round){
-        return false;
-      }
+  public function __construct($id=null,$data=false,$logs=false,$json=false) {
+    if ($id){
+      $round = $this->getRound($id);
+
+      //If we found the round, parse it...
+      if(!$round) return false;
       $round = $this->parseRound($round);
-      foreach ($round as $key => $value){
-        $this->$key = $value;
-      }
-      if ($this->start) {
-        if ($this->server){ //Cause we're using start for other stuff too
-          $this->logs = true;
-        }
-        $this->duration = $round->duration;
-        $this->integrity = true;
+
+      //Set properties from round parse
+      foreach ($round as $k => $v){
+        $this->$k = $v;
       }
 
-      //Full round data
+      //Get round feedback
       if ($data){
         $this->data = new stdClass;
         $feedback = $this->getRoundFeedback($this->round_id);
         $feedback = $this->parseRoundFeedback($feedback);
+        
+        //This is ugly, but it prevents us from having to loop through every
+        //statistic if we want to look up something
+        //There is probably a better way to do this though
         foreach($feedback as $data){
           $name = $data->var_name;
           if (!$name) continue; //Fixes round #65941 which had an empty var
           $this->data->$name['value'] = $data->var_value;
           $this->data->$name['details'] = $data->details;
         }
+
+        //Because I'm lazy
         if ( isset($this->data->traitor_objective)
           || isset($this->data->wizard_objective)
           || isset($this->data->changeling_objective)) {
           $this->hasObjectives = true;
         }
-        if (isset($this->data->game_mode)){
-          $this->game_mode = $this->data->game_mode['details'];
-        }
-        $this->hash = sha1(json_encode($data));
-        $this->neighbors = $this->getRoundNeighbors($this->round_id);
       }
 
       //Or we're pulling down logs
       if ($logs){
-        if (!$this->start && !$this->server){
+        if (!$this->status){
           $this->logs = false;
         } else {
-          if ($json){
-            $this->logs = $this->getLogs($round,TRUE);
-          } else {
-            $logs = $this->getlogs($round,FALSE);
-            $this->logs = $this->parselogs($logs,$round);
+            $logs = $this->getlogs($round,$json);
+            if (!$json) {
+              $this->logs = $this->parselogs($logs,$round);
+            } else {
+              $this->logs = $logs;
+            }
           }
         }
-      }
+      return $round;
     }
-    return $round;
-  }
-
-  public function getRoundNeighbors($id){
-    $db = new database();
-    $db->query("SELECT MAX(next.round_id) AS `next`,
-      MIN(prev.round_id) AS `prev`
-      FROM ss13feedback
-      LEFT JOIN ss13feedback AS `next` ON next.round_id = ss13feedback.round_id + 1
-      LEFT JOIN ss13feedback AS `prev` ON prev.round_id = ss13feedback.round_id - 1
-      WHERE ss13feedback.round_id = ?");
-    $db->bind(1, $id);
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    return $db->single();
+    return false;
   }
 
   public function parseRound(&$round){
-    $round->server = $this->mapServer($round->server);
     if ($round->start) $round->start = date("Y-m-d H:i:s",strtotime($round->start));
     $round->end = date("Y-m-d H:i:s",strtotime($round->end));
-    $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/".date('Y/m-F/d-l',strtotime($round->end)).".txt";
-    // $round->status = $this->mapStatus($round->status);
+    $round->server = $this->mapServer($round->server);
+    if ($round->start && $round->game_mode){
+      $round->logs = true; //Round has logs
+      $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/".date('Y/m-F/d-l',strtotime($round->end)).".txt";
+
+      //End state doesn't get called if the map changes or something, so we can
+      //set this manually if all the conditions are met
+      if (!$round->status) $round->status = 'proper completion';
+    } else {
+      if (!$round->status) $round->status = false;
+    }
     return $round;
   }
 
@@ -116,18 +105,28 @@
     }
   }
 
-  public function getRound($round){
+  public function getRound($id){
     $db = new database();
     $db->query("SELECT ss13feedback.details AS `end`,
         start.details AS `start`,
         server.details AS `server`,
         ss13feedback.round_id,
-        TIMEDIFF(STR_TO_DATE(ss13feedback.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration
+         mode.details AS game_mode,
+        TIMEDIFF(STR_TO_DATE(ss13feedback.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration,
+        IF (proper.details IS NULL, error.details, proper.details) AS `status`,
+        MAX(next.round_id) AS `next`,
+        MIN(prev.round_id) AS `prev`
         FROM ss13feedback
         LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
         LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
+        LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
+        LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
+        LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
+        LEFT JOIN ss13feedback AS `next` ON next.round_id = ss13feedback.round_id + 1
+        LEFT JOIN ss13feedback AS `prev` ON prev.round_id = ss13feedback.round_id - 1
         WHERE ss13feedback.var_name = 'round_end'
-        AND ss13feedback. round_id = $round");
+        AND ss13feedback.round_id = ?");
+    $db->bind(1, $id);
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -374,6 +373,8 @@
   public function mapServer($ip) {
     $ip = explode(':',$ip);
     if (!isset($ip[1])) return 'Unknown';
+
+    //Per MSO, we should be looking at the port #s.
     switch ($ip[1]){
       case '2337':
         return 'Basil';
@@ -384,118 +385,127 @@
       break;
 
       default: 
-        return 'Unknown Server';
+        return 'Unknown';
       break;
     }
   }
 
   public function parseRoundFeedback(&$feedback){
     foreach($feedback as &$data){
-      switch($data->var_name){
-
-        case 'traitor_objective':
-        case 'wizard_objective':
-        case 'changeling_objective':
-          $data->details = array_count_values(explode(' ',$data->details));
-          $objs = array();
-          foreach ($data->details as $obj => $count){
-            $obj = explode('|',$obj);
-            $objective = str_replace('/datum/objective/', '',$obj[0]);
-            $status = $obj[1];
-
-            if (array_key_exists($objective, $objs)){
-              $objs[$objective][$status] = $count;
-            } else {
-              $objs[$objective][$status] = $count;
-            }
-          }
-          $data->details = $objs;
-        break;
-
-        case 'slime_core_harvested':
-        case 'handcuffs':
-        case 'zone_targeted':
-        case 'admin_verb':
-        case 'traitor_success':
-        // case 'traitor_objective':
-        case 'cargo_imports':
-        case 'gun_fired':
-        case 'food_harvested':
-        case 'item_used_for_combat':
-        case 'slime_babies_born':
-        case 'ore_mined':
-        case 'chemical_reaction':
-        case 'cell_used':
-        case 'mobs_killed_mining':
-        case 'slime_cores_used':
-        case 'object_crafted':
-        case 'food_made':
-        case 'traitor_uplink_items_bought':
-        case 'item_printed':
-        case 'mining_equipment_bought':
-        case 'cult_runes_scribed':
-        case 'changeling_success':
-        case 'changeling_powers':
-        case 'wizard_success':
-        case 'event_ran':
-        case 'wizard_spell_learned':
-        case 'admin_secrets_fun_used':
-        case 'item_deconstructed':
-        case 'mining_voucher_redeemed':
-        case 'export_sold_amount':
-        case 'export_sold_cost':
-        case 'pick_used_mining':
-        case 'clockcult_scripture_recited':
-        case 'engine_started':
-          $data->details = array_count_values(explode(' ',$data->details));
-        break;
-
-        case 'ban_job':
-          $data->details = explode('-_',trim($data->details));
-        break;
-
-        case 'radio_usage':
-          $data->details = explode(' ',$data->details);
-          $radio = array();
-          foreach ($data->details as &$channel){
-            $channel = explode('-',$channel);
-          }
-          $total = 0;
-          foreach ($data->details as $c) {
-            $radio[$c[0]] = $c[1]+0;
-            $total+= $c[1];
-          }
-          arsort($radio);
-          $radio['total'] = $total;
-          $data->details = $radio;
-        break;
-
-        case 'job_preferences':
-          $data->details = explode('|-'," ".$data->details);
-          array_pop($data->details);
-          $prefs = array();
-          foreach ($data->details as &$job){
-            $job = str_replace(' |','',$job);
-            $job = str_replace('_',' ',$job);
-            if ($job{0} == '|') $job{0} = '';
-            $job = explode('|',$job);
-            foreach ($job as &$stat){
-              if (strpos($stat,'=')){
-                $stat = explode('=',$stat);
-              }
-            }
-            $prefs[$job[0]]['HIGH'] = $job[1][1];
-            $prefs[$job[0]]['MEDIUM'] = $job[2][1];
-            $prefs[$job[0]]['LOW'] = $job[3][1];
-            $prefs[$job[0]]['NEVER'] = $job[4][1];
-            $prefs[$job[0]]['BANNED'] = $job[5][1];
-            $prefs[$job[0]]['YOUNG'] = $job[6][1];
-          }
-          $data->details = $prefs;
-        break;
-      }
+      $this->parseFeedback($data);
     }
     return $feedback;
+  }
+  
+  public function parseFeedback(&$data){
+    if ('object' != gettype($data)) return false;
+    switch($data->var_name){
+
+      case 'traitor_objective':
+      case 'wizard_objective':
+      case 'changeling_objective':
+        $data->details = array_count_values(explode(' ',$data->details));
+        $objs = array();
+        foreach ($data->details as $obj => $count){
+          $obj = explode('|',$obj);
+          $objective = str_replace('/datum/objective/', '',$obj[0]);
+          $status = $obj[1];
+
+          if (array_key_exists($objective, $objs)){
+            $objs[$objective][$status] = $count;
+          } else {
+            $objs[$objective][$status] = $count;
+          }
+        }
+        $data->details = $objs;
+      break;
+
+      case 'ban_job':
+        $data->details = explode('-_',trim($data->details));
+      break;
+
+      case 'radio_usage':
+        $data->details = explode(' ',$data->details);
+        $radio = array();
+        foreach ($data->details as &$channel){
+          $channel = explode('-',$channel);
+        }
+        $total = 0;
+        foreach ($data->details as $c) {
+          $radio[$c[0]] = $c[1]+0;
+          $total+= $c[1];
+        }
+        arsort($radio);
+        $radio['total'] = $total;
+        $data->details = $radio;
+      break;
+
+      case 'job_preferences':
+        $data->details = explode('|-'," ".$data->details);
+        array_pop($data->details);
+        $prefs = array();
+        foreach ($data->details as &$job){
+          $job = str_replace(' |','',$job);
+          $job = str_replace('_',' ',$job);
+          if ($job{0} == '|') $job{0} = '';
+          $job = explode('|',$job);
+          foreach ($job as &$stat){
+            if (strpos($stat,'=')){
+              $stat = explode('=',$stat);
+            }
+          }
+          $prefs[$job[0]]['HIGH'] = $job[1][1];
+          $prefs[$job[0]]['MEDIUM'] = $job[2][1];
+          $prefs[$job[0]]['LOW'] = $job[3][1];
+          $prefs[$job[0]]['NEVER'] = $job[4][1];
+          $prefs[$job[0]]['BANNED'] = $job[5][1];
+          $prefs[$job[0]]['YOUNG'] = $job[6][1];
+        }
+        $data->details = $prefs;
+      break;
+
+      case 'slime_core_harvested':
+      case 'handcuffs':
+      case 'zone_targeted':
+      case 'admin_verb':
+      case 'traitor_success':
+      case 'cargo_imports':
+      case 'gun_fired':
+      case 'food_harvested':
+      case 'item_used_for_combat':
+      case 'slime_babies_born':
+      case 'ore_mined':
+      case 'chemical_reaction':
+      case 'cell_used':
+      case 'mobs_killed_mining':
+      case 'slime_cores_used':
+      case 'object_crafted':
+      case 'food_made':
+      case 'traitor_uplink_items_bought':
+      case 'item_printed':
+      case 'mining_equipment_bought':
+      case 'cult_runes_scribed':
+      case 'changeling_success':
+      case 'changeling_powers':
+      case 'wizard_success':
+      case 'event_ran':
+      case 'wizard_spell_learned':
+      case 'admin_secrets_fun_used':
+      case 'item_deconstructed':
+      case 'mining_voucher_redeemed':
+      case 'export_sold_amount':
+      case 'export_sold_cost':
+      case 'pick_used_mining':
+      case 'clockcult_scripture_recited':
+      case 'engine_started':
+      case 'hivelord_core':
+      case 'circuit_printed':
+      case 'high_research_level':
+        $data->details = array_count_values(explode(' ',$data->details));
+      break;
+
+    }
+    return $data;
   }
 
 }

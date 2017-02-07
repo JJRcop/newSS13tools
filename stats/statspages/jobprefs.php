@@ -25,9 +25,13 @@
             <?php echo $job; ?>
           </a>
         </td>
+        <?php if ('Assistant' == $job) :?>
+        <td colspan='3'><?php echo $d['LOW'];?></td>
+        <?php else: ?>
         <td><?php echo $d['HIGH'];?></td>
         <td><?php echo $d['MEDIUM'];?></td>
         <td><?php echo $d['LOW'];?></td>
+        <?php endif;?>
         <td class="warning"><?php echo $d['BANNED'];?></td>
         <td class="warning"><?php echo $d['YOUNG'];?></td>
       </tr>

@@ -260,10 +260,10 @@ if (!$clothing) {
 
   $head  = imagecreatefrompng($sprites['head']);
   $chest = imagecreatefrompng($sprites['chest']);
-  $rArm = imagecreatefrompng($sprites['rArm']);
-  $lArm = imagecreatefrompng($sprites['lArm']);
-  $lLeg = imagecreatefrompng($sprites['lLeg']);
-  $rLeg = imagecreatefrompng($sprites['rLeg']);
+  $rArm  = imagecreatefrompng($sprites['rArm']);
+  $lArm  = imagecreatefrompng($sprites['lArm']);
+  $lLeg  = imagecreatefrompng($sprites['lLeg']);
+  $rLeg  = imagecreatefrompng($sprites['rLeg']);
 
   if (null != $head) imagecopy($body, $head, 0, 0, 0, 0, 32, 32); imagedestroy($head);
   if (null != $chest) imagecopy($body, $chest, 0, 0, 0, 0, 32, 32); imagedestroy($chest);
