@@ -16,7 +16,10 @@
       <th>Time of Death</th>
       <th>Location</th>
       <th>Coordinates</th>
-      <th>Damage</th>
+      <th>Brute</th>
+      <th>Brain</th>
+      <th>Fire</th>
+      <th>Oxy</th>
       <th>Special</th>
     </tr>
   </thead>

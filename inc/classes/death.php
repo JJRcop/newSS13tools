@@ -69,11 +69,11 @@ class death {
     $death->HTML.= "<td>$death->tod</td>";
     $death->HTML.= "<td>$death->pod</td>";
     $death->HTML.= "<td><code>$death->coord</code></td>";
-    $death->bruteHTML = "<span class='label brute'>Brute: $death->bruteloss</span> ";
-    $death->brainHTML = "<span class='label brain'>Brain: $death->brainloss</span> ";
-    $death->fireHTML = "<span class='label fire'>Fire: $death->fireloss</span> ";
-    $death->oxyHTML = "<span class='label oxy'>Oxygen: $death->oxyloss</span>";
-    $death->HTML.= "<td>".$death->bruteHTML.$death->brainHTML.$death->fireHTML.$death->oxyHTML."</td>";
+    $death->bruteHTML = "<td class='warning'>$death->bruteloss</td> ";
+    $death->brainHTML = "<td class='success'>$death->brainloss</td> ";
+    $death->fireHTML = "<td class='danger'>$death->fireloss</td> ";
+    $death->oxyHTML = "<td class='info'>$death->oxyloss</td>";
+    $death->HTML.= $death->bruteHTML.$death->brainHTML.$death->fireHTML.$death->oxyHTML;
     $death->HTML.= "<td>".ucfirst($death->special)."</td>";
     $death->HTML.= "</tr>";
     return $death;
@@ -85,6 +85,7 @@ class death {
       coord
       FROM ss13death
       WHERE coord != '0, 0, 0'
+      AND mapname = 'Box Station'
       GROUP BY coord ORDER BY `number` DESC
       LIMIT 0,?;");
     $db->bind(1,$count);
@@ -94,6 +95,43 @@ class death {
       return returnError("Database error: ".$e->getMessage());
     }
     return $db->resultset();
+  }
+
+  public function getDeathsFromMap($map='Box'){
+    switch($map){
+      case 'Box':
+      default:
+        $map = 'Box Station';
+      break;
+
+      case 'Meta':
+        $map = 'MetaStation';
+      break;
+
+      case 'Delta':
+        $map = 'Delta Station';
+      break;
+
+      case 'Omega':
+        $map = 'OmegaStation';
+      break;
+    }
+    $db = new database();
+    $db->query("SELECT *
+      FROM ss13death
+      WHERE ss13death.tod < (SELECT MAX(ss13feedback.time) 
+        FROM ss13feedback 
+        WHERE var_name = 'round_end' LIMIT 0,1)
+      AND mapname = ?
+      ORDER BY ss13death.tod DESC
+      LIMIT 0, 1000;");
+    $db->bind(1,$map);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultSet();
   }
 
 }
