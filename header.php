@@ -28,6 +28,11 @@ $user = new user();
     text-align: center;
     margin: 0 0 20px 0;
   }
+  #deathmap {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
   td, th {
     vertical-align: middle !important;
   }
@@ -87,11 +92,13 @@ $user = new user();
     text-align: right;
     padding-right: 5px;
   }
-  .book {
+  .book, .round {
     color: #337ab7;
   }
-  .book:hover {
-    cursor: poiner;
+  .book:hover,
+  .round:hover {
+    cursor: pointer;
+    cursor: hand; 
     text-decoration: underline;
   }
   .library-adult {
