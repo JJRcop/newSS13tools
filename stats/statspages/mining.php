@@ -11,19 +11,8 @@
       <h3>Ores Mined</h3>
       <ul class="list-unstyled">
       <?php
-        $totalOres = 0;
-        $newOres = array();
         foreach ($round->data->ore_mined['details'] as $item => $amount){
-          $oreData = explode('|',$item);
-          if (array_key_exists($oreData[0], $newOres)){
-            $newOres[$oreData[0]] = $newOres[$oreData[0]] + ($oreData[1] * $amount);
-          } else {
-            @$newOres[$oreData[0]] = ($oreData[1] * $amount);
-          }
-        }
-        foreach ($newOres as $ore => $amt){
-          echo "<li>$amt - $ore</li>";
-          $totalOres = $totalOres += $amt;
+          echo "<li>$item - $amount</li>";
         }
         ?>
       </ul>
@@ -65,7 +54,7 @@
   <?php if (isset($round->data->ore_mined)):?>
     <div class="col-md-4">
       <hr>
-      <p>All in all, <?php echo $totalOres;?> ores were mined</p>
+      <p>All in all, <?php echo array_sum($round->data->ore_mined['details']);?> ores were mined</p>
     </div>
   <?php endif;?>
   <?php if (isset($round->data->mobs_killed_mining)):?>

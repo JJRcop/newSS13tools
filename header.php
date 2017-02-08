@@ -33,6 +33,9 @@ $user = new user();
     width: 100%;
     height: auto;
   }
+  tfoot {
+    border-top: 3px solid #DDD;
+  }
   td, th {
     vertical-align: middle !important;
   }

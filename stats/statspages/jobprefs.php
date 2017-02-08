@@ -1,11 +1,3 @@
-<div class="page-header">
-  <h2>
-    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#jobprefs" aria-expanded="false" aria-controls="collapseExample">
-      View
-    </a> Job Preferences</h2>
-</div>
-<div class="collapse" id="jobprefs">
-<p>This round, players had their job preferences set to...</p>
 <table class="tabl table-bordered table-condensed sort">
   <thead>
     <tr>
@@ -18,7 +10,7 @@
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($round->data->job_preferences['details'] as $job => $d):?>
+    <?php foreach ($prefs as $job => $d):?>
       <tr>
         <td>
           <a href="https://tgstation13.org/wiki/<?php echo $job;?>" target="_blank">
@@ -26,7 +18,7 @@
           </a>
         </td>
         <?php if ('Assistant' == $job) :?>
-        <td colspan='3'><?php echo $d['LOW'];?></td>
+        <td colspan='3'><?php echo $d['LOW'];?> (Assistant is a binary Yes/No)</td>
         <?php else: ?>
         <td><?php echo $d['HIGH'];?></td>
         <td><?php echo $d['MEDIUM'];?></td>
@@ -38,4 +30,3 @@
     <?php endforeach;?>
     </tbody>
   </table>
-</div>

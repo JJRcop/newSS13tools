@@ -90,7 +90,7 @@ if (isset($_GET['page'])){
       if (!$round->duration){
         echo "<tr id='$round->round_id' class='round bad-round'>";
         $status = "<span class='glyphicon glyphicon-flag'></span>";
-      } elseif ($round->status == 'nuke') {
+      } elseif ($round->status == 'nuke' || $round->status == 'nuke - unhandled ending') {
         echo "<tr id='$round->round_id' class='round warning'>";
         $status = "<span class='glyphicon glyphicon-asterisk'></span>";
       } elseif ($round->status != 'proper completion'){

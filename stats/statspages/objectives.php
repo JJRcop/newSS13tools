@@ -1,10 +1,7 @@
 <div class="page-header">
-  <h2>
-    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#antags" aria-expanded="false" aria-controls="collapseExample">
-      View
-    </a> Antagonist Objectives</h2>
+  <h2>Antagonist Objectives</h2>
 </div>
-<div id="antags" class="collapse">
+<div id="antags">
   <?php
 
   //###
@@ -48,131 +45,40 @@
   <div class="row">
     <?php if ($tatorS && $tatorO) :?>
       <div class="col-md-4">
-        <h2>Traitor Stats</h2>
+        <h3>Traitor Stats</h3>
         <p>Overall:
-        <?php if (isset($tatorS['details']['SUCCESS'])):?>
-          <span class='label lead label-success'>
-            Success: <?php echo $tatorS['details']['SUCCESS'];?>
-          </span> 
-        <?php endif;?>
-        &nbsp;
-        <?php if (isset($tatorS['details']['FAIL'])):?>
-          <span class='label lead label-danger'>
-            Fail: <?php echo $tatorS['details']['FAIL'];?>
-          </span> 
-        <?php endif;?>
+        <?php $details = $tatorS['details'];
+        include('success.php');?>
         </p>
         <p>With the following attempted objectives:</p>
-        <table class="table table-bordered table-condensed">
-          <?php foreach ($tatorO['details'] as $objective => $count): ?>
-            <tr>
-              <th>
-                <?php echo $objective;?>
-              </th>
-              <td class="success">
-                <?php if (isset($count['SUCCESS'])):?>
-                  <span class='label label-success'>
-                    Success: <?php echo $count['SUCCESS'];?>
-                  </span>&nbsp;
-                <?php endif;?>
-              </td>
-              <td class="danger">
-                <?php if (isset($count['FAIL'])):?>
-                  <span class='label label-danger'>
-                    Fail: <?php echo $count['FAIL'];?>
-                  </span> 
-                <?php endif;?>
-              </td>
-            </tr>
-          <?php endforeach;?>
-        </table>
+        <?php $details = $tatorO['details'];
+        include ('objs.php');?>
       </div>
     <?php endif;?>
 
     <?php if ($lingS && $lingO) :?>
       <div class="col-md-4">
-        <h2>Changeling Stats</h2>
+        <h3>Changeling Stats</h3>
         <p>Overall:
-        <?php if (isset($lingS['details']['SUCCESS'])):?>
-          <span class='label label-success'>
-            Success: <?php echo $lingS['details']['SUCCESS'];?>
-          </span>
-          &nbsp;
-        <?php endif;?>
-        <?php if (isset($lingS['details']['FAIL'])):?>
-          <span class='label label-danger'>
-            Fail: <?php echo $lingS['details']['FAIL'];?>
-          </span> 
-        <?php endif;?>
+        <?php $details = $lingS['details'];
+        include('success.php');?>
         </p>
         <p>With the following attempted objectives:</p>
-        <table class="table table-bordered table-condensed">
-          <?php foreach ($lingO['details'] as $objective => $count): ?>
-            <tr>
-              <th>
-                <?php echo $objective;?>
-              </th>
-              <td class="success">
-                <?php if (isset($count['SUCCESS'])):?>
-                  <span class='label label-success'>
-                    Success: <?php echo $count['SUCCESS'];?>
-                  </span>&nbsp;
-                <?php endif;?>
-              </td>
-              <td class="danger">
-                <?php if (isset($count['FAIL'])):?>
-                  <span class='label label-danger'>
-                    Fail: <?php echo $count['FAIL'];?>
-                  </span> 
-                <?php endif;?>
-              </td>
-            </tr>
-          <?php endforeach;?>
-        </table>
+        <?php $details = $lingO['details'];
+        include ('objs.php');?>
       </div>
     <?php endif;?>
 
     <?php if ($wizardS && $wizardO) :?>
       <div class="col-md-4">
-        <h2>Wizard Stats</h2>
+        <h3>Wizard Stats</h3>
         <p>Overall:
-        <?php if (isset($wizardS['details']['SUCCESS'])):?>
-          <span class='label lead label-success'>
-            Success: <?php echo $lingS['details']['SUCCESS'];?>
-          </span>
-          &nbsp;
-        <?php endif;?>
-        <?php if (isset($wizardS['details']['FAIL'])):?>
-          <span class='label lead label-danger'>
-            Fail: <?php echo $wizardS['details']['FAIL'];?>
-          </span>
-
-        <?php endif;?>
+        <?php $details = $wizardS['details'];
+        include('success.php');?>
         </p>
         <p>With the following attempted objectives:</p>
-        <table class="table table-bordered table-condensed">
-          <?php foreach ($wizardO['details'] as $objective => $count): ?>
-            <tr>
-              <th>
-                <?php echo $objective;?>
-              </th>
-              <td class="success">
-                <?php if (isset($count['SUCCESS'])):?>
-                  <span class='label label-success'>
-                    Success: <?php echo $count['SUCCESS'];?>
-                  </span>&nbsp;
-                <?php endif;?>
-              </td>
-              <td class="danger">
-                <?php if (isset($count['FAIL'])):?>
-                  <span class='label label-danger'>
-                    Fail: <?php echo $count['FAIL'];?>
-                  </span> 
-                <?php endif;?>
-              </td>
-            </tr>
-          <?php endforeach;?>
-        </table>
+        <?php $details = $wizardO['details'];
+        include ('objs.php');?>
       </div>
     <?php endif;?>
   </div>

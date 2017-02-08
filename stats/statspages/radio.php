@@ -1,14 +1,6 @@
-<div class="page-header">
-  <h2>
-    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#radio" aria-expanded="false" aria-controls="collapseExample">
-      View
-    </a> Radio Usage</h2>
-</div>
-<div id="radio" class="collapse">
-
 <ul class="list-inline">
-<?php  $radio = $round->data->radio_usage['details'];
-foreach($radio as $channel => $num):?>
+<li><strong>Total</strong> - <?php echo array_sum($radio);?></li>
+<?php foreach($radio as $channel => $num):?>
   <li><strong><?php echo $channel;?></strong> - <?php echo $num;?></li>
 <?php endforeach;?>
 </ul>
@@ -30,14 +22,12 @@ foreach($radio as $channel => $num):?>
 </style>
   <div class="progress">
   <?php
-  $total = $radio['total'];
   array_pop($radio);
   foreach ($radio as $channel => $num) {
     $pct = 0;
-    if ($num) $pct = ($num/$total)*100;
+    if ($num) $pct = ($num/array_sum($radio))*100;
     echo '<div class="progress-bar radio-'.$channel.'" style="width: '.$pct.'%;">
     <span>'.$channel.'-'.$num.'</span></div>';
   }
   ?>
   </div>
-</div>

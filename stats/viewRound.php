@@ -44,46 +44,10 @@ if($json) {
 
 <?php include('statspages/game_mode.php');?>
 
-<?php
+<?php include ('statspages/pages.php'); ?>
 
-if (isset($round->data->round_end_ghosts) || isset($round->data->survived_total)) {
-  include 'statspages/population.php';
-}
-
-if($round->hasObjectives) {
-  include('statspages/objectives.php');
-}
-
-if (isset($round->data->export_sold_amount) || isset($round->data->cargo_imports)) {
-  include 'statspages/econ.php';
-}
-
-if (isset($round->data->gun_fired)){
-  include 'statspages/combat.php';
-}
-
-if (isset($round->data->ore_mined) || isset($round->data->mobs_killed_mining)){
-  include 'statspages/mining.php';
-} 
-
-if (isset($round->data->job_preferences)){
-  include 'statspages/jobprefs.php';
-}
-
-if (isset($round->data->radio_usage)){
-  include 'statspages/radio.php';
-}
-
-?>
-
-<div class="page-header">
-  <h2>
-    <a class="btn btn-primary" role="button" data-toggle="collapse" href="#rawdata" aria-expanded="false" aria-controls="collapseExample">
-      View
-    </a> Raw Data</h2>
-</div>
-
-<div class=" collapse" id="rawdata">
+<div id="rawdata">
+  <h3>Raw data</h3>
   <table class="table table-bordered table-condensed">
     <thead>
       <tr>
@@ -95,7 +59,11 @@ if (isset($round->data->radio_usage)){
     <tbody>
     <?php foreach ($round->data as $k => $v) :?>
       <tr>
-        <td><?php echo $k;?></td>
+        <td>
+          <a href='singleStat.php?stat=<?php echo $k;?>'>
+            <?php echo $k;?>
+          </a>
+        </td>
         <td><?php echo $v['value']; ?></td>
         <td><?php if (is_array($v['details'])){
             var_dump($v['details']);
