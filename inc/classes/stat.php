@@ -46,7 +46,7 @@ class stat {
       server.details as `server`
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
-      WHERE DATE(ss13feedback.time) BETWEEN (NOW() - INTERVAL 30 DAY) AND NOW()
+      WHERE DATE(ss13feedback.time) BETWEEN (NOW() - INTERVAL 7 DAY) AND NOW()
       AND ss13feedback.var_name = ?
       ORDER BY `time` DESC;
     ");
