@@ -15,6 +15,8 @@ class database {
 
   private $stmt;
 
+  public $abort = false;
+
   public function __construct($alt=false) {
 
     if ($alt){
@@ -41,7 +43,8 @@ class database {
     }
 
     catch (\PDOException $e) {
-      die('Unable to access remote database.');
+      $this->error = $e->getMessage();
+      $this->abort = true;
     }
 
   }

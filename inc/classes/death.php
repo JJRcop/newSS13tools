@@ -12,6 +12,9 @@ class death {
     //people from seeing deaths from rounds that are currenty ongoing.
   
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT ss13feedback.time FROM ss13feedback WHERE var_name = 'round_end' LIMIT 0,1");
     try {
       $db->execute();
@@ -38,6 +41,9 @@ class death {
 
   public function getDeathsInRange($start,$end) {
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT * FROM tbl_death WHERE tod BETWEEN '$start' AND '$end'");
     try {
       $db->execute();
@@ -81,6 +87,9 @@ class death {
 
   public function getDeathMap($count){
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT COUNT(coord) AS number,
       coord
       FROM ss13death
@@ -117,6 +126,9 @@ class death {
       break;
     }
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT *
       FROM ss13death
       WHERE ss13death.tod < (SELECT MAX(ss13feedback.time) 

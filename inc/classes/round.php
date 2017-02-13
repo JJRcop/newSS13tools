@@ -107,6 +107,9 @@
 
   public function getRound($id){
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT ss13feedback.details AS `end`,
         start.details AS `start`,
         server.details AS `server`,
@@ -137,6 +140,9 @@
 
   public function getRoundFeedback($round){
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT var_name, var_value, details
       FROM tbl_feedback WHERE round_id = ?");
     $db->bind(1,$round);
@@ -317,6 +323,9 @@
   public function listRounds($page=1, $count=30){
     $page = ($page*$count) - $count;
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $database = $db->query("SELECT ss13feedback.round_id,
       server.details AS `server`,
       mode.details AS game_mode,
@@ -350,6 +359,9 @@
 
   public function countRounds() {
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT count(DISTINCT round_id) AS total FROM ss13feedback;");
     try {
       $db->execute();
@@ -361,6 +373,9 @@
 
   public function getRoundsByMonth() {
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT count(DISTINCT round_id) AS rounds,
       concat(MONTH(ss13feedback.time),'-',YEAR(ss13feedback.time)) AS `date`,
       MIN(round_id) AS firstround,

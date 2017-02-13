@@ -2,6 +2,9 @@
 <?php
 
 $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
 $db->query("SELECT * FROM tbl_feedback WHERE `time` BETWEEN '2016-12-01' AND '2016-12-31';");
 $db->execute();
 $rounds = $db->resultset();

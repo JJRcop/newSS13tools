@@ -42,6 +42,9 @@ class stat {
 
   public function getStat($stat){
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT ss13feedback.*,
       server.details as `server`
       FROM ss13feedback
@@ -61,6 +64,9 @@ class stat {
 
   public function isStat($stat){
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT round_id FROM tbl_feedback WHERE var_name = ? LIMIT 0,1");
     $db->bind(1,$stat);
     try {

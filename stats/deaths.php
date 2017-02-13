@@ -27,8 +27,13 @@
 <?php 
 
 $death = new death();
-foreach($death->getDeaths() as $death){
-  echo $death->HTML;
+$deaths = $death->getDeaths();
+if(!$deaths){
+  echo "<tr><td colspan='10'>No deaths found</td></tr>";
+} else {
+  foreach($deaths as $death){
+    echo $death->HTML;
+  }
 }
 ?>
   </tbody>

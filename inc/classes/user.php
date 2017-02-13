@@ -19,6 +19,12 @@ class user {
 
   public function whodis(){
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT ss13player.*, TIMESTAMPDIFF(HOUR, lastseen, NOW()) AS hoursAgo FROM ss13player WHERE ip = ? ORDER BY lastseen DESC LIMIT 1");
     $db->bind(1,$_SERVER['REMOTE_ADDR']);
     try {
@@ -70,6 +76,9 @@ class user {
 
   public function auth() {
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT ckey, lastadminrank
       FROM tbl_player
       WHERE lastadminrank != 'Player'

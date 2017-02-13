@@ -22,6 +22,9 @@ class library {
 
   public function getBook($book) {
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT * FROM tbl_library WHERE id = ?");
     $db->bind(1,$book);
     try {
@@ -65,6 +68,9 @@ class library {
 
   public function getBookNeighbors($book){
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT MAX(next.id) AS `next`,
       MIN(prev.id) AS `prev`,
       next.title AS nexttitle,
@@ -87,6 +93,9 @@ class library {
   public function getCatalog($page=1, $count=30){
     $page = ($page*$count) - $count;
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT id, author, title, category FROM tbl_library
       WHERE content != ''
       ORDER BY `datetime` DESC
@@ -103,6 +112,9 @@ class library {
 
   public function countBooks(){
     $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
     $db->query("SELECT count(DISTINCT id) AS total
       FROM ss13library
       WHERE content != ''");
