@@ -41,7 +41,7 @@ class database {
     }
 
     catch (\PDOException $e) {
-      $this->error = $e->getMessage();
+      die($e->getMessage());
     }
 
   }
