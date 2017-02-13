@@ -41,7 +41,7 @@ class database {
     }
 
     catch (\PDOException $e) {
-      die($e->getMessage());
+      die('Unable to access remote database.');
     }
 
   }
