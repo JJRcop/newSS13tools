@@ -92,17 +92,24 @@ if (isset($_GET['page'])){
     } else{
       foreach($rounds as $round){
         if (!$round->duration){
+          //BAD ROUND
           echo "<tr id='$round->round_id' class='round bad-round'>";
-          $status = "<span class='glyphicon glyphicon-flag'></span>";
+          $status = "<i class='fa fa-flag'></i>";
+
+          //NUKE
         } elseif ($round->status == 'nuke' || $round->status == 'nuke - unhandled ending') {
           echo "<tr id='$round->round_id' class='round warning'>";
-          $status = "<span class='glyphicon glyphicon-asterisk'></span>";
+          $status = "<i class='fa fa-certificate'></i>";
+
+          //ERROR
         } elseif ($round->status != 'proper completion'){
           echo "<tr id='$round->round_id' class='round danger'>";
-          $status = "<span class='glyphicon glyphicon-remove'></span>";
+          $status = "<i class='fa fa-times'></i>";
+
+          //PROPER
         } else {
           echo "<tr id='$round->round_id' class='round'>";
-          $status = "<span class='glyphicon glyphicon-ok'></span>";
+          $status = "<i class='fa fa-check'></i>";
         }
         echo "<td>$status <a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td>";
         if ($round->duration){

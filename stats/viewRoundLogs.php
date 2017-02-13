@@ -20,17 +20,15 @@ if($json) {
   <p class="lead">Unable to accurately locate logs for round #<?php echo $round->round_id;?>, because either the server or round start time could not be located.</p>
     <a href='viewRound.php?round=<?php echo $round->round_id;?>'
   class='btn btn-info btn-xs'>
-      <span class='glyphicon glyphicon-arrow-left'></span>
-      Back
+      <i class="fa fa-arrow-left"></i> Back
     </a>
 <?php die(); endif;?>
 
 <div class="page-header">
-  <a href="viewRound.php?round=<?php echo $round->round_id;?>" class="btn btn-info btn-xs">
-    <span class='glyphicon glyphicon-arrow-left'></span>
-    Back
-  </a>
   <h1>
+  <a href="viewRound.php?round=<?php echo $round->round_id;?>" class="btn btn-info btn-xs">
+    <i class="fa fa-arrow-left"></i> Back
+  </a>
   Logs for Round #<?php echo $round->round_id;?>
     <small>Ended <?php echo $round->end;?></small>
   </h1>

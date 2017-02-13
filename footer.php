@@ -5,9 +5,11 @@
     </div>
   </footer>
 </div>
+<script src="<?php echo APP_URL;?>/resources/js/stickyHeaders.js"></script>
 <script>
 $('document').ready(function(){
    $('.sort').tablesorter();
+   $('.table').stickyTableHeaders({fixedOffset: $('.navbar-fixed-top')});
  });
 </script>
 <?php if(defined('UA')) :?>

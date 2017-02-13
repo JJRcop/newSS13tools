@@ -1,0 +1,116 @@
+body {
+    padding-top: 60px;
+  }
+  img {
+    image-rendering: -moz-crisp-edges;         /* Firefox */
+    image-rendering:   -o-crisp-edges;         /* Opera */
+    image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
+  }
+  #output {
+    text-align: center;
+    margin: 0 0 20px 0;
+  }
+  #deathmap {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  thead {
+    background: white;
+  }
+  tfoot {
+    border-top: 3px solid #DDD;
+  }
+  td, th {
+    vertical-align: middle !important;
+  }
+  tr.bad-round {
+    color: grey;
+    font-size: 8px;
+    background: #eeeeee;
+  }
+  .text-brute {color: orange;}
+  .text-brain {color: green;}
+  .text-fire  {color: red;}
+  .text-oxy   {color: blue;}
+  .brute {background-color: orange;}
+  .brain {background-color: green;}
+  .fire  {background-color: red;}
+  .oxy   {background-color: blue;}
+  .censored { color: #bbbbbb; font-size: small; }
+  .OOC      { color: #002eb8; }
+  .ADMIN    { color: #b82e00; font-weight: bold; }
+  .SAY      { color: #008000; }
+  .ACCESS   { color: #ff5050; }
+  .WHISPER  { font-style: italic; }
+  .EMOTE    { font-style: italic; }
+  .GAME     { color: #00c000; font-weight: bold; }
+  .PDA      { color: #800000; }
+  .log-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .logs {
+    font-family: Monospace;
+    width: auto;
+    border: 1px solid grey;
+  }
+  .logs td {
+    vertical-align: top !important;
+  }
+  .logs td:first-child {
+    background: rgb(225,225,225);
+  }
+  .logs tr:target{
+    background: yellow;
+  }
+  .logs tr:hover {
+    background: rgba(255,255,0,.5);
+  }
+  .ln,
+  .ts,
+  .lt {
+    text-align: left;
+    padding: 0 5px;
+    color: black;
+    font-weight: normal;
+    font-style: normal;
+  }
+  .lt {
+    text-align: right;
+    padding-right: 5px;
+  }
+  .book, .round {
+    color: #337ab7;
+  }
+  .book:hover,
+  .round:hover {
+    cursor: pointer;
+    cursor: hand; 
+    text-decoration: underline;
+  }
+  .library-adult {
+    background: grey;
+    color: grey;
+  }
+  .library-adult:hover {
+    background: transparent;
+    color: inherit;
+  }
+  .sort {
+    width: 100%;
+  }
+  .sort thead tr th {
+    background-repeat: no-repeat;
+    background-position: right center;
+  }
+  .tablesorter-headerUnSorted {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); }
+
+  .tablesorter-headerAsc {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); }
+
+  .tablesorter-headerDesc {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); }

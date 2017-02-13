@@ -10,14 +10,19 @@
     <ul class="list-unstyled">
       <?php 
       $death = new death();
-      foreach($death->getDeaths(10,TRUE) as $death){
-        echo $death->HTML;
+      $deaths = $death->getDeaths(10,TRUE);
+      if(!$deaths){
+        echo "<li>No deaths found</li>";
+      } else {
+        foreach($deaths as $death){
+          echo $death->HTML;
+        }
       }
       ?>
     </ul>
   </div>
   <div class="col-md-6">
-    <p class="lead">We're talking to the main /tg/station database. There is no cause for alarm.</p>
+    <?php require_once('changelog.php');?>
   </div>
 </div>
 

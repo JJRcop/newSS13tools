@@ -31,9 +31,5 @@ $total = $dead + $survivors; ?>
   <?php endif;?>
 </div>
 <small><p class="text-muted text-right">(This is an approximation)</p></small>
-<?php if (isset($round->data->emergency_shuttle)) :?>
-  <p class="lead text-right">The crew evacuated aboard <em><?php echo str_replace('_', ' ', $round->data->emergency_shuttle['details']);?></em></p>
-<?php else:?>
-  <p class="lead text-center">The round ended without a crew evacuation.</p>
-<?php endif;?>
+
 <hr>

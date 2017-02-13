@@ -52,3 +52,20 @@ function HSL2RGB($iH, $iS, $iV) {
   $return['B'] = round($dB);
   return $return;
 }
+
+function iconStack($icon, $top, $class=null,$flip=false){
+  if ($flip){
+      return "<span class='fa-stack fa-lg'>
+      <i class='fa fa-$icon fa-stack-2x'></i>
+      <i class='fa fa-$top fa-stack-1x $class'></i>
+    </span>";
+  }
+  return "<span class='fa-stack fa-lg'>
+  <i class='fa fa-$icon fa-stack-1x'></i>
+  <i class='fa fa-$top fa-stack-2x $class'></i>
+</span>";
+}
+
+function icon($icon, $class=null){
+  return iconStack($icon,'circle-thin',$class);
+}

@@ -32,7 +32,7 @@ if($json) {
     <?php if ($round->logs): ?>
       <a href='viewRoundLogs.php?round=<?php echo $round->round_id;?>'
     class='btn btn-info btn-xs'>
-        <span class='glyphicon glyphicon-search'></span>
+        <i class="fa fa-tasks"></i>
         View logs
       </a>
     <?php endif; ?>

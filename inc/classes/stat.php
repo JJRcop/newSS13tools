@@ -175,7 +175,7 @@ class stat {
       case 'item_deconstructed':
       case 'mining_voucher_redeemed':
       case 'export_sold_amount':
-      // case 'export_sold_cost':
+      case 'export_sold_cost':
       case 'pick_used_mining':
       case 'clockcult_scripture_recited':
       case 'hivelord_core':
@@ -202,7 +202,6 @@ class stat {
       case 'ore_mined':
       case 'chemical_reaction':
       case 'item_printed':
-      case 'export_sold_cost':
       case 'food_harvested':
         $data->details = str_replace(', ', ' ', $data->details);
         $data->details = rtrim($data->details,",");

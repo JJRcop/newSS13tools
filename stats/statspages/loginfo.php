@@ -3,8 +3,4 @@
   <?php if (isset($round->data->end_error)):?>
     <p class="lead">The round ended prematurely because: <?php echo $round->data->end_error['details'];?></p>
   <?php endif;?>
-<?php else: ?>
-  <?php if (isset($round->data->end_error)):?>
-    <p class="lead">The round ended successfully, but the game world did not restart properly because: <?php echo $round->data->end_error['details'];?></p>
-  <?php endif;?>
 <?php endif;?>

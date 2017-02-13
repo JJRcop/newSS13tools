@@ -48,23 +48,42 @@ class user {
       case 'Game Admin':
       case 'TrialAdmin':
         $user->color = '#9570c0';
-        $user->label = "<span class='label' style='background: $user->color'>";
-        $user->label.= "$user->ckey</span>";
+        $user->label = "<span class='label' style='background: $user->color'";
+        $user->label.= "title='$user->lastadminrank'>";
+        $user->label.= "<i class='fa fa-balance-scale'></i> $user->ckey </span>";
+        $user->legit = TRUE;
+      break;
+
+      case 'Headmin': 
+        $user->color = '#A00';
+        $user->label = "<span class='label' style='background: $user->color'";
+        $user->label.= "title='$user->lastadminrank'>";
+        $user->label.= "<i class='fa fa-star'></i> $user->ckey </span>";
         $user->legit = TRUE;
       break;
 
       case 'Barista':
         $user->color = '#6b4711';
-        $user->label = "<span class='label' style='background: $user->color'>";
-        $user->label.= "$user->ckey (WHERE'S MY FUCKIN COFFEE)</span>";
+        $user->label = "<span class='label' style='background: $user->color'";
+        $user->label.= "title='$user->lastadminrank'>";
+        $user->label.= "<i class='fa fa-coffee'></i> $user->ckey </span>";
         $user->legit = TRUE;
       break;
 
+      case 'coder':
+      $user->color = '#009900';
+      $user->label = "<span class='label' style='background: $user->color'";
+        $user->label.= "title='$user->lastadminrank'>";
+      $user->label.= "<i class='fa fa-code'></i> $user->ckey</span>";
+      $user->legit = FALSE; //Change to TRUE to allow access to bans etc
+      break;
 
       case 'Host': 
-        $color = '#A00';
-        $user->label = "<span class='label' style='background: #A00'>";
-        $user->label.= "$user->ckey</span>";
+        $user->color = '#A00';
+        $user->label = "<span class='label' style='background: $user->color'";
+        $user->label.= "title='$user->lastadminrank'>";
+        $user->label.= "<i class='fa fa-server'></i> $user->ckey</span>";
+        $user->legit = TRUE;
       break;
     }
     if (24 <= $user->hoursAgo){
