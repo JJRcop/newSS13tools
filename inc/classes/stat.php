@@ -49,10 +49,9 @@ class stat {
       server.details as `server`
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
-      WHERE DATE(ss13feedback.time) BETWEEN (NOW() - INTERVAL 7 DAY) AND NOW()
+      WHERE DATE(ss13feedback.time) BETWEEN (NOW() - INTERVAL 30 DAY) AND NOW()
       AND ss13feedback.var_name = ?
-      ORDER BY `time` DESC;
-    ");
+      ORDER BY `time` DESC;");
     $db->bind(1,$stat);
     try {
       $db->execute();
@@ -186,9 +185,12 @@ class stat {
       case 'religion_book':
       case 'religion':
       case 'chaplain_weapon':
+      case 'emergency_shuttle':
+      case 'cult_runes_scribed':
         $data->details = str_replace(', ', ' ', $data->details);
         $data->details = str_replace(',', '', $data->details);
-        $data->details = array_count_values(explode(' ',$data->details)); 
+        $data->details = array_count_values(explode(' ',$data->details));
+        if(1 == count($data->details)) reset($data->details); $data->details = key($data->details);
       break;
 
       case 'round_end_result':

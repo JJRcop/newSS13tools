@@ -1,5 +1,5 @@
 <?php require_once('../header.php'); ?>
-<?php require_once('../auth_check.php'); ?>
+<?php echo alert('## CLASSIFIED ## GA+//NA</strong> This page is classified. This page should not shared with non-admins.');?>
 
 
 <div class="page-header"><h1>DMI files</h1></div>

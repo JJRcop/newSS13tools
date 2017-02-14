@@ -1,6 +1,6 @@
 <?php require_once('header.php'); ?>
 
-<?php $app = new app(); ?>
+<?php $app = new app(TRUE); ?>
 <div class="page-header">
 <h1>Information and status</h1>
 </div>

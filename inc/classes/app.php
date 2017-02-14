@@ -1,17 +1,29 @@
 <?php class app {
 
+  public $app_name = APP_NAME;
+  public $app_URL = APP_URL;
+
+  public $die = false;
+
   public $doesLocalRepoExist;
   public $localRepoVersion;
   public $remoteRepo;
   public $reposSynced;
 
-  public function __construct() {
-    $this->doesLocalRepoExist = $this->doesLocalRepoExist();
-    $this->localRepoVersion = $this->getLocalRepoVersion();
-    $this->remoteRepo = $this->getRemoteRepoVersion();
-    $this->reposSynced = TRUE;
-    if ($this->localRepoVersion != $this->remoteRepo->object->sha){
-      $this->reposSynced = FALSE;
+  private $restrictedDirs = array(
+    'tgdb'=>2, //Bans/notes/player/connection database
+    'tools'=>1 //Icon tools
+  );
+
+  public function __construct($info=false) {
+    if ($info){
+      $this->doesLocalRepoExist = $this->doesLocalRepoExist();
+      $this->localRepoVersion = $this->getLocalRepoVersion();
+      $this->remoteRepo = $this->getRemoteRepoVersion();
+      $this->reposSynced = TRUE;
+      if ($this->localRepoVersion != $this->remoteRepo->object->sha){
+        $this->reposSynced = FALSE;
+      }
     }
   }
 
@@ -49,6 +61,34 @@
     fwrite($jsonfile, json_encode($json));
     fclose($jsonfile);
     return $json['data'];
+  }
+
+  public function restrictionCheck($user){
+    //This checks against a list of directories and if the path contains one of
+    //the entries, AND if the user doesn't have the proper authorization level,
+    //we throw a flag that the app can catch and exit() on
+    foreach ($this->restrictedDirs as $dir => $level){
+      $check = str_replace(ROOTPATH,'',$_SERVER['SCRIPT_FILENAME']);
+      if (strpos($check,$dir) !== FALSE && !$user->legit
+        && $user->level < $level){
+        $this->die = TRUE;
+        return alert('You could not be authenticated as a game administrator. If you are a game administrator, log in to the game, then come back and refresh this page.',FALSE);
+      }
+    }
+  }
+
+  public function getMemos(){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT * FROM tbl_memo ORDER BY `timestamp` DESC");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultset();
   }
 
 }

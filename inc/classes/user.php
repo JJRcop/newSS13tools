@@ -2,6 +2,11 @@
 
 class user {
 
+  public $legit;
+  public $label;
+  public $color;
+  public $level = 0;
+
   public function __construct(){
     $user = $this->whodis();
     if (!$user){
@@ -50,8 +55,9 @@ class user {
         $user->color = '#9570c0';
         $user->label = "<span class='label' style='background: $user->color'";
         $user->label.= "title='$user->lastadminrank'>";
-        $user->label.= "<i class='fa fa-balance-scale'></i> $user->ckey </span>";
+        $user->label.= "<i class='fa fa-eye'></i> $user->ckey </span>";
         $user->legit = TRUE;
+        $user->level = 2;
       break;
 
       case 'Headmin': 
@@ -60,6 +66,7 @@ class user {
         $user->label.= "title='$user->lastadminrank'>";
         $user->label.= "<i class='fa fa-star'></i> $user->ckey </span>";
         $user->legit = TRUE;
+        $user->level = 2;
       break;
 
       case 'Barista':
@@ -68,6 +75,7 @@ class user {
         $user->label.= "title='$user->lastadminrank'>";
         $user->label.= "<i class='fa fa-coffee'></i> $user->ckey </span>";
         $user->legit = TRUE;
+        $user->level = 2;
       break;
 
       case 'coder':
@@ -76,6 +84,7 @@ class user {
         $user->label.= "title='$user->lastadminrank'>";
       $user->label.= "<i class='fa fa-code'></i> $user->ckey</span>";
       $user->legit = FALSE; //Change to TRUE to allow access to bans etc
+      $user->level = 1;
       break;
 
       case 'Host': 
@@ -84,6 +93,7 @@ class user {
         $user->label.= "title='$user->lastadminrank'>";
         $user->label.= "<i class='fa fa-server'></i> $user->ckey</span>";
         $user->legit = TRUE;
+        $user->level = 3;
       break;
     }
     if (24 <= $user->hoursAgo){

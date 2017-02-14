@@ -69,3 +69,44 @@ function iconStack($icon, $top, $class=null,$flip=false){
 function icon($icon, $class=null){
   return iconStack($icon,'circle-thin',$class);
 }
+
+function alert($msg, $level='info'){
+  switch($level){
+    default:
+    case 'info':
+    case 2:
+      $class = 'info';
+    break;
+
+    case 'success':
+    case 1:
+    case TRUE:
+      $class = 'success';
+    break;
+
+    case 'danger':
+    case 0:
+    case FALSE:
+      $class = 'danger';
+    break;
+  }
+  return "<div class='alert alert-$class'>$msg</div>";
+}
+
+/**
+ * pick
+ *
+ * Grabs one item from a list or an array of choices
+ *
+ * @param $list (mixed) Either a comma separated list or an array of choices to
+ * pick from
+ *
+ * @return (string) A random item from the specified list
+ */
+
+function pick($list) {
+  if (!is_array($list)) {
+    $list = explode(',',$list);
+  }
+  return $list[floor(rand(0,count($list)-1))];
+}

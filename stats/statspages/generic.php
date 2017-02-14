@@ -1,6 +1,7 @@
 <table class="table table-bordered table-condensed">
 <?php 
 $bars = '';
+var_dump($stat);
 foreach ($stat->details as $detail => $count){
   if (0 == $count) continue;
   $color = sha1($detail);
