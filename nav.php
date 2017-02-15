@@ -5,9 +5,7 @@
       data-toggle="collapse" data-target="#navbar"
       aria-expanded="false" aria-controls="navbar">
         <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+        <i class="fa fa-navicon fa-lg" style="color: white;"></i>
       </button>
       <a class="navbar-brand" href="<?php echo APP_URL;?>index.php">
         SS13 Tools
@@ -61,13 +59,6 @@
             <a href="<?php echo APP_URL;?>library/catalog.php">Library</a>
           </li>
         <?php endif;?>
-        <li class="label-danger">
-          <a style="color: white;"
-          href="https://github.com/nfreader/newSS13tools/issues"
-          target="_blank">
-            <i class="fa fa-exclamation-circle"></i> I found a bug!
-          </a>
-        </li>
       </ul>
       <?php if($user->legit):?>
         <ul class="nav navbar-nav navbar-right">

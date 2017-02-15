@@ -1,16 +1,30 @@
   <hr />
   <footer>
-    <div class="page-footer">
-    Status: <?php echo "<code>".PHP_Timer::resourceUsage()."</code>";?>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="page-footer">
+          <h3>Status</h3>
+          <?php echo "<code>".PHP_Timer::resourceUsage()."</code>";?>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h3>Issue Reports</h3>
+        <a class="btn btn-danger"
+        href="https://github.com/nfreader/newSS13tools/issues"
+        target="_blank">
+          <i class="fa fa-exclamation-circle"></i> I found a bug!
+        </a>
+      </div>
     </div>
   </footer>
 </div>
 <script src="<?php echo APP_URL;?>/resources/js/stickyHeaders.js"></script>
 <script>
 $('document').ready(function(){
-   $('.sort').tablesorter();
-   $('.table').stickyTableHeaders({fixedOffset: $('.navbar-fixed-top')});
- });
+  $('.sort').tablesorter();
+  $('.table').stickyTableHeaders({fixedOffset: $('.navbar-fixed-top')});
+  $('[data-toggle="tooltip"]').tooltip()
+});
 </script>
 <?php if(defined('UA')) :?>
 <script>
