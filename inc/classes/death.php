@@ -15,19 +15,14 @@ class death {
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT ss13feedback.time FROM ss13feedback WHERE var_name = 'round_end' LIMIT 0,1");
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    $time = $db->single()->time;
-
-    $db->query("SELECT *
-      FROM ss13death
-      WHERE ss13death.tod < (SELECT ss13feedback.time FROM ss13feedback WHERE var_name = 'round_end' ORDER BY ss13feedback.time DESC LIMIT 1)
+    $db->query("SELECT * FROM ss13death
+      WHERE tod < (SELECT ss13feedback.time
+      FROM ss13feedback
+      WHERE var_name = 'round_end'
+      ORDER BY ss13feedback.time DESC
+      LIMIT 0,1)
       ORDER BY ss13death.tod DESC
-      LIMIT 0,$count;");
+      LIMIT 0, $count;");
     try {
       $db->execute();
     } catch (Exception $e) {
