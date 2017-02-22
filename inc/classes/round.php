@@ -13,6 +13,7 @@
   public $prev = false;
   public $hasObjectives = false;
   public $fromCache = false;
+  public $data = false;
 
   public function __construct($id=null,$data=false,$logs=false,$json=false) {
     if ($id){
@@ -213,6 +214,7 @@
     $logs = str_replace("-censored(misc)-\r\n",'',$logs);
     $logs = str_replace("-censored(asay/apm/ahelp/notes/etc)-\r\n",'',$logs);
     $logs = str_replace(" from -censored(ip/cid)- ",' ',$logs);
+    $logs = str_replace("-censored(private logtype)-", '', $logs);
     $logs = str_replace(" : ",': ',$logs);
     $logs = str_replace("-\r\n", '', $logs);
     $logs = str_replace("<span class='boldannounce'>",'',$logs);
@@ -406,8 +408,8 @@
   }
 
   public function parseRoundFeedback(&$feedback){
+    $stat = new stat();
     foreach($feedback as &$data){
-      $stat = new stat();
       $data = $stat->parseFeedback($data);
     }
     return $feedback;

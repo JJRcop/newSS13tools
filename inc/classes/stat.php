@@ -2,42 +2,47 @@
 
 class stat {
 
-  public $name;
+  public $var_name;
   public $value;
   public $details;
   public $rounds;
+  public $first;
+  public $last;
+  public $total;
 
   public function __construct($stat=false, $server=false, $start=false, $end=false){
     if ($stat){
       if(!$this->isStat($stat)) return false;
       $stat = $this->getStat($stat);
       $stat = $this->parseStat($stat);
+      foreach ($stat as $k => $v){
+        $this->$k = $v;
+      }
       return $stat;
     }
     return false;
   }
 
   public function parseStat(&$stat){
-    $this->last = $stat[0]->time;
-    $this->first = $stat[count($stat)-1]->time;
-    $fb = new stdClass;
-    $fb->details = '';
-    $fb->rounds = '';
-    $fb->value = 0;
-    $fb->var_name = $stat[0]->var_name;
-    $this->name = $stat[0]->var_name;
+    // var_dump($stat);
+    $data = new stdClass;
+    $data->var_name = $stat[0]->var_name;
+    $data->rounds = null;
+    $data->details = null;
+    $data->value = 0;
+    $data->last = $stat[0]->time;
+    $data->total = count($stat);
+    $data->first = $stat[$data->total-1]->time;
     foreach ($stat as $s){
-      if($s->var_value) $fb->value+= $s->var_value;
-      if($s->details) $fb->details.= $s->details.", ";
-      if($s->round_id) $fb->rounds.= $s->round_id." "; 
+      $data->rounds .= "$s->round_id, ";
+      if($s->details) $data->details.= "$s->details, ";
+      $data->value  += $s->var_value;
     }
-    $fb->details = trim($fb->details);
-    $fb->rounds = trim($fb->rounds);
-    $fb = $this->parseFeedback($fb);
-    $this->value = $fb->value;
-    $this->details = $fb->details;
-    $this->rounds = count(explode(' ',$fb->rounds));
-    return $stat;
+    $data->details = rtrim($data->details);
+    $data->details = rtrim($data->details,',');
+    $data = $this->parseFeedback($data,TRUE);
+    if('' == $data->details) $data->details = FALSE;
+    return $data;
   }
 
   public function getStat($stat){
@@ -76,9 +81,101 @@ class stat {
     return $db->single();
   }
 
-    public function parseFeedback(&$data){
+  public function parseFeedback(&$data,$tally=false){
     if ('object' != gettype($data)) return false;
+    if ('' == $data->details) $data->details = FALSE;
+    if (!isset($data->var_name)) return false;
     switch($data->var_name){
+      //Ok, let's break this down, stat by stat. This is a nasty mess of code
+      //but things should be broken up and organized into a somewhat coherent
+      //way.
+
+      default:
+        $data->details = $data->details;
+      break;      
+
+      //First up, stats that have a | value separator, but for stacks/amounts
+      //So we need to add 'like' stats to themselves.
+      //IE: Miners can mine a stack of 4 metal ore, and a stack of 5 metal ore
+      //We need to add that together to give us 9 metal ore.
+      case 'chemical_reaction':
+      case 'ore_mined':
+      case 'food_harvested':
+      case 'item_printed':
+        $data->details = array_count_values(explode(' ',$data->details));
+        $tmp = array();
+        foreach ($data->details as $k => $v){
+          $a = explode('|',$k);
+          $k = $a[0];
+          @$a = $a[1];
+          if(isset($tmp[$k])) {
+            $tmp[$k] += $v * $a;
+          } else {
+            $tmp[$k] = $v * $a;
+          }
+        }
+        $data->details = $tmp;
+      break;
+
+      //Job preferences!
+      case 'job_preferences':
+        $data->details = explode('|-'," ".$data->details);
+        array_pop($data->details);
+        $prefs = array();
+        foreach ($data->details as &$job){
+          $job = str_replace(' |','',$job);
+          $job = str_replace('_',' ',$job);
+          if ($job{0} == '|') $job{0} = '';
+          $job = explode('|',$job);
+          foreach ($job as &$stat){
+            if (strpos($stat,'=')){
+              $stat = explode('=',$stat);
+            }
+          }
+          if ($tally){
+            @$prefs[$job[0]]['HIGH']  += (int) $job[1][1];
+            @$prefs[$job[0]]['MEDIUM']+= (int) $job[2][1];
+            @$prefs[$job[0]]['LOW']   += (int) $job[3][1];
+            @$prefs[$job[0]]['NEVER'] += (int) $job[4][1];
+            @$prefs[$job[0]]['BANNED']+= (int) $job[5][1];
+            @$prefs[$job[0]]['YOUNG'] += (int) $job[6][1];
+          } else {
+            $prefs[$job[0]]['HIGH'] = (int) $job[1][1];
+            $prefs[$job[0]]['MEDIUM'] = (int) $job[2][1];
+            $prefs[$job[0]]['LOW'] = (int) $job[3][1];
+            $prefs[$job[0]]['NEVER'] = (int) $job[4][1];
+            $prefs[$job[0]]['BANNED'] = (int) $job[5][1];
+            $prefs[$job[0]]['YOUNG'] = (int) $job[6][1];
+          }
+        }
+        $data->details = $prefs;
+      break;
+
+      //Radio usage
+      case 'radio_usage':
+        $data->details = explode(' ',$data->details);
+        $radio = array();
+        foreach ($data->details as &$channel){
+          $channel = explode('-',$channel);
+        }
+        $total = 0;
+        foreach ($data->details as $c) {
+          if ($tally){
+            if(isset($radio[$c[0]])){
+              $radio[$c[0]]+= $c[1]+0;
+            } else {
+              $radio[$c[0]]= $c[1]+0;
+            }
+          } else {
+            $radio[$c[0]] = $c[1]+0;
+          }
+          $total+= $c[1];
+        }
+        if ($tally) $radio['total'] = $total;
+        $data->details = $radio;
+      break;
+
+      //Objectives
       case 'traitor_objective':
       case 'wizard_objective':
       case 'changeling_objective':
@@ -98,123 +195,170 @@ class stat {
         
       break;
 
-      case 'ban_job':
-        $data->details = explode('-_',trim($data->details));
-      break;
-
-      case 'radio_usage':
-        $data->details = explode(' ',$data->details);
-        $radio = array();
-        foreach ($data->details as &$channel){
-          $channel = explode('-',$channel);
-        }
-        foreach ($data->details as $c) {
-          if(isset($radio[$c[0]])){
-            $radio[$c[0]]+= $c[1]+0;
-          } else {
-            $radio[$c[0]]= $c[1]+0;
-          }
-        }
-        arsort($radio);
-        $data->details = $radio;
-      break;
-
-      case 'job_preferences':
-        $data->details = str_replace(',', '', $data->details);
-        $data->details = explode('|-'," ".$data->details);
-        array_pop($data->details);
-        $prefs = array();
-        foreach ($data->details as &$job){
-          $job = str_replace(' |','',$job);
-          $job = str_replace('_',' ',$job);
-          if ($job{0} == '|') $job{0} = '';
-          $job = explode('|',$job);
-          foreach ($job as &$stat){
-            if (strpos($stat,'=')){
-              $stat = explode('=',$stat);
-            }
-          }
-          @$prefs[$job[0]]['HIGH']  += $job[1][1];
-          @$prefs[$job[0]]['MEDIUM']+= $job[2][1];
-          @$prefs[$job[0]]['LOW']   += $job[3][1];
-          @$prefs[$job[0]]['NEVER'] += $job[4][1];
-          @$prefs[$job[0]]['BANNED']+= $job[5][1];
-          @$prefs[$job[0]]['YOUNG'] += $job[6][1];
-        }
-        $data->details = $prefs;
-      break;
-
-      case 'slime_core_harvested':
-      case 'handcuffs':
-      case 'zone_targeted':
-      case 'admin_verb':
-      case 'traitor_success':
-      case 'cargo_imports':
-      case 'gun_fired':
-      // case 'food_harvested':
-      case 'item_used_for_combat':
-      case 'slime_babies_born':
-      // case 'ore_mined':
-      // case 'chemical_reaction':
-      case 'cell_used':
-      case 'mobs_killed_mining':
-      case 'slime_cores_used':
-      case 'object_crafted':
-      case 'food_made':
-      case 'traitor_uplink_items_bought':
-      // case 'item_printed':
-      case 'mining_equipment_bought':
-      case 'cult_runes_scribed':
-      case 'changeling_success':
-      case 'changeling_powers':
-      case 'wizard_success':
-      case 'event_ran':
-      case 'wizard_spell_learned':
+      //Everything else
+      //case 'admin_cookies_spawned':
       case 'admin_secrets_fun_used':
-      case 'item_deconstructed':
-      case 'mining_voucher_redeemed':
+      case 'admin_verb':
+      // case 'alert_comms_blue':
+      // case 'alert_comms_green':
+      // case 'alert_keycard_auth_maint':
+      // case 'alert_keycard_auth_red':
+      // case 'arcade_loss_hp_emagged':
+      // case 'arcade_loss_hp_normal':
+      // case 'arcade_loss_mana_emagged':
+      // case 'arcade_loss_mana_normal':
+      // case 'arcade_win_emagged':
+      // case 'arcade_win_normal':
+      case 'assembly_made':
+      // case 'ban_appearance':
+      // case 'ban_appearance_unban':
+      // case 'ban_edit':
+      // case 'ban_job':
+      // case 'ban_job_tmp':
+      // case 'ban_job_unban':
+      // case 'ban_perma':
+      // case 'ban_tmp':
+      // case 'ban_tmp_mins':
+      // case 'ban_unban':
+      // case 'ban_warn':
+      // case 'benchmark':
+      case 'cargo_imports':
+      case 'cell_used':
+      case 'changeling_objective':
+      case 'changeling_powers':
+      case 'changeling_success':
+      case 'chemical_reaction':
+      case 'circuit_printed':
+      case 'clockcult_scripture_recited':
+      case 'colonies_dropped':
+      case 'comment':
+      case 'cult_objective':
+      case 'cult_runes_scribed':
+      // case 'cyborg_ais_created':
+      // case 'cyborg_birth':
+      // case 'cyborg_engineering':
+      // case 'cyborg_frames_built':
+      // case 'cyborg_janitor':
+      // case 'cyborg_medical':
+      // case 'cyborg_miner':
+      // case 'cyborg_mmis_filled':
+      // case 'cyborg_peacekeeper':
+      // case 'cyborg_security':
+      // case 'cyborg_service':
+      // case 'cyborg_standard':
+      // case 'disposal_auto_flush':
+      // case 'emergency_shuttle':
+      // case 'end_error':
+      // case 'end_proper':
+      case 'engine_started':
+      // case 'escaped_human':
+      // case 'escaped_on_pod_1':
+      // case 'escaped_on_pod_2':
+      // case 'escaped_on_pod_3':
+      // case 'escaped_on_pod_5':
+      // case 'escaped_on_shuttle':
+      // case 'escaped_total':
+      case 'event_ran':
       case 'export_sold_amount':
       case 'export_sold_cost':
-      case 'pick_used_mining':
-      case 'clockcult_scripture_recited':
-      case 'hivelord_core':
-      case 'circuit_printed':
+      // case 'food_harvested':
+      case 'food_made':
+      // case 'game_mode':
+      case 'god_objective':
+      case 'god_success':
+      case 'gun_fired':
+      case 'handcuffs':
       case 'high_research_level':
-      case 'engine_started':
-      case 'assembly_made':
-      case 'religion_book':
-      case 'religion':
-      case 'chaplain_weapon':
-      case 'emergency_shuttle':
-      case 'cult_runes_scribed':
-        $data->details = str_replace(', ', ' ', $data->details);
+      case 'hivelord_core':
+      case 'immortality_talisman':
+      case 'item_deconstructed':
+      case 'item_printed':
+      case 'item_used_for_combat':
+      case 'jaunter':
+      // case 'job_preferences':
+      case 'lazarus_injector':
+      // case 'mecha_durand_created':
+      // case 'mecha_firefighter_created':
+      // case 'mecha_gygax_created':
+      // case 'mecha_honker_created':
+      // case 'mecha_odysseus_created':
+      // case 'mecha_phazon_created':
+      // case 'mecha_ripley_created':
+      case 'megafauna_kills':
+      case 'mining_adamantine_produced':
+      case 'mining_clown_produced':
+      case 'mining_diamond_produced':
+      case 'mining_equipment_bought':
+      case 'mining_glass_produced':
+      case 'mining_gold_produced':
+      case 'mining_iron_produced':
+      case 'mining_plasma_produced':
+      case 'mining_rglass_produced':
+      case 'mining_silver_produced':
+      case 'mining_steel_produced':
+      case 'mining_uranium_produced':
+      case 'mining_voucher_redeemed':
+      case 'mobs_killed_mining':
+      // case 'newscaster_channels':
+      // case 'newscaster_newspapers_printed':
+      // case 'newscaster_stories':
+      // case 'nuclear_challenge_mode':
+      case 'object_crafted':
+      // case 'ore_mined':
+      case 'pick_used_mining':
+      // case 'radio_usage':
+
+      // case 'round_end':
+      // case 'round_end_clients':
+      // case 'round_end_ghosts':
+      // case 'round_start':
+      // case 'server_ip':
+      // case 'shuttle_fasttravel':
+      case 'slime_babies_born':
+      case 'slime_cores_used':
+      case 'slime_core_harvested':
+      case 'supply_mech_collection_redeemed':
+      // case 'surgeries_completed':
+      // case 'surgery_initiated':
+      case 'surgery_step_failed':
+      case 'surgery_step_success':
+      // case 'survived_human':
+      // case 'survived_total':
+      case 'traitor_objective':
+      case 'traitor_success':
+      case 'traitor_uplink_items_bought':
+      case 'warp_cube':
+      case 'wisp_lantern':
+      case 'wizard_objective':
+      case 'wizard_spell_learned':
+      case 'wizard_success':
+      case 'zone_targeted':
         $data->details = str_replace(',', '', $data->details);
         $data->details = array_count_values(explode(' ',$data->details));
-        if(1 == count($data->details)) reset($data->details); $data->details = key($data->details);
+      break;
+
+      case 'revision':
+      case 'religion_book':
+      case 'religion_deity':
+      case 'religion_name':
+      case 'chaplain_weapon':
+      case 'game_mode':
+      case 'server_ip':
+      case 'end_proper':
+      case 'end_error':
+        if ($tally) $data->details = array_count_values(explode(', ',$data->details));
       break;
 
       case 'round_end_result':
-      case 'game_mode':
-      case 'religion_name':
-      case 'religion_deity':
-        $data->details = rtrim($data->details,",");
-        $data->details = array_count_values(explode(', ',$data->details));
+        if ($tally) $data->details = array_count_values(explode(', ',$data->details));
       break;
 
-      case 'ore_mined':
-      case 'chemical_reaction':
-      case 'item_printed':
-      case 'food_harvested':
-        $data->details = str_replace(', ', ' ', $data->details);
-        $data->details = rtrim($data->details,",");
-        $data->details = array_count_values(explode(' ',$data->details));
-        $clean = [];
-        foreach ($data->details as $key => $val){
-          $key = explode('|',$key);
-          @$newVal = $val * $key[1];
-            @$clean[$key[0]]+=$newVal;
-        }
-        $data->details = $clean;
+      case 'shuttle_manipulator':
+      case 'shuttle_purchase':
+      case 'emergency_shuttle':
+        $data->details = str_replace(' ', '; ', $data->details);
+        $data->details = str_replace('_', ' ', $data->details);
+        if ($tally) $data->details = array_count_values(explode('; ',$data->details));
       break;
     }
     if (is_array($data->details)) arsort($data->details);

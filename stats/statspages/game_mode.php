@@ -141,7 +141,7 @@ if ($round->game_mode) {
     }
   }
   if (isset($round->data->emergency_shuttle)) {
-    $shuttle = icon('space-shuttle')." <em>".str_replace('_', ' ', $round->data->emergency_shuttle['details'])."</em>";
+    $shuttle = icon('space-shuttle')." The crew evacuated aboard <em>".str_replace('_', ' ', $round->data->emergency_shuttle['details'])."</em>";
   } else {
     $shuttle = iconStack('space-shuttle','ban','text-danger')." The round ended without a crew evacuation.";
   }
@@ -162,7 +162,7 @@ if ($round->game_mode) {
 <ul class="list-unstyled">
 <li><?php echo $mode;?></li>
 <li><?php echo $result;?></li>
-<li><?php echo icon('clock-o')." It lasted $round->duration";?></li>
+<li><?php echo icon('clock-o')." The round lasted $round->duration";?></li>
 <li><?php echo $shuttle;?></li>
 <li><?php echo $error;?></li>
 <?php if($rare) echo "<li>$rare</li>";?>
