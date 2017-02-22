@@ -130,13 +130,36 @@ tr.perma,
   color: black;
 }
 
-.list-group-item:hover .ql {
+.table.ban {
+  table-layout:fixed; 
+}
+
+.table.ban tbody tr th {
+  text-align: right;
+}
+
+.label.label-player {
+  background-color: transparent;
+  border: 1px solid #eee;
+}
+
+.label.label-player a {
+  color: inherit;
+}
+
+.panel-heading a.label {
+  color: white !important;
+  font-size: inherit;
+}
+
+.ipaddr:hover .ql,
+.cid:hover .ql {
   display: inline-block;
 }
 
 .ql {
   display: none;
-  padding: 5px;
+  padding: 5px 5px 0 5px;
   border-radius: 4px;
   border: 1px solid inherit;
   float: right;

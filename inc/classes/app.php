@@ -11,8 +11,8 @@
   public $reposSynced;
 
   private $restrictedDirs = array(
-    'tgdb'=>2, //Bans/notes/player/connection database
-    'tools'=>1 //Icon tools
+    'tgdb'  => 2, //Bans/notes/player/connection database
+    'tools' => 1 //Icon tools
   );
 
   public function __construct($info=false) {
@@ -67,10 +67,17 @@
     //This checks against a list of directories and if the path contains one of
     //the entries, AND if the user doesn't have the proper authorization level,
     //we throw a flag that the app can catch and exit() on
+    if (!$user) {
+      $this->die = TRUE;
+      return alert('You could not be authenticated as a game administrator. If you are a game administrator, log in to the game, then come back and refresh this page.',FALSE);
+    }
+    if (!$user->legit){
+      $this->die = TRUE;
+      return alert('You could not be authenticated as a game administrator. If you are a game administrator, log in to the game, then come back and refresh this page.',FALSE);
+    }
     foreach ($this->restrictedDirs as $dir => $level){
       $check = str_replace(ROOTPATH,'',$_SERVER['SCRIPT_FILENAME']);
-      if (strpos($check,$dir) !== FALSE && !$user->legit
-        && $user->level < $level){
+      if ((strpos($check,$dir) !== FALSE) && $user->level < $level){
         $this->die = TRUE;
         return alert('You could not be authenticated as a game administrator. If you are a game administrator, log in to the game, then come back and refresh this page.',FALSE);
       }

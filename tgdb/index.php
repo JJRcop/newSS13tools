@@ -1,7 +1,8 @@
 <?php require_once("../header.php");?>
 
-<?php echo alert('## CLASSIFIED ## GA+//NA</strong> This page is classified. This page should not shared with non-admins.');?>
+<?php require_once('tgdb_nav.php');?>
 
+<?php echo alert('## CLASSIFIED ## GA+//NA</strong> This page is classified. This page should not shared with non-admins.');?>
 
 <div class="page-header">
   <h1>tgdb</h1>
