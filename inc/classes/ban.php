@@ -181,4 +181,23 @@ class ban {
     return $ban;
   }
 
+  public function adminBanCounts() {
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT count(*) AS bans,
+      bantype,
+      a_ckey AS admin
+      FROM ss13ban
+      GROUP BY bantype, a_ckey
+      ORDER BY bans DESC;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultset();
+  }
+
 }

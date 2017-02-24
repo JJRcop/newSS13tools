@@ -28,4 +28,12 @@
        <?php endif; ?>
     </ul>
   </div>
+  <div class="col-md-6">
+  <h3>See also:</h3>
+  <ul class="list-group">
+    <li class="list-group-item">
+      <a href="banCounts.php">Number of bans, by type, by admin</a>
+    </li>
+  </ul>
+  </div>
 </div>
