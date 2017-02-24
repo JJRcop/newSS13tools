@@ -25,3 +25,5 @@ $bans = $ban->adminBanCounts(); ?>
   <?php endforeach;?>
   </tbody>
 </table>
+
+<?php require_once('../footer.php');?>
