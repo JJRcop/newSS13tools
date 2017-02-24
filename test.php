@@ -1,157 +1,86 @@
 <?php require_once('header.php'); ?>
 
-<?php 
+<div class="row">
+<div class="col-md-10">
 
-$stats = array(
-  'admin_cookies_spawned',
-  'admin_secrets_fun_used',
-  'admin_verb',
-  'alert_comms_blue',
-  'alert_comms_green',
-  'alert_keycard_auth_maint',
-  'alert_keycard_auth_red',
-  'arcade_loss_hp_emagged',
-  'arcade_loss_hp_normal',
-  'arcade_loss_mana_emagged',
-  'arcade_loss_mana_normal',
-  'arcade_win_emagged',
-  'arcade_win_normal',
-  'assembly_made',
-  'ban_appearance',
-  'ban_appearance_unban',
-  'ban_edit',
-  'ban_job',
-  'ban_job_tmp',
-  'ban_job_unban',
-  'ban_perma',
-  'ban_tmp',
-  'ban_tmp_mins',
-  'ban_unban',
-  'ban_warn',
-  'benchmark',
-  'cargo_imports',
-  'cell_used',
-  'changeling_objective',
-  'changeling_powers',
-  'changeling_success',
-  'chaplain_weapon',
-  'chemical_reaction',
-  'circuit_printed',
-  'clockcult_scripture_recited',
-  'colonies_dropped',
-  'comment',
-  'cult_objective',
-  'cult_runes_scribed',
-  'cyborg_ais_created',
-  'cyborg_birth',
-  'cyborg_engineering',
-  'cyborg_frames_built',
-  'cyborg_janitor',
-  'cyborg_medical',
-  'cyborg_miner',
-  'cyborg_mmis_filled',
-  'cyborg_peacekeeper',
-  'cyborg_security',
-  'cyborg_service',
-  'cyborg_standard',
-  'disposal_auto_flush',
-  'emergency_shuttle',
-  'end_error',
-  'end_proper',
-  'engine_started',
-  'escaped_human',
-  'escaped_on_pod_1',
-  'escaped_on_pod_2',
-  'escaped_on_pod_3',
-  'escaped_on_pod_5',
-  'escaped_on_shuttle',
-  'escaped_total',
-  'event_ran',
-  'export_sold_amount',
-  'export_sold_cost',
-  'food_harvested',
-  'food_made',
-  'game_mode',
-  'god_objective',
-  'god_success',
-  'gun_fired',
-  'handcuffs',
-  'high_research_level',
-  'hivelord_core',
-  'immortality_talisman',
-  'item_deconstructed',
-  'item_printed',
-  'item_used_for_combat',
-  'jaunter',
-  'job_preferences',
-  'lazarus_injector',
-  'mecha_durand_created',
-  'mecha_firefighter_created',
-  'mecha_gygax_created',
-  'mecha_honker_created',
-  'mecha_odysseus_created',
-  'mecha_phazon_created',
-  'mecha_ripley_created',
-  'megafauna_kills',
-  'mining_adamantine_produced',
-  'mining_clown_produced',
-  'mining_diamond_produced',
-  'mining_equipment_bought',
-  'mining_glass_produced',
-  'mining_gold_produced',
-  'mining_iron_produced',
-  'mining_plasma_produced',
-  'mining_rglass_produced',
-  'mining_silver_produced',
-  'mining_steel_produced',
-  'mining_uranium_produced',
-  'mining_voucher_redeemed',
-  'mobs_killed_mining',
-  'newscaster_channels',
-  'newscaster_newspapers_printed',
-  'newscaster_stories',
-  'nuclear_challenge_mode',
-  'object_crafted',
-  'ore_mined',
-  'pick_used_mining',
-  'radio_usage',
-  'religion_book',
-  'religion_deity',
-  'religion_name',
-  'revision',
-  'round_end',
-  'round_end_clients',
-  'round_end_ghosts',
-  'round_end_result',
-  'round_start',
-  'server_ip',
-  'shuttle_fasttravel',
-  'shuttle_manipulator',
-  'shuttle_purchase',
-  'slime_babies_born',
-  'slime_cores_used',
-  'slime_core_harvested',
-  'supply_mech_collection_redeemed',
-  'surgeries_completed',
-  'surgery_initiated',
-  'surgery_step_failed',
-  'surgery_step_success',
-  'survived_human',
-  'survived_total',
-  'traitor_objective',
-  'traitor_success',
-  'traitor_uplink_items_bought',
-  'warp_cube',
-  'wisp_lantern',
-  'wizard_objective',
-  'wizard_spell_learned',
-  'wizard_success',
-  'zone_targeted'
-);
+<?php
 
-foreach ($stats as $s){
-  $stat = new stat($s);
-  if(!$stat->var_name){
-    echo "<code>$s</code> not found!<br>";
-  }
+$db = new database();
+$db->query("SET SESSION group_concat_max_len = 1000000;");
+$db->execute();
+$db->query("SELECT ss13feedback.var_name,
+GROUP_CONCAT(ss13feedback.round_id SEPARATOR ', ') AS rounds,
+SUM(ss13feedback.var_value) AS `value`,
+IF (ss13feedback.details = '', NULL, GROUP_CONCAT(ss13feedback.details SEPARATOR ', ')) AS details
+      FROM ss13feedback
+      WHERE DATE(ss13feedback.time) BETWEEN (NOW() - INTERVAL 30 DAY) AND NOW()
+      AND ss13feedback.var_name != ''
+      GROUP BY ss13feedback.var_name
+      ORDER BY ss13feedback.var_name ASC;");
+
+$db->execute();
+
+$parse = new stat();
+$stats = $db->resultset();
+foreach($stats as $stat){
+  $stat->total = count(explode(', ',$stat->rounds));
+  $stat = $parse->parseFeedback($stat, TRUE);?>
+  <div class="page-header" id="<?php echo $stat->var_name;?>">
+  <h1><code><?php echo $stat->var_name;?></code></h1>
+  </div>
+  <p class="lead">Across <?php echo $stat->total;?> rounds (where this statistic was recorded):</p>
+  <?php 
+  if ('' == $stat->var_name) continue;
+  if (!$stat->details && $stat->value) {
+    include('stats/statspages/bigNum.php');
+  } else {
+    switch ($stat->var_name){
+
+      default:
+        include('stats/statspages/generic.php');
+      break;      
+
+      case 'radio_usage':
+        $radio = $stat->details;
+        include('stats/statspages/radio.php');
+      break;
+
+      case 'job_preferences':
+        $prefs = $stat->details;
+        include('stats/statspages/jobprefs.php');
+      break;
+
+      case 'traitor_success':
+      case 'wizard_success':
+      case 'changeling_success':
+        $details = $stat->details;
+        include('stats/statspages/success.php');
+      break;
+
+      case 'traitor_objective':
+      case 'wizard_objective':
+      case 'changeling_objective':
+      case 'cult_objective':
+        $details = $stat->details;
+        include('stats/statspages/objs.php');
+      break;
+
+      case 'round_end_result':
+        include('stats/statspages/generic.php');
+      break;
+
+    }
+  } 
 }
+?>
+</div>
+<div class="col-md-2">
+<ul class="list-unstyled">
+<?php foreach($stats as $s):?>
+  <li><a href="#<?php echo $s->var_name;?>"><code><?php echo $s->var_name;?></code></a></li>
+<?php endforeach;?>
+</ul>
+</div>
+</div>
+
+<?php require_once('footer.php');?>

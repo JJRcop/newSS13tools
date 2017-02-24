@@ -84,6 +84,9 @@
     } else {
       if (!$round->status) $round->status = false;
     }
+    if (!$round->result) {
+      $round->result = $round->status;
+    }
     return $round;
   }
 
@@ -111,25 +114,24 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT ss13feedback.details AS `end`,
-        start.details AS `start`,
-        server.details AS `server`,
-        ss13feedback.round_id,
-         mode.details AS game_mode,
-        TIMEDIFF(STR_TO_DATE(ss13feedback.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration,
-        IF (proper.details IS NULL, error.details, proper.details) AS `status`,
-        MAX(next.round_id) AS `next`,
-        MIN(prev.round_id) AS `prev`
-        FROM ss13feedback
-        LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
-        LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
-        LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
-        LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
-        LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
-        LEFT JOIN ss13feedback AS `next` ON next.round_id = ss13feedback.round_id + 1
-        LEFT JOIN ss13feedback AS `prev` ON prev.round_id = ss13feedback.round_id - 1
-        WHERE ss13feedback.var_name = 'round_end'
-        AND ss13feedback.round_id = ?");
+    $db->query("SELECT ss13feedback.round_id,
+      server.details AS `server`,
+      mode.details AS game_mode,
+      STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
+      STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y') AS `start`,
+      TIMEDIFF(STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration,
+      IF (proper.details IS NULL, error.details, proper.details) AS `status`,
+      result.details AS result
+      FROM ss13feedback
+      LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
+      LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
+      LEFT JOIN ss13feedback AS `end` ON ss13feedback.round_id = end.round_id AND end.var_name = 'round_end'
+      LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
+      LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
+      LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
+      LEFT JOIN ss13feedback AS `result` ON ss13feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
+      WHERE ss13feedback.var_name='round_end'
+      AND ss13feedback.round_id = ?");
     $db->bind(1, $id);
     try {
       $db->execute();
@@ -214,7 +216,7 @@
     $logs = str_replace("-censored(misc)-\r\n",'',$logs);
     $logs = str_replace("-censored(asay/apm/ahelp/notes/etc)-\r\n",'',$logs);
     $logs = str_replace(" from -censored(ip/cid)- ",' ',$logs);
-    $logs = str_replace("-censored(private logtype)-", '', $logs);
+    $logs = str_replace("-censored(private logtype)-\r\n", '', $logs);
     $logs = str_replace(" : ",': ',$logs);
     $logs = str_replace("-\r\n", '', $logs);
     $logs = str_replace("<span class='boldannounce'>",'',$logs);
@@ -334,7 +336,8 @@
       STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
       STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y') AS `start`,
       TIMEDIFF(STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration,
-      IF (proper.details IS NULL, error.details, proper.details) AS `status`
+      IF (proper.details IS NULL, error.details, proper.details) AS `status`,
+      result.details AS result
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
@@ -342,6 +345,7 @@
       LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
       LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
       LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
+      LEFT JOIN ss13feedback AS `result` ON ss13feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
       WHERE ss13feedback.var_name='round_end'
       ORDER BY ss13feedback.time DESC
       LIMIT ?,?;");

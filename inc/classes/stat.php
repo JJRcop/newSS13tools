@@ -24,7 +24,6 @@ class stat {
   }
 
   public function parseStat(&$stat){
-    // var_dump($stat);
     $data = new stdClass;
     $data->var_name = $stat[0]->var_name;
     $data->rounds = null;
@@ -90,6 +89,7 @@ class stat {
       //but things should be broken up and organized into a somewhat coherent
       //way.
 
+      //Default case. Duh.
       default:
         $data->details = $data->details;
       break;      
@@ -171,7 +171,7 @@ class stat {
           }
           $total+= $c[1];
         }
-        if ($tally) $radio['total'] = $total;
+        // if ($tally) $radio['total'] = $total;
         $data->details = $radio;
       break;
 
@@ -179,6 +179,7 @@ class stat {
       case 'traitor_objective':
       case 'wizard_objective':
       case 'changeling_objective':
+      case 'cult_objective':
         $data->details = array_count_values(explode(' ',$data->details));
         $objs = array();
         foreach ($data->details as $obj => $count){
@@ -193,6 +194,16 @@ class stat {
         }
         $data->details = $objs;
         
+      break;
+
+      case 'ban_job':
+      case 'ban_job_tmp':
+      case 'ban_job_unban':
+        $data->details = str_replace('-_', '#', rtrim($data->details,','));
+        $data->details = str_replace('_', ' ', $data->details);
+        $data->details = str_replace(',', '', rtrim($data->details,','));
+        $data->details = array_count_values(explode('#',$data->details));
+        array_filter($data->details);
       break;
 
       //Everything else
@@ -356,9 +367,21 @@ class stat {
       case 'shuttle_manipulator':
       case 'shuttle_purchase':
       case 'emergency_shuttle':
+      case 'shuttle_fasttravel':
+        $data->details = str_replace(',', '', $data->details);
         $data->details = str_replace(' ', '; ', $data->details);
         $data->details = str_replace('_', ' ', $data->details);
         if ($tally) $data->details = array_count_values(explode('; ',$data->details));
+      break;
+
+      case 'round_end':
+      case 'round_start':
+        $hours = array();
+        foreach (explode(', ',$data->details) as $d){
+          $hour = date('H',strtotime($d));
+          @$hours[$hour]+= 1;
+        }
+        $data->details = $hours;
       break;
     }
     if (is_array($data->details)) arsort($data->details);
@@ -366,6 +389,7 @@ class stat {
   }
 
   public function getModeData($mode){
+
     return $mode;
   }
 

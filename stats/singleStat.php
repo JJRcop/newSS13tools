@@ -14,7 +14,6 @@ require_once('../header.php'); ?>
   <h1>Single statistic: <code> <?php echo $stat->var_name;?></code></h1>
 </div>
 <p class="lead">Across <?php echo $stat->total;?> rounds (where this statistic was tracked) between <?php echo "$stat->first and $stat->last";?>:</p>
-
 <?php if (!$stat->details && $stat->value) {
   include('statspages/bigNum.php');
 } else {
@@ -47,9 +46,9 @@ require_once('../header.php'); ?>
       include('statspages/generic.php');
     break;
 
-    case 'game_mode':
-      include('statspages/modestats.php');
-    break;
+    // case 'game_mode':
+    //   include('statspages/modestats.php');
+    // break;
 
     default: 
       if(0 == $stat->value){

@@ -8,7 +8,8 @@ foreach ($stat->details as $detail => $count){
   $width = ($count/array_sum($stat->details)) * 100;
   $bars.= "<div class='progress-bar' style='width: $width%;";
   $bars.= "background-color: #$color;' data-toggle='tooltip' title='$detail'>$count</div>";
-  echo "<tr><td>$detail</td><td>$count</td><td style='background-color: #$color;'></td></tr>";
+  echo "<tr><td><code>$detail</code></td><td>$count</td>";
+  echo "<td style='background-color: #$color;'></td></tr>";
 }
 ?>
 </table>

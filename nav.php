@@ -13,6 +13,7 @@
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
+      <li><a href="<?php echo APP_URL;?>todo.php">Todos</a></li>
         <?php if ($user->legit): ?>
         <li><a href="<?php echo APP_URL;?>info.php">System Info</a></li>
         <li class="dropdown">
