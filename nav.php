@@ -48,11 +48,11 @@
           </a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="<?php echo APP_URL;?>stats/listRounds.php">
+              <a href="<?php echo APP_URL;?>rounds/listRounds.php">
                 Round List
               </a>
             </li>
-            <li><a href="<?php echo APP_URL;?>stats/deaths.php">Deaths</a></li>
+            <li><a href="<?php echo APP_URL;?>death/deaths.php">Deaths</a></li>
           </ul>
         </li>
         <?php if ($user->valid):?>

@@ -21,7 +21,8 @@ if($json) {
 <?php die(); endif;?>
 
 <?php if(DEBUG):?>
-<div class="alert alert-info">The hash for this round is <code><?php echo sha1(json_encode($round->data)); ?></code></div>
+<div class="alert alert-info">The hash for this round is <code><?php echo hash('sha256',
+json_encode($round->data)); ?></code></div>
 <?php endif;?>
 
 <?php require_once('statspages/pagination.php');?>
@@ -44,7 +45,7 @@ if($json) {
 
 <?php include('statspages/game_mode.php');?>
 
-<?php include ('statspages/pages.php'); ?>
+<?php include('statspages/pages.php'); ?>
 
 <div id="rawdata">
   <h3>Raw data</h3>
@@ -60,14 +61,16 @@ if($json) {
     <?php foreach ($round->data as $k => $v) :?>
       <tr>
         <td>
-          <a href='singleStat.php?stat=<?php echo $k;?>'>
+          <a href='<?php echo APP_URL;?>stats/singleStat.php?stat=<?php echo $k;?>'>
             <?php echo $k;?>
           </a>
         </td>
         <td><?php echo $v['value']; ?></td>
-        <td><?php if (is_array($v['details'])){
-            var_dump($v['details']);
-            } else {
+        <td><?php if (is_array($v['details'])){ ?>
+              <?php if (0 < count($v['details'])):?>
+              <?php var_dump($v['details']);?>
+              <?php endif;?>
+            <?php } else {
               echo $v['details'];
             }?>
         </td>

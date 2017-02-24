@@ -20,26 +20,26 @@ require_once('../header.php'); ?>
   switch ($stat->var_name){
     case 'radio_usage':
       $radio = $stat->details;
-      include('statspages/radio.php');
+      include('../rounds/statspages/radio.php');
     break;
 
     case 'job_preferences':
       $prefs = $stat->details;
-      include('statspages/jobprefs.php');
+      include('../rounds/statspages/jobprefs.php');
     break;
 
     case 'traitor_success':
     case 'wizard_success':
     case 'changeling_success':
       $details = $stat->details;
-      include('statspages/success.php');
+      include('../rounds/statspages/success.php');
     break;
 
     case 'traitor_objective':
     case 'wizard_objective':
     case 'changeling_objective':
       $details = $stat->details;
-      include('statspages/objs.php');
+      include('../rounds/statspages/objs.php');
     break;
 
     case 'round_end_result':

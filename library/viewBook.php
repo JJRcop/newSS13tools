@@ -9,11 +9,11 @@ $book = new library($book,TRUE);
 
 <nav>
   <ul class="pager">
-  <?php if ($book->neighbors->prev): ?>
-    <?php if ('Adult' == $book->neighbors->prevcat):?>
-      <li class="previous danger"><a href="viewBook.php?book=<?php echo $book->neighbors->prev;?>"><span aria-hidden="true">&larr;</span> [Adult Content]</a></li>
+  <?php if ($book->prev): ?>
+    <?php if ('Adult' == $book->prevcat):?>
+      <li class="previous danger"><a href="viewBook.php?book=<?php echo $book->prev;?>"><span aria-hidden="true">&larr;</span> [Adult Content]</a></li>
     <?php else:?>
-      <li class="previous"><a href="viewBook.php?book=<?php echo $book->neighbors->prev;?>"><span aria-hidden="true">&larr;</span> <?php echo $book->neighbors->prevtitle;?></a></li>
+      <li class="previous"><a href="viewBook.php?book=<?php echo $book->prev;?>"><span aria-hidden="true">&larr;</span> <?php echo $book->prevtitle;?></a></li>
     <?php endif;?>
   <?php endif;?>
   <li><a href="catalog.php">&uarr; Catalog</a></li>
@@ -21,11 +21,11 @@ $book = new library($book,TRUE);
     <li><a href="#"><span class="glyphicon glyphicon-flag"></span> Flag for deletion</a></li>
   <?php endif;?>
 
-  <?php if ($book->neighbors->next): ?>
-    <?php if ('Adult' == $book->neighbors->nextcat):?>
-      <li class="next danger"><a href="viewBook.php?book=<?php echo $book->neighbors->next;?>">[Adult Content] <span aria-hidden="true">&rarr;</span></a></li>
+  <?php if ($book->next): ?>
+    <?php if ('Adult' == $book->nextcat):?>
+      <li class="next danger"><a href="viewBook.php?book=<?php echo $book->next;?>">[Adult Content] <span aria-hidden="true">&rarr;</span></a></li>
     <?php else:?>
-      <li class="next"><a href="viewBook.php?book=<?php echo $book->neighbors->next;?>"><?php echo $book->neighbors->nexttitle;?> <span aria-hidden="true">&rarr;</span></a></li>
+      <li class="next"><a href="viewBook.php?book=<?php echo $book->next;?>"><?php echo $book->nexttitle;?> <span aria-hidden="true">&rarr;</span></a></li>
     <?php endif;?>
   <?php endif;?>
   </ul>

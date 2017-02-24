@@ -12,11 +12,24 @@ if (isset($_GET['page'])){
 } else {
   $page = 1;
 }
+$query = null;
+if (isset($_GET['query'])){
+  $query = filter_input(INPUT_GET, 'query',
+    FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH);
+}
 ?>
 <div class="page-header">
+  <form class="form-inline pull-right" action="" method="GET">
+    <div class="form-group">
+      <input type="text" class="form-control" id="query" name="query"
+      placeholder="Search term" value="<?php echo $query;?>">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
   <h1>The Library</h1>
 </div>
 
+<?php if(!$query):?>
 <nav aria-label="Page navigation">
   <ul class="pagination">
     <?php if ($page > 1):?>
@@ -27,36 +40,34 @@ if (isset($_GET['page'])){
     </li>
     <?php endif;?>
     <?php 
-
-    if ($page > 5 && $page < ($pages-5)){      
-      for ($i = ($page-5); $i <= ($page+5); $i++){
-        if ($page == $i){
-          echo "<li class='active'>";
-        } else {
-          echo "<li>";
+      if ($page > 5 && $page < ($pages-5)){      
+        for ($i = ($page-5); $i <= ($page+5); $i++){
+          if ($page == $i){
+            echo "<li class='active'>";
+          } else {
+            echo "<li>";
+          }
+          echo "<a href='catalog.php?page=$i'>$i</a></li>";
         }
-        echo "<a href='catalog.php?page=$i'>$i</a></li>";
-      }
-    } else if ($page <= 5) {
-      for ($i = 1; $i <= 5; $i++){
-        if ($page == $i){
-          echo "<li class='active'>";
-        } else {
-          echo "<li>";
+      } else if ($page <= 5) {
+        for ($i = 1; $i <= 5; $i++){
+          if ($page == $i){
+            echo "<li class='active'>";
+          } else {
+            echo "<li>";
+          }
+          echo "<a href='catalog.php?page=$i'>$i</a></li>";
         }
-        echo "<a href='catalog.php?page=$i'>$i</a></li>";
-      }
-    } else {
-      for ($i = ($pages-5); $i <= $pages; $i++){
-        if ($page == $i){
-          echo "<li class='active'>";
-        } else {
-          echo "<li>";
+      } else {
+        for ($i = ($pages-5); $i <= $pages; $i++){
+          if ($page == $i){
+            echo "<li class='active'>";
+          } else {
+            echo "<li>";
+          }
+          echo "<a href='catalog.php?page=$i'>$i</a></li>";
         }
-        echo "<a href='catalog.php?page=$i'>$i</a></li>";
       }
-    }
-
     ?>
     <li>
       <?php if ($page < $pages):?>
@@ -69,6 +80,7 @@ if (isset($_GET['page'])){
     </li>
   </ul>
 </nav>
+<?php endif;?>
 
 <p class="lead">Welcome to the library. Blank books aren't being shown. I want to die.</p>
 
@@ -83,7 +95,7 @@ if (isset($_GET['page'])){
   </thead>
   <tbody>
     <?php
-    $books = $books->getCatalog($page);
+    $books = $books->getCatalog($page,30,$query);
     foreach ($books as $book) {
       if ($book->category == 'Adult') {
         echo "<tr class='library-adult book' id='$book->id'>";
@@ -95,6 +107,10 @@ if (isset($_GET['page'])){
       echo "<td>$book->title</td>";
       echo "<td>$book->category</td>";
       echo "</tr></a>";
+    }
+    if (!$books){
+      echo "<tr><td colspan='4' style='text-align: center'>";
+      echo "&laquo; No results &raquo;</td></tr>";
     }
     ?>
   </tbody>

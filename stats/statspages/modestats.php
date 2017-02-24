@@ -3,7 +3,8 @@
 $bars = '';
 foreach ($stat->details as $detail => $count){
   if (0 == $count) continue;
-  $color = sha1($detail);
+  $color = hash('sha256',
+$detail);
   $color = $color{0}.$color{1}.$color{2};
   $width = ($count/array_sum($stat->details)) * 100;
   $bars.= "<div class='progress-bar' style='width: $width%;";

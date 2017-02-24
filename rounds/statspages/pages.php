@@ -5,7 +5,7 @@ if (isset($round->data->round_end_ghosts) || isset($round->data->survived_total)
 }
 
 if($round->hasObjectives) {
-  include('objectives.php');
+  include('antags.php');
 }
 
 if (isset($round->data->export_sold_amount) || isset($round->data->cargo_imports)) {

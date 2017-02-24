@@ -51,8 +51,7 @@
         include('success.php');?>
         </p>
         <p>With the following attempted objectives:</p>
-        <?php $details = $tatorO['details'];
-        include ('objs.php');?>
+        <?php $details = $tatorO['details']; include ('objs.php');?>
       </div>
     <?php endif;?>
 
@@ -64,8 +63,7 @@
         include('success.php');?>
         </p>
         <p>With the following attempted objectives:</p>
-        <?php $details = $lingO['details'];
-        include ('objs.php');?>
+        <?php $details = $lingO['details']; include ('objs.php');?>
       </div>
     <?php endif;?>
 
@@ -73,12 +71,10 @@
       <div class="col-md-4">
         <h3>Wizard Stats</h3>
         <p>Overall:
-        <?php $details = $wizardS['details'];
-        include('success.php');?>
+        <?php $details = $wizardS['details']; include('success.php');?>
         </p>
         <p>With the following attempted objectives:</p>
-        <?php $details = $wizardO['details'];
-        include ('objs.php');?>
+        <?php $details = $wizardO['details']; include ('objs.php');?>
       </div>
     <?php endif;?>
   </div>

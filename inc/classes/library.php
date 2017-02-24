@@ -25,7 +25,17 @@ class library {
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM tbl_library WHERE id = ?");
+    $db->query("SELECT ss13library.*,
+      MAX(next.id) AS `next`,
+      MIN(prev.id) AS `prev`,
+      next.title AS nexttitle,
+      prev.title AS prevtitle,
+      prev.category AS prevcat,
+      next.category AS nextcat
+      FROM ss13library
+      LEFT JOIN ss13library AS `next` ON next.id = ss13library.id + 1
+      LEFT JOIN ss13library AS `prev` ON prev.id = ss13library.id - 1
+      WHERE ss13library.id= ?");
     $db->bind(1,$book);
     try {
       $db->execute();
@@ -62,7 +72,6 @@ class library {
         $book->label = "$book->category";
       break;
     }
-    $book->neighbors = $this->getBookNeighbors($book->id);
     return $book;
   }
 
@@ -90,14 +99,19 @@ class library {
     return $db->single();
   }
 
-  public function getCatalog($page=1, $count=30){
+  public function getCatalog($page=1, $count=30, $query=null){
     $page = ($page*$count) - $count;
     $db = new database();
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT id, author, title, category FROM tbl_library
+    if ($query){
+      $query = "AND content LIKE '%$query%'";
+    }
+    $db->query("SELECT id, author, title, category
+      FROM tbl_library
       WHERE content != ''
+      $query
       ORDER BY `datetime` DESC
       LIMIT ?,?");
     $db->bind(1,$page);
