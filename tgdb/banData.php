@@ -3,7 +3,7 @@
     <h3 class="panel-title">
       <i class="fa fa-<?php echo $ban->icon;?>"
       title="<?php echo $ban->scope;?> ban" data-toggle="tooltip"></i>
-      <a href="#">
+      <a href='viewPlayer.php?ckey=<?php echo $ban->ckey;?>'>
         <?php echo $ban->ckey;?></a> 
       banned from <?php echo $ban->scope;?>, <?php echo $ban->bantimestamp;?> by
       <a href="#">

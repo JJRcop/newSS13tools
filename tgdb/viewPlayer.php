@@ -80,4 +80,22 @@ $player = $player->getPlayerByCkey($ckey);
   </div>
 </div>
 
+<div class="row" id="bans">
+<?php if ($player->bans):?>
+  <div class="page-header">
+    <h2>Bans <small>(<?php echo count($player->bans);?>)</small></h2>
+  </div>
+<?php else:?>
+  <div class="page-header">
+    <h2>No Bans on record</h2>
+  </div>
+<?php endif;?>
+
+<?php if ($player->bans){
+  foreach ($player->bans as $ban) {
+    include('banData.php');
+  }
+}?>
+</div>
+
 <?php require_once('../footer.php');?>
