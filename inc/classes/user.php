@@ -24,15 +24,15 @@ class user {
   }
 
   public function whodis(){
+    if(!isset($_COOKIE['byond_ckey'])){
+      return false;
+    } 
     $db = new database();
     if($db->abort){
       return FALSE;
     }
-    if($db->abort){
-      return FALSE;
-    }
-    $db->query("SELECT ss13player.*, TIMESTAMPDIFF(HOUR, lastseen, NOW()) AS hoursAgo FROM ss13player WHERE ip = ? ORDER BY lastseen DESC LIMIT 1");
-    $db->bind(1,$_SERVER['REMOTE_ADDR']);
+    $db->query("SELECT ss13player.*, TIMESTAMPDIFF(HOUR, lastseen, NOW()) AS hoursAgo FROM ss13player WHERE ckey = ? ORDER BY lastseen DESC LIMIT 1");
+    $db->bind(1,$_COOKIE['byond_ckey']);
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -113,7 +113,7 @@ class user {
         $user->level = 3;
       break;
     }
-    if (24 <= $user->hoursAgo){
+    if (!isset($_COOKIE['byond_ckey'])){
       $user->legit = FALSE;
     }
     $user->firstSeenTimeStamp = timeStamp($user->firstseen);

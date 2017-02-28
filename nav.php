@@ -65,6 +65,10 @@
         <ul class="nav navbar-nav navbar-right">
           <li><a href="#"><?php echo $user->label;?></a></li>
         </ul>
+      <?php else: ?>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="auth.php">Authenticate</a></li>
+        </ul>
       <?php endif;?>
     </div><!--/.nav-collapse -->
   </div>
