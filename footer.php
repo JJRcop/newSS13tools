@@ -8,11 +8,11 @@
         </div>
       </div>
       <div class="col-md-4">
-        <h3>Issue Reports</h3>
+        <h3>I found a bug!</h3>
         <a class="btn btn-danger"
         href="https://github.com/nfreader/newSS13tools/issues"
         target="_blank">
-          <i class="fa fa-exclamation-circle"></i> I found a bug!
+          <i class="fa fa-exclamation-circle"></i> Report Issue
         </a>
       </div>
     </div>

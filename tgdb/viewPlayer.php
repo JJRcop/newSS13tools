@@ -19,7 +19,7 @@ $player = $player->getPlayerByCkey($ckey);
 
 <div class="page-header">
   <h1><?php echo $player->label;?>&nbsp;
-  <small>Last seen <?php echo $player->hoursAgo;?> hours ago | 
+  <small>Last seen <?php echo $player->lastSeenTimeStamp;?> | 
   <a href="https://www.byond.com/members/<?php echo $player->ckey;?>"
   target="_blank">BYOND <i class="fa fa-external-link"></i></a>
   </small></h1>
@@ -32,7 +32,9 @@ $player = $player->getPlayerByCkey($ckey);
         <strong class="list-group-item-heading">Last rank</strong>
           <?php echo $player->lastadminrank;?>
       </li>
-      <?php if('Not banned' != $player->standing):?>
+      <?php if(strpos($player->standing,'Permanent') !== FALSE):?>
+        <li class="list-group-item perma">
+      <?php elseif (strpos($player->standing,'Temporarily') !== FALSE):?>
         <li class="list-group-item list-group-item-danger">
       <?php else:?>
         <li class="list-group-item list-group-item-success">
@@ -95,6 +97,8 @@ $player = $player->getPlayerByCkey($ckey);
   foreach ($player->bans as $ban) {
     include('banData.php');
   }
+} else {
+  echo alert("No bans to show",1);
 }?>
 </div>
 

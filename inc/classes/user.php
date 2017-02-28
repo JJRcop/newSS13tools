@@ -45,7 +45,6 @@ class user {
     $user->legit = FALSE;
     $user->color = "#FFF";
     $user->colorFore = "#000";
-    $user->standing = 'Not banned';
     switch($user->lastadminrank) {
       default:
       case 'Player':
@@ -116,19 +115,32 @@ class user {
     }
     if (24 <= $user->hoursAgo){
       $user->legit = FALSE;
-      $user->label = FALSE;
     }
     $user->firstSeenTimeStamp = timeStamp($user->firstseen);
     $user->lastSeenTimeStamp = timeStamp($user->lastseen);
+    $user->standing = array();
     if (!$user->bans){
-      $user->standing = 'Not banned';
+      $user->standing[] = 'Not banned';
     } else {
       foreach ($user->bans as $b) {
         if ($b->status == 'Active'){
-          $user->standing = 'Banned';
+          if('JOB_PERMABAN' == $b->bantype){
+            $user->standing[] = 'Permanently Job Banned';
+          }
+          if('JOB_TEMPBAN' == $b->bantype){
+            $user->standing[] = 'Temporarily Job Banned';
+          }
+          if('TEMPBAN' == $b->bantype){
+            $user->standing[] = 'Temporarily Banned';
+          }
+          if('PERMABAN' == $b->bantype){
+            $user->standing[] = 'Permanently Banned';
+          }
         }
       }
+      $user->standing = array_unique($user->standing);
     }
+    $user->standing = implode(", ",$user->standing);
     return $user;
   }
 

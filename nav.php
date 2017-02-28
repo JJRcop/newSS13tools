@@ -8,7 +8,7 @@
         <i class="fa fa-navicon fa-lg" style="color: white;"></i>
       </button>
       <a class="navbar-brand" href="<?php echo APP_URL;?>index.php">
-        SS13 Tools
+        <i class="fa fa-bar-chart"></i>  SS13 Tools
       </a>
     </div>
     <div id="navbar" class="collapse navbar-collapse">

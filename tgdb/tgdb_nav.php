@@ -8,7 +8,7 @@
         <i class="fa fa-navicon fa-2x" style="color: white;"></i>
       </button>
       <a class="navbar-brand" href="<?php echo APP_URL;?>tgdb/index.php">
-        TGDB <i class="fa fa-database"></i>
+        <i class="fa fa-database"></i> TGDB
       </a>
     </div>
     <div id="tgdbnav" class="collapse navbar-collapse">
@@ -27,3 +27,97 @@
     </div><!--/.nav-collapse -->
   </div>
 </nav>
+
+<p><i class="fa fa-lightbulb-o"></i> <strong>New!</strong> Start typing to begin searching for a ckey!</p>
+
+<script src='../resources/js/jquery.typeahead.min.js'></script>
+<link rel='stylesheet' href='../resources/css/jquery.typeahead.min.css' />
+
+<div id="playerSearch" style="display: none;">
+  <div class="container">
+<!--     <form class="form-horizontal">
+      <div class="form-group form-group-lg">
+        <div class="col-sm-12">
+          <input type="text" class="form-control input-xl" id="search"
+          name="search" placeholder="Ckey">
+        </div>
+        <label class="text-center text-muted col-sm-12">
+          &laquo; Press ESC to close &raquo;
+        </label>
+      </div>
+    </form> -->
+    <form class="form-horizontal">
+        <div class="typeahead__container form-horizontal">
+            <div class="typeahead__field form-group form-group-lg">
+                <div class="col-sm-12">
+                    <span class="typeahead__query">
+                        <input class="js-typeahead form-control input-xl"
+                               name="ckey"
+                               type="search"
+                               autocomplete="off"
+                               placeholder="ckey"
+                               id="search">
+                    </span>
+       <!--              <span class="typeahead__button">
+                        <button type="submit">
+                            <span class="typeahead__search-icon"></span>
+                        </button> -->
+                    </span>
+                </div>
+                <label class="text-center text-muted col-sm-12">
+                  &laquo; Press ESC to close &raquo;
+                </label>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>
+<script>
+var searchContainer = $('#playerSearch');
+var searchStatus = false;
+
+window.onkeydown = function (e) {
+  if (!e) e = window.event;
+  if (!e.metaKey) {
+    if(e.keyCode >= 65 && event.keyCode <= 90 || e.keyCode >= 48 && event.keyCode <= 57) {
+      searchContainer.show();
+      searchContainer.find('input').focus();
+      searchStatus = true;
+    }
+  }
+  if (searchStatus && event.keyCode == 27){
+    searchContainer.hide();
+    searchStatus = false;
+  }
+}
+$("#search").submit(function(e){
+  e.preventDefault();
+});
+$.typeahead({
+  input: '#search',
+  minLength: 2,
+  order: 'desc',
+  source: {
+    ajax: {
+      url: 'ckeySuggest.php',
+      data: {
+        query: '{{query}}'
+      }
+    }
+  },
+  dynamic: true,
+  debug: true,
+  hint: true,
+  mustSelectItem: true,
+  display: ['ckey'],
+  href: function (item) {
+    return "viewPlayer.php?ckey=" + item.ckey
+  },
+  callback: {
+    onClickAfter: function (node, a, item, event) {
+      event.preventDefault;
+      window.location.href = item.href;
+    }
+  }
+})
+</script>
