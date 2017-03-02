@@ -3,6 +3,27 @@
 <div class="page-header">
   <h1>SS13 tools &amp; stats</h1>
 </div>
+<?php $num = $app->getBigNumbers();?>
+<div class="row">
+  <div class="col-md-6">
+    <div class="jumbotron">
+      <h1>
+        <small>Tracking</small><br>
+        <?php echo $num['deaths'];?><br>
+        <small>deaths</small>
+      </h1>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="jumbotron">
+      <h1>
+        <small>Tracking</small><br>
+        <?php echo $num['rounds'];?><br>
+        <small>rounds</small>
+      </h1>
+    </div>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-md-6">
@@ -22,7 +43,7 @@
     </ul>
   </div>
   <div class="col-md-6">
-    <?php require_once('changelog.php');?>
+  <h2>Recent rounds <small><a href='rounds/listRounds.php'>See more</a></small></h2>
   </div>
 </div>
 

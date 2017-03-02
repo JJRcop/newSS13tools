@@ -13,9 +13,20 @@
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-      <li><a href="<?php echo APP_URL;?>todo.php">Todos</a></li>
+      <li><a href="<?php echo APP_URL;?>status.php">Project Status</a></li>
         <?php if ($user->legit): ?>
-        <li><a href="<?php echo APP_URL;?>info.php">System Info</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+          role="button" aria-expanded="false">Tools
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="<?php echo APP_URL;?>info.php">System Info</a></li>
+            <li>
+              <a href="<?php echo APP_URL;?>tools/generateAllMonthlyStats.php">Generate Monthly Stats</a>
+            </li>
+          </ul>
+        </li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"
           role="button" aria-expanded="false">Icon Tools
@@ -53,6 +64,11 @@
               </a>
             </li>
             <li><a href="<?php echo APP_URL;?>death/deaths.php">Deaths</a></li>
+            <li>
+              <a href="<?php echo APP_URL;?>stats/statsByMonth.php">
+                Stats by month
+              </a>
+            </li>
           </ul>
         </li>
         <?php if ($user->legit):?>

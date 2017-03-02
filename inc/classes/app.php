@@ -95,4 +95,28 @@
     return $db->resultset();
   }
 
+  public function getBigNumbers(){
+    $result = array();
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("EXPLAIN SELECT count(id) AS deaths FROM ss13death;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $result['deaths'] = $db->single()->rows;
+
+    $db->query("SELECT count(distinct round_id) AS rounds FROM ss13feedback;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $result['rounds'] = $db->single()->rounds;
+    return $result;
+  }
+
 }

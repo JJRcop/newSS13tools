@@ -7,7 +7,7 @@
 
 <div class="row">
   <div class="col-md-12">
-  <?php if (!file_exists("../".ICONS_DIR)) die("Can't find tgstation/icons. Did you check it out?"); ?>
+  <?php if (!file_exists(ICONS_DIR)) die("Can't find tgstation/icons. Did you check it out?"); ?>
     <p><strong>Click on a file to generate PNGs</strong> Or <a href="#" class="btn btn-success btn-xs" id="genAll">Generate all</a></p>
     <table class="table table-bordered table-condensed">
     <thead>

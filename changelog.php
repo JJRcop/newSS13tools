@@ -1,19 +1,20 @@
-<h2>Changelog</h2>
-
+<div class="page-header">
+  <h1>Changelog</h1>
+</div>
 <ul class="list-group">
-<li class="list-group-item">
-  <h4 class="list-group-heading">28-02-2017</h4>
-  <ul class="list-unstyled">
-    <li><i class="fa fa-plus text-success"></i> You can now log in to atlantaned.space with your tgstation13.org forum account! Click on Authenticate in the upper right-hand corner to get started!</li>
-  </ul>
-</li>
-<li class="list-group-item">
-  <h4 class="list-group-heading">24-02-2017</h4>
-  <p>A bunch of stuff got refactored, and...</p>
-  <ul class="list-unstyled">
-    <li><i class="fa fa-plus text-success"></i> The library has a search engine!</li>
-  </ul>
-</li>
+  <li class="list-group-item">
+    <h4 class="list-group-heading">28-02-2017</h4>
+    <ul class="list-unstyled">
+      <li><i class="fa fa-plus text-success"></i> You can now log in to atlantaned.space with your tgstation13.org forum account! Click on Authenticate in the upper right-hand corner to get started!</li>
+    </ul>
+  </li>
+  <li class="list-group-item">
+    <h4 class="list-group-heading">24-02-2017</h4>
+    <p>A bunch of stuff got refactored, and...</p>
+    <ul class="list-unstyled">
+      <li><i class="fa fa-plus text-success"></i> The library has a search engine!</li>
+    </ul>
+  </li>
   <li class="list-group-item">
     <h4 class="list-group-heading">22-02-2017</h4>
     <p>The database is back and I fixed a bunch of stuff!</p>

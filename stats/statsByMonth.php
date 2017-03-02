@@ -1,21 +1,24 @@
 <?php require_once('../header.php') ;?>
 
-<?php
-
-$start    = (new DateTime('2011-10-30'))->modify('first day of this month');
-$end      = (new DateTime())->modify('last day of last month');
-$interval = DateInterval::createFromDateString('1 month');
-$period   = new DatePeriod($start, $interval, $end);
-$dates = array();
-foreach ($period as $dt) {
-  $dates[] = $dt->format("Y-m-d");
-}
-$dates = array_reverse($dates);
-?>
+<?php $stat = new stat();
+$stats = $stat->getMonthsWithStats();?>
+<div class="page-header">
+  <h1>Stats by month</h1>
+</div>
 
 <ul class="list-inline">
-<?php foreach ($dates as $d):?>
-  <li><a href="#"><?php echo $d;?></a></li>
-<?php endforeach;?>
+  <?php foreach ($stats as $date):
+  $count = $date->stats;
+  $date = new dateTime("$date->month/01/$date->year");
+  $link = APP_URL."stats/viewMonthlyStats.php?year=".$date->format('Y');
+  $link.= "&month=".$date->format('m');
+  ?>
+    <li>
+      <a href="<?php echo $link;?>">
+        <?php echo $date->format('F Y')." - $count datapoints";?>
+      </a>
+    </li>
+  <?php endforeach;?>
 </ul>
+
 <?php require_once('../footer.php') ;?>

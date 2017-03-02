@@ -1,4 +1,4 @@
 <?php require_once('config.php');
 
-$user = new user();
-var_dump($user);
+$stat = new stat();
+var_dump($stat->generateMonthlyStats(2017,02));

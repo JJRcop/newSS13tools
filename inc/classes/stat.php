@@ -392,5 +392,118 @@ class stat {
 
     return $mode;
   }
+  public function getStatsForMonth($start,$end) {
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
+    $db->execute();
+    $db->query("SELECT ss13feedback.var_name,
+      GROUP_CONCAT(ss13feedback.round_id SEPARATOR ', ') AS rounds,
+      SUM(ss13feedback.var_value) AS `value`,
+      IF (ss13feedback.details = '', NULL, GROUP_CONCAT(ss13feedback.details SEPARATOR ', ')) AS details
+      FROM ss13feedback
+      WHERE DATE(ss13feedback.time) BETWEEN ? AND ?
+      AND ss13feedback.var_name != ''
+      GROUP BY ss13feedback.var_name
+      ORDER BY ss13feedback.var_name ASC;");
+    $db->bind(1,$start);
+    $db->bind(2,$end);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $parse = new stat();
+    foreach ($results = $db->resultset() as &$stat){
+      $stat->total = count(explode(', ',$stat->rounds));
+      $stat = $parse->parseFeedback($stat, TRUE);
+    }
+    return $db->resultset();
+  }
 
+  public function generateMonthlyStats($year,$month) {
+    $date = new DateTime("Midnight $month/01/$year");
+    $start = $date->format("Y-m-01 H:i:s");
+    $end = $date->format('Y-m-t 23:59:59');
+    $results = $this->getStatsForMonth($start, $end);
+    foreach ($results as &$stat){
+      $stat->total = count(explode(', ',$stat->rounds));
+      $stat = $this->parseFeedback($stat, TRUE);
+    }
+    return $this->saveMonthlyStats($results,$year,$month)." for ".$date->format("Y-m");
+  }
+
+  public function SaveMonthlyStats($stats,$year,$month){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("INSERT INTO monthly_stats
+      (rounds, roundcount, var_name, data, value, month, year)
+      VALUES(?, ?, ?, ?, ?, ?, ?)");
+    $i = 0;
+    foreach ($stats as &$d){
+      if ('' == $d->var_name) continue;
+      if ($d->details && is_array($d->details)){
+        $d->details = json_encode($d->details);
+      }
+      $db->bind(1,$d->rounds);
+      $db->bind(2,$d->total);
+      $db->bind(3,$d->var_name);
+      $db->bind(4,$d->details);
+      $db->bind(5,$d->value);
+      $db->bind(6,$month);
+      $db->bind(7,$year);
+      try {
+        $db->execute();
+      } catch (Exception $e) {
+        var_dump("Database error: ".$e->getMessage());
+      }
+      $i++;
+    }
+    $db->query("INSERT INTO tracked_months
+      (year, month, stats)
+      VALUES(?, ?, ?)");
+    $db->bind(1,$year);
+    $db->bind(2,$month);
+    $db->bind(3,$i);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return "Database error: ".$e->getMessage();
+    }
+    return "Added $i stats to the database";
+  }
+
+  public function getMonthsWithStats(){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT * FROM tracked_months");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      var_dump("Database error: ".$e->getMessage());
+    }
+    return $db->resultSet();
+  }
+
+  public function getMonthlyStats($year, $month){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT * FROM monthly_stats WHERE month = ? AND year = ?");
+    $db->bind(1,$month);
+    $db->bind(2,$year);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      var_dump("Database error: ".$e->getMessage());
+    }
+    return $db->resultSet();
+  }
 }

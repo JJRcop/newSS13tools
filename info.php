@@ -38,6 +38,21 @@
       <td>rootpath</td>
       <td><?php var_dump(ROOTPATH);?></td>
     </tr>
+    <tr>
+      <?php $db = new database();?>
+      <td>Primary DB</td>
+      <td class="<?php echo ($db->abort)?'danger':'success';?>">
+        <?php echo ($db->abort)?'error':'connected';?>
+      </td>
+    </tr>
+    <tr>
+      <?php $db = new database(TRUE);?>
+      <td>Secondary DB</td>
+      <td class="<?php echo ($db->abort)?'danger':'success';?>">
+        <?php echo ($db->abort)?'error':'connected';?>
+      </td>
+    </tr>
+
   </tbody>
 </table>
 
