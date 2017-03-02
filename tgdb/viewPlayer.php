@@ -1,5 +1,4 @@
 <?php require_once("../header.php");?>
-
 <?php require_once('tgdb_nav.php');?>
 
 <?php
@@ -15,6 +14,7 @@ if (!$ckey){
 
 $player = new user();
 $player = $player->getPlayerByCkey($ckey);
+var_dump($player);
 ?>
 
 <div class="page-header">
@@ -28,7 +28,7 @@ $player = $player->getPlayerByCkey($ckey);
 <div class="row">
   <div class="col-md-4">
     <ul class="list-group">
-      <li class="list-group-item" style="background: <?php echo $player->color;?>; color: <?php echo $player->colorFore;?>;">
+      <li class="list-group-item" style="background: <?php echo $player->backColor;?>; color: <?php echo $player->foreColor;?>;">
         <strong class="list-group-item-heading">Last rank</strong>
           <?php echo $player->lastadminrank;?>
       </li>

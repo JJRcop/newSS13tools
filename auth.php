@@ -7,10 +7,9 @@ if(isset($_GET['reset'])){
   die("Reset");
 }
 
-define("REMOTE_ROOT",'https://tgstation13.org/phpBB/');
-define('OAUTHREMOTECREATE',REMOTE_ROOT.'oauth_create_session.php');
-define('OAUTHREMOTE',REMOTE_ROOT.'oauth.php');
-define('OAUTHREMOTEINFO',REMOTE_ROOT.'oauth_get_session_info.php');
+if(!defined('OAUTHREMOTE')){
+  die("No remote OAuth provider specified.");
+}
 
 $step = 1;
 if (isset($_GET['step'])){

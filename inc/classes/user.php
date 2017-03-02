@@ -1,63 +1,58 @@
-<?php
+<?php class user{
 
-class user {
+  public $ckey; //Ckey
+  public $byond; //Their byond key, unsanitized
 
-  public $legit;
+  public $legit = false; //Whether or not the user is recognized as a player
+  public $rank = 'Player'; //Their rank (defualts to player, unprivileged)
+  public $level = 0; //Their access level for this application
+
+  public $foreColor = '#FFF'; //Foreground(text) color
+  public $backColor = '#DDD'; //Background color
   public $label;
-  public $color;
-  public $level = 0;
+
+  public $firstSeenTimeStamp;
+  public $lastSeenTimeStamp;
 
   public function __construct(){
-    $user = $this->whodis();
-    if (!$user){
-      $this->legit = FALSE;
-      $this->label = FALSE;
-      $this->valid = FALSE;
-      return $user;
+    if(isset($_COOKIE['byond_ckey'])){
+      $user = $this->getUser($_COOKIE['byond_ckey']);
+      if(!$user) return false;
+      $user = $this->parseUser($user);
+      //Cookie dependent info
+      $user->legit = false;
+      if('OK' == $_COOKIE['status']) $user->legit = TRUE;
+      $user->ckey = $_COOKIE['byond_ckey'];
+      $user->byond = $_COOKIE['byond_key'];
+
+      foreach ($user as $k => $v){
+        $this->$k = $v;
+      }
     }
-    $user->bans = FALSE;
-    $user = $this->parseUser($user);
-    foreach ($user as $key=>$value){
-      $this->$key = $value;
-    }
-    $this->valid = TRUE;
+    return false;
   }
 
-  public function whodis(){
-    if(!isset($_COOKIE['byond_ckey'])){
-      return false;
-    } 
-    $db = new database();
-    if($db->abort){
-      return FALSE;
+  public function parseUser(&$user,$data=false){
+    //Stuff we can set from the DB
+    $user->rank = $user->lastadminrank;
+    $user->firstSeenTimeStamp = timeStamp($user->firstseen);
+    $user->lastSeenTimeStamp = timeStamp($user->lastseen);
+    if(is_int($user->ip)){
+      $user->ip = long2ip($user->ip);
     }
-    $db->query("SELECT ss13player.*, TIMESTAMPDIFF(HOUR, lastseen, NOW()) AS hoursAgo FROM ss13player WHERE ckey = ? ORDER BY lastseen DESC LIMIT 1");
-    $db->bind(1,$_COOKIE['byond_ckey']);
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    return $db->single();
-  }
 
-  public function parseUser(&$user){
-    $user->legit = FALSE;
-    $user->color = "#FFF";
-    $user->colorFore = "#000";
-    switch($user->lastadminrank) {
-      default:
-      case 'Player':
-        $user->label = "$user->ckey";
-        $user->legit = FALSE;
-      break;
+    //Ok, time to get their and set up display variables
+    
+    //Defaults
+    $user->backColor = "#DDD";
+    $user->foreColor = "#444";
+    $user->icon = '';
+    $user->level = 0;
 
+    switch ($user->rank) {
       case 'Coder':
-      $user->color = '#009900';
-      $user->label = "<span class='label' style='background: $user->color'";
-        $user->label.= "title='$user->lastadminrank'>";
-      $user->label.= "<i class='fa fa-code'></i> $user->ckey</span>";
-      $user->legit = FALSE; //Change to TRUE to allow access to bans etc
+      $user->backColor = '#009900';
+      $user->icon = "<i class='fa fa-code'></i>";
       $user->level = 1;
       break;
 
@@ -67,95 +62,77 @@ class user {
       case 'CoderMin':
       case 'GameMaster':
       case 'ClockcultEmpress':
-        $user->color = '#9570c0';
-        $user->colorFore = '#FFF';
-        $user->label = "<span class='label' style='background: $user->color'";
-        $user->label.= "title='$user->lastadminrank'>";
-        $user->label.= "<i class='fa fa-eye'></i> $user->ckey </span>";
-        $user->legit = TRUE;
+        $user->backColor = "#9570c0";
+        $user->foreColor = "#FFF";
+        $user->icon = "<i class='fa fa-eye'></i>";
         $user->level = 2;
       break;
 
       case 'Barista':
-        $user->color = '#6b4711';
-        $user->label = "<span class='label' style='background: $user->color'";
-        $user->label.= "title='$user->lastadminrank'>";
-        $user->label.= "<i class='fa fa-coffee'></i> $user->ckey </span>";
-        $user->legit = TRUE;
+        $user->backColor = '#6b4711';
+        $user->icon = "<i class='fa fa-coffee'></i>";
         $user->level = 2;
       break;
 
       case 'GameMaster': 
-        $user->color = '#A00';
-        $user->label = "<span class='label' style='background: $user->color'";
-        $user->label.= "title='$user->lastadminrank'>";
-        $user->label.= "<i class='fa fa-star'></i> $user->ckey </span>";
-        $user->legit = TRUE;
+        $user->backColor = '#A00';
+        $user->icon = "<i class='fa fa-star'></i>";
         $user->level = 3;
       break;
 
       case 'HeadAdmin':
       case 'Headmin':
-        $user->color = '#A00';
-        $user->label = "<span class='label' style='background: $user->color'";
-        $user->label.= "title='$user->lastadminrank'>";
-        $user->label.= "<i class='fa fa-star'></i> $user->ckey </span>";
-        $user->legit = TRUE;
+        $user->foreColor = '#A00';
+        $user->icon  = "<i class='fa fa-star'></i>";
         $user->level = 3;
       break;
 
       case 'Host': 
-        $user->color = '#A00';
-        $user->label = "<span class='label' style='background: $user->color'";
-        $user->label.= "title='$user->lastadminrank'>";
-        $user->label.= "<i class='fa fa-server'></i> $user->ckey</span>";
-        $user->legit = TRUE;
+        $user->foreColor = '#A00';
+        $user->icon = "<i class='fa fa-server'></i>";
         $user->level = 3;
       break;
     }
-    if (!isset($_COOKIE['byond_ckey'])){
-      $user->legit = FALSE;
-    }
-    $user->firstSeenTimeStamp = timeStamp($user->firstseen);
-    $user->lastSeenTimeStamp = timeStamp($user->lastseen);
-    $user->standing = array();
-    if (!$user->bans){
-      $user->standing[] = 'Not banned';
-    } else {
-      foreach ($user->bans as $b) {
-        if ($b->status == 'Active'){
-          if('JOB_PERMABAN' == $b->bantype){
-            $user->standing[] = 'Permanently Job Banned';
-          }
-          if('JOB_TEMPBAN' == $b->bantype){
-            $user->standing[] = 'Temporarily Job Banned';
-          }
-          if('TEMPBAN' == $b->bantype){
-            $user->standing[] = 'Temporarily Banned';
-          }
-          if('PERMABAN' == $b->bantype){
-            $user->standing[] = 'Permanently Banned';
+
+    $user->label = "<span class='label' title='$user->rank' ";
+    $user->label.= "style='background-color: $user->backColor;";
+    $user->label.= "color: $user->foreColor;'>$user->icon $user->ckey";
+    $user->label.= "</span>";
+    if ($data) { //For viewing player info pages
+      $user->standing = array();
+      if (!$user->bans){
+        $user->standing[] = 'Not banned';
+      } else {
+        foreach ($user->bans as $b) {
+          if ($b->status == 'Active'){
+            if('JOB_PERMABAN' == $b->bantype){
+              $user->standing[] = 'Permanently Job Banned';
+            }
+            if('JOB_TEMPBAN' == $b->bantype){
+              $user->standing[] = 'Temporarily Job Banned';
+            }
+            if('TEMPBAN' == $b->bantype){
+              $user->standing[] = 'Temporarily Banned';
+            }
+            if('PERMABAN' == $b->bantype){
+              $user->standing[] = 'Permanently Banned';
+            }
           }
         }
+        $user->standing = array_unique($user->standing);
       }
-      $user->standing = array_unique($user->standing);
+      $user->standing = implode(", ",$user->standing);
     }
-    $user->standing = implode(", ",$user->standing);
     return $user;
   }
 
-  public function auth() {
+  public function getUser($ckey){
     $db = new database();
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT ckey, lastadminrank
-      FROM tbl_player
-      WHERE lastadminrank != 'Player'
-      AND lastseen > DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-      AND ip = ?
-      LIMIT 0,1");
-    $db->bind(1,$_SERVER['REMOTE_ADDR']);
+    $db->query("SELECT * FROM tbl_player WHERE ckey = ? LIMIT 1");
+    $db->bind(1,$ckey);
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -185,10 +162,10 @@ class user {
     }
     $player = $db->single();
     $player->bans = $this->getPlayerBans($player->ckey);
-    $player = $this->parseUser($player);
+    $player = $this->parseUser($player,TRUE);
     return $player;
   }
-
+  
   public function getPlayerBans($ckey){
     $db = new database();
     if($db->abort){

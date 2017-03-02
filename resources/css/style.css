@@ -93,7 +93,9 @@ tr.perma,
   border-color: #FBE3FC !important;
 }
 
-
+.navbar-nav>li>a>span {
+  font-size: 100% !important;
+}
 
 .book, .round {
   color: #337ab7;

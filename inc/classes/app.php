@@ -72,7 +72,10 @@
       if(1 == strpos($check,$dir)){
         if (!$user->legit || $user->level < $level){
           $this->die = TRUE;
-          return alert("You do not have permission to access this page. Please <a href='".APP_URL."auth.php'>authenticate</a> and try again.",FALSE);
+          $msg = "You do not have permission to access this page. ";
+          $msg.= "Please <a href='".APP_URL."auth.php'>authenticate</a> ";
+          $msg.= "and try again.";
+          return alert($msg,FALSE);
         }
       }
     }

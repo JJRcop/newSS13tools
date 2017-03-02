@@ -55,7 +55,7 @@
             <li><a href="<?php echo APP_URL;?>death/deaths.php">Deaths</a></li>
           </ul>
         </li>
-        <?php if ($user->valid):?>
+        <?php if ($user->legit):?>
           <li>
             <a href="<?php echo APP_URL;?>library/catalog.php">Library</a>
           </li>
