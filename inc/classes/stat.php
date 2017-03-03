@@ -400,7 +400,7 @@ class stat {
     $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
     $db->execute();
     $db->query("SELECT ss13feedback.var_name,
-      GROUP_CONCAT(ss13feedback.round_id SEPARATOR ', ') AS rounds,
+      count(distinct ss13feedback.round_id) as rounds,
       SUM(ss13feedback.var_value) AS `value`,
       IF (ss13feedback.details = '', NULL, GROUP_CONCAT(ss13feedback.details SEPARATOR ', ')) AS details
       FROM ss13feedback
@@ -417,7 +417,6 @@ class stat {
     }
     $parse = new stat();
     foreach ($results = $db->resultset() as &$stat){
-      $stat->total = count(explode(', ',$stat->rounds));
       $stat = $parse->parseFeedback($stat, TRUE);
     }
     return $db->resultset();
@@ -441,8 +440,8 @@ class stat {
       return FALSE;
     }
     $db->query("INSERT INTO monthly_stats
-      (rounds, roundcount, var_name, data, value, month, year)
-      VALUES(?, ?, ?, ?, ?, ?, ?)");
+      (rounds, var_name, data, value, month, year)
+      VALUES(?, ?, ?, ?, ?, ?)");
     $i = 0;
     foreach ($stats as &$d){
       if ('' == $d->var_name) continue;
@@ -450,12 +449,11 @@ class stat {
         $d->details = json_encode($d->details);
       }
       $db->bind(1,$d->rounds);
-      $db->bind(2,$d->total);
-      $db->bind(3,$d->var_name);
-      $db->bind(4,$d->details);
-      $db->bind(5,$d->value);
-      $db->bind(6,$month);
-      $db->bind(7,$year);
+      $db->bind(2,$d->var_name);
+      $db->bind(3,$d->details);
+      $db->bind(4,$d->value);
+      $db->bind(5,$month);
+      $db->bind(6,$year);
       try {
         $db->execute();
       } catch (Exception $e) {
