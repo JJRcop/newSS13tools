@@ -86,7 +86,8 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM tbl_memo ORDER BY `timestamp` DESC");
+    $db->query("SELECT * FROM tbl_messages WHERE `type` = 'memo'
+      ORDER BY `timestamp` DESC");
     try {
       $db->execute();
     } catch (Exception $e) {

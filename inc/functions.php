@@ -162,3 +162,16 @@ function timestamp($date,$str=null) {
   $return.= "</span>";
   return $return;
 }
+
+/**
+ * Replace links in text with html links
+ *
+ * @param  string $text
+ * @return string
+ */
+function auto_link_text($text) {
+  $regex = '#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#';
+  return preg_replace_callback($regex, function ($matches) {
+    return "<a href='{$matches[0]}' target='_blank'>{$matches[0]}</a>";
+  }, $text);
+}

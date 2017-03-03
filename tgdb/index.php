@@ -17,8 +17,8 @@
         foreach($memos as $memo):?>
           <li class="list-group-item">
             <blockquote>
-              <p><?php echo nl2br($memo->memotext);?></p>
-              <footer><?php echo $memo->ckey;?>
+              <p><?php echo auto_link_text(nl2br($memo->text));?></p>
+              <footer><?php echo $memo->adminckey;?>
                 <cite><?php echo $memo->timestamp;?></cite>
               </footer>
             </blockquote>

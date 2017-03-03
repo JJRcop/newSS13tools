@@ -14,7 +14,6 @@ if (!$ckey){
 
 $player = new user();
 $player = $player->getPlayerByCkey($ckey);
-var_dump($player);
 ?>
 
 <div class="page-header">
@@ -82,17 +81,36 @@ var_dump($player);
   </div>
 </div>
 
-<div class="row" id="bans">
+<div class="row">
+<?php if ($player->messages):?>
+  <div class="page-header">
+    <h2>Messages <?php echo (count($player->messages) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#messages'>Show</a> ":""?><small>(<?php echo count($player->messages);?>)</small></h2>
+  </div>
+<?php else:?>
+  <div class="page-header">
+    <h2>No messages on record</h2>
+  </div>
+<?php endif;?>
+  <div class="<?php echo (count($player->messages) > 5)?"collapse":""?>" id="messages">
+<?php if ($player->messages){
+  foreach ($player->messages as $message) {
+    include('messageData.php');
+  }
+} else {
+  echo alert("No messages to show",1);
+}?>
+  </div>
+
 <?php if ($player->bans):?>
   <div class="page-header">
-    <h2>Bans <small>(<?php echo count($player->bans);?>)</small></h2>
+    <h2>Bans <?php echo (count($player->bans) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#bans'>Show</a> ":""?><small>(<?php echo count($player->bans);?>)</small></h2>
   </div>
 <?php else:?>
   <div class="page-header">
     <h2>No Bans on record</h2>
   </div>
 <?php endif;?>
-
+  <div class="<?php echo (count($player->bans) > 5)?"collapse":""?>" id="bans">
 <?php if ($player->bans){
   foreach ($player->bans as $ban) {
     include('banData.php');
@@ -100,6 +118,7 @@ var_dump($player);
 } else {
   echo alert("No bans to show",1);
 }?>
+  </div>
 </div>
 
 <?php require_once('../footer.php');?>

@@ -83,7 +83,7 @@
         </ul>
       <?php else: ?>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="auth.php">Authenticate</a></li>
+          <li><a href="<?php echo APP_URL;?>auth.php">Authenticate</a></li>
         </ul>
       <?php endif;?>
     </div><!--/.nav-collapse -->

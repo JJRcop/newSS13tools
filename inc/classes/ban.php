@@ -54,7 +54,8 @@ class ban {
     }
     $db->query("SELECT tbl_ban.*,
       MAX(next.id) AS `next`,
-      MIN(prev.id) AS `prev`
+      MIN(prev.id) AS `prev`,
+      MINUTE(TIMEDIFF(tbl_ban.expiration_time, tbl_ban.bantime)) AS duration_c
       FROM tbl_ban
       LEFT JOIN tbl_ban AS `next` ON next.id = tbl_ban.id + 1
       LEFT JOIN tbl_ban AS `prev` ON prev.id = tbl_ban.id - 1
@@ -68,14 +69,41 @@ class ban {
     return $db->single();
   }
 
-  public function getBanList($page = 0, $count=100) {
+  public function getBanList($page = 0, $count=100,$filterby=null,$filter=null) {
     $db = new database();
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM tbl_ban ORDER BY id DESC LIMIT ?, ?");
-    $db->bind(1, $page);
-    $db->bind(2, $count);
+    $where = '';
+    if ($filterby && $filter) {
+      switch ($filterby){
+        case 'IP':
+        case 'ip':
+          $where = "ip";
+          $filter = ip2long($filter);
+        break;
+
+        case 'CID':
+        case 'cid':
+          $where = "computerid";
+          $filter = $filter;
+        break;
+      }
+      $where = "WHERE $where = ?";
+    }
+    $db->query("SELECT *,
+    MINUTE(TIMEDIFF(tbl_ban.expiration_time, tbl_ban.bantime)) AS duration_c
+    FROM tbl_ban
+    $where
+    ORDER BY id DESC LIMIT ?, ?");
+    if($where){
+      $db->bind(2, $page);
+      $db->bind(3, $count);
+      $db->bind(1,$filter);
+    } else {
+      $db->bind(1, $page);
+      $db->bind(2, $count);
+    }
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -91,15 +119,21 @@ class ban {
   public function parseBan(&$ban) {
     //The ban status should be done on MySQL, this is a crutch and I don't like
     //it :(
-    
+    $ban->reason = auto_link_text($ban->reason);
     $round = new round();
-    $ban->serverip = $round->mapServer($ban->serverip);
+    $ban->serverip = $round->mapServer(long2ip($ban->server_ip).":".$ban->server_port);
 
     $ban->status = 'Active';
     $ban->statusClass = 'danger';
 
     $ban->bantimestamp = timeStamp($ban->bantime);
     $ban->expirationtimestamp = timeStamp($ban->expiration_time);
+
+    $ban->duration = $ban->duration_c;
+
+    if (is_int($ban->ip)){
+      $ban->ip = long2ip($ban->ip);
+    }
 
     switch ($ban->bantype){
       case 'TEMPBAN':
@@ -126,7 +160,6 @@ class ban {
           // $ban->expirationtimestamp = timeStamp($ban->expiration_time,'Expired');
           $ban->status = 'Expired';
           $ban->statusClass = 'success';
-
         }
       break;
 
@@ -198,6 +231,28 @@ class ban {
       return returnError("Database error: ".$e->getMessage());
     }
     return $db->resultset();
+  }
+
+  public function getPlayerBans($ckey){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT *,
+      MINUTE(TIMEDIFF(tbl_ban.expiration_time, tbl_ban.bantime)) AS duration_c
+      FROM ss13ban WHERE ckey=? ORDER BY bantime DESC");
+    $db->bind(1,strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $ckey)));
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $ban = new ban();
+    if(!$bans = $db->resultSet()) return false;
+    foreach ($bans as &$b){
+      $b = $ban->parseBan($b);
+    }
+    return $bans;
   }
 
 }

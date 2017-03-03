@@ -9,7 +9,7 @@
     <div class="jumbotron">
       <h1>
         <small>Tracking</small><br>
-        <?php echo $num['deaths'];?><br>
+        <?php echo number_format($num['deaths']);?><br>
         <small>deaths</small>
       </h1>
     </div>
@@ -18,7 +18,7 @@
     <div class="jumbotron">
       <h1>
         <small>Tracking</small><br>
-        <?php echo $num['rounds'];?><br>
+        <?php echo number_format($num['rounds']);?><br>
         <small>rounds</small>
       </h1>
     </div>

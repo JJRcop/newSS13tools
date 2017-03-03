@@ -12,6 +12,12 @@
     </h3>
   </div>
   <div class="panel-body">
+  <?php if ('Active' != $ban->status && isset($hideInactive)):?>
+    <p class="text-center text-muted">
+    &laquo; <?php echo $ban->status;?>. <a href="viewBan.php?ban=<?php echo $ban->id;?>">Click here</a> for details &raquo;
+    </p>
+    </div>
+  <?php else:?>
    <p><?php echo $ban->reason;?></p>
   </div>
   <table class="table table-condensed table-bordered ban">
@@ -31,7 +37,14 @@
     </tr>
     <tr>
       <th>CID</th>
-      <td class='cid'><?php echo $ban->computerid;?><?php if ($ban->computerid):?><div class="ql">(<a href="#"><i class="fa fa-ban"></i></a>)(<a href="#"><i class="fa fa-plug"></i></a>)(<a href="#"><i class="fa fa-user"></i></a>)</div><?php endif;?></td>
+      <td class='cid'><?php echo $ban->computerid;?>
+        <?php if ($ban->computerid):?>
+            <div class="ql">
+              (<a href="bans.php?cid=<?php echo $ban->computerid;?>"><i class="fa fa-ban"></i></a>)
+              (<a href="#"><i class="fa fa-plug"></i></a>)
+              (<a href="#"><i class="fa fa-user"></i></a>)
+            </div>
+          <?php endif;?></td>
       <?php if ($ban->status == 'Expired'):?>
         <th>Ban expired</th>
       <?php else:?>
@@ -41,9 +54,17 @@
     </tr>
     <tr>
       <th>IP</th>
-      <td class='ipaddr'><?php echo $ban->ip;?><?php if ($ban->ip):?><div class="ql">(<a href="#"><i class="fa fa-ban"></i></a>)(<a href="#"><i class="fa fa-plug"></i></a>)(<a href="#"><i class="fa fa-user"></i></a>)</div><?php endif;?></td>
+      <td class='ipaddr'><?php echo $ban->ip;?>
+        <?php if ($ban->ip):?>
+            <div class="ql">
+              (<a href="bans.php?ip=<?php echo $ban->ip;?>"><i class="fa fa-ban"></i></a>)
+              (<a href="#"><i class="fa fa-plug"></i></a>)
+              (<a href="#"><i class="fa fa-user"></i></a>)
+            </div>
+        <?php endif;?></td>
       <th>Ban was issued on</th>
       <td><?php echo $ban->serverip;?></td>
     </tr>
-  </table>
+    </table>
+  <?php endif;?>
 </div>

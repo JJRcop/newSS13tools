@@ -21,7 +21,7 @@ $stats = $stat->getMonthlyStats($date->format("Y"),$date->format("m"));
   <div class="page-header" id="<?php echo $stat->var_name;?>">
     <h1><code><?php echo $stat->var_name;?></code></h1>
     </div>
-    <p class="lead">Across <?php echo $stat->roundcount;?> rounds (where this statistic was recorded):</p>
+    <p class="lead">Across <?php echo $stat->rounds;?> rounds (where this statistic was recorded):</p>
     <?php 
     $stat->details = json_decode($stat->data,TRUE);
     if (!$stat->details && $stat->value) {
