@@ -87,6 +87,7 @@
     if (!$round->result) {
       $round->result = $round->status;
     }
+    $round->permalink = APP_URL."/rounds/viewRound.php?round=$round->round_id";
     return $round;
   }
 

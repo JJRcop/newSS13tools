@@ -28,7 +28,7 @@ $bans = $bans->getBanList(0, 100, $filterby, $filter);?>
   <?php endif;?>
   </h1>
 </div>
-<?php $hideInactive = TRUE;?>
+<?php if(!$filter) $hideInactive = TRUE;?>
 <?php foreach ($bans as $ban):?>
   <?php include('banData.php');?>
 <?php endforeach;?>

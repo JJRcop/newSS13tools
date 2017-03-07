@@ -9,13 +9,15 @@
 
     <h2>Done!</h2>
     <ul class="options-list">
+      <li class="list-group-item">Cached month-by-month stats</li>
       <li class="list-group-item">Month-by-month stats</li>
+      <li class="list-group-item">Tgstation forum auth</li>
     </ul>
 
     <h2>Near-future</h2>
     <ul class="options-list">
+      <li class="list-group-item">DMI diff viewer</li>
       <li class="list-group-item">Round list calendar view</li>
-      <li class="list-group-item">Cached month-by-month stats</li>
       <li class="list-group-item">Split stats by server</li>
       <li class="list-group-item">Daily death maps</li>
     </ul>

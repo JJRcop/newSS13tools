@@ -35,6 +35,7 @@ class ban {
   public $class = FALSE;
   public $icon = FALSE;
   public $scope = FALSE;
+  public $minutes = FALSE;
 
   public function __construct($id=null) {
     if ($id){
@@ -55,7 +56,7 @@ class ban {
     $db->query("SELECT tbl_ban.*,
       MAX(next.id) AS `next`,
       MIN(prev.id) AS `prev`,
-      MINUTE(TIMEDIFF(tbl_ban.expiration_time, tbl_ban.bantime)) AS duration_c
+      TIMESTAMPDIFF(MINUTE, ss13ban.bantime, ss13ban.expiration_time) AS minutes
       FROM tbl_ban
       LEFT JOIN tbl_ban AS `next` ON next.id = tbl_ban.id + 1
       LEFT JOIN tbl_ban AS `prev` ON prev.id = tbl_ban.id - 1
@@ -92,7 +93,7 @@ class ban {
       $where = "WHERE $where = ?";
     }
     $db->query("SELECT *,
-    MINUTE(TIMEDIFF(tbl_ban.expiration_time, tbl_ban.bantime)) AS duration_c
+    TIMESTAMPDIFF(MINUTE, ss13ban.bantime, ss13ban.expiration_time) AS minutes
     FROM tbl_ban
     $where
     ORDER BY id DESC LIMIT ?, ?");
@@ -129,7 +130,7 @@ class ban {
     $ban->bantimestamp = timeStamp($ban->bantime);
     $ban->expirationtimestamp = timeStamp($ban->expiration_time);
 
-    $ban->duration = $ban->duration_c;
+    $ban->duration = $ban->minutes;
 
     if (is_int($ban->ip)){
       $ban->ip = long2ip($ban->ip);
@@ -239,7 +240,7 @@ class ban {
       return FALSE;
     }
     $db->query("SELECT *,
-      MINUTE(TIMEDIFF(tbl_ban.expiration_time, tbl_ban.bantime)) AS duration_c
+      TIMESTAMPDIFF(MINUTE, ss13ban.bantime, ss13ban.expiration_time) AS minutes
       FROM ss13ban WHERE ckey=? ORDER BY bantime DESC");
     $db->bind(1,strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $ckey)));
     try {

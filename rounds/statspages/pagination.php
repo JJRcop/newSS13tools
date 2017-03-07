@@ -8,6 +8,8 @@
     </li>
   <?php endif;?>
 
+  <li><a href="listRounds.php"><i class="fa fa-list"></i> Round listing</a></li>
+
   <?php if ($round->next): ?>
     <li class="next">
       <a href="viewRound.php?round=<?php echo $round->next;?>">Next round

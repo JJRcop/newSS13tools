@@ -44,6 +44,16 @@
   </div>
   <div class="col-md-6">
   <h2>Recent rounds <small><a href='rounds/listRounds.php'>See more</a></small></h2>
+  <ul class="list-unstyled">
+  <?php $round = new round();
+  $rounds = $round->listRounds(1,5);
+  if($rounds):
+  foreach ($rounds as $round):?>
+  <li>
+    <a href="<?php echo $round->permalink;?>">
+      #<?php echo $round->round_id;?></a>, a round of <?php echo $round->game_mode;?> that lasted <?php echo $round->duration;?>
+  <?php endforeach; endif;?>
+  </ul>
   </div>
 </div>
 
