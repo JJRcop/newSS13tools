@@ -90,6 +90,7 @@ window.onkeydown = function (e) {
     searchStatus = false;
   }
 }
+
 $("#search").submit(function(e){
   e.preventDefault();
 });

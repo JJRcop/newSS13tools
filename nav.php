@@ -22,6 +22,7 @@
           </a>
           <ul class="dropdown-menu" role="menu">
             <li><a href="<?php echo APP_URL;?>info.php">System Info</a></li>
+            <li><a href="<?php echo APP_URL;?>tools/updateTG.php">Update local repository</a></li>
             <li>
               <a href="<?php echo APP_URL;?>tools/generateAllMonthlyStats.php">Generate Monthly Stats</a>
             </li>
@@ -40,6 +41,11 @@
               <a href="<?php echo APP_URL;?>tools/generateallPNGs.php">
               Generate all mob PNGs</a>
             </li>
+            <li>
+              <a href="<?php echo APP_URL;?>tools/DMIdiff.php">
+              DMI diff viewer</a>
+            </li>
+
           </ul>
         </li>
         <?php endif; ?>

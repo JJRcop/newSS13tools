@@ -28,18 +28,25 @@
   }
 
   public function doesLocalRepoExist(){
-    if(!is_file(DMEFILE)) return false; return true;
+    if(is_file(DMEFILE)) return true;
+    return false;
   }
 
   public function getLocalRepoVersion(){
     if ($this->doesLocalRepoExist){
-      return shell_exec('git rev-parse --verify HEAD 2> /dev/null');
+      return rtrim(shell_exec("cd ".DMEDIR." && git rev-parse --verify HEAD 2> /dev/null"));
+    }
+  }
+
+  public function updateLocalRepo(){
+    if ($this->doesLocalRepoExist){
+      return rtrim(shell_exec("cd ".DMEDIR." && git pull"));
     }
   }
 
   public function getRemoteRepoVersion(){
-    if(file_exists('tmp/githubversion.json')){
-      $json = file_get_contents('tmp/githubversion.json');
+    if(file_exists(ROOTPATH.'/tmp/githubversion.json')){
+      $json = file_get_contents(ROOTPATH.'/tmp/githubversion.json');
       $data = json_decode($json);
       if ($data->timestamp - time() > 600){
         return $this->cacheRemoteRepoVersion();
@@ -57,7 +64,7 @@
     $json['timestamp'] = time();
     $res = $client->request('GET',$repo);
     $json['data'] = json_decode($res->getBody()->getContents());
-    $jsonfile = fopen('tmp/githubversion.json', 'w+');
+    $jsonfile = fopen(ROOTPATH.'/tmp/githubversion.json', 'w+');
     fwrite($jsonfile, json_encode($json));
     fclose($jsonfile);
     return $json['data'];

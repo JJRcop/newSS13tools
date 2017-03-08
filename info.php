@@ -24,7 +24,7 @@
     <tr class="<?php echo ($app->reposSynced)?'success':'danger';?>">
       <td>Local Repo Version</td>
       <td><code><?php echo $app->localRepoVersion;?></code>
-      <?php echo ($app->doesLocalRepoExist)?"<span class='label label-danger'>OUT OF SYNC</span>":'';?></td>
+      <?php echo ($app->doesLocalRepoExist)?"":"<span class='label label-danger'>OUT OF SYNC</span>";?></td>
     </tr>
     <tr>
       <td>Remote Repo Version</td>
