@@ -33,7 +33,7 @@ $stats = $stat->getMonthlyStats($date->format("Y"),$date->format("m"));
         break;      
         case 'radio_usage':
           $radio = $stat->details;
-          include(ROOTPATH.'/stats/statspages/radio.php');
+          include(ROOTPATH.'/rounds/statspages/radio.php');
         break;
         case 'job_preferences':
           $prefs = $stat->details;

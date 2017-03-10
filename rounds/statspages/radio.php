@@ -4,7 +4,7 @@
   <li><strong><?php echo $channel;?></strong> - <?php echo $num;?></li>
 <?php endforeach;?>
 </ul>
-
+<?php array_pop($radio);?>
 <style>
 .radio-COM {background-color: #008000;}
 .radio-SCI {background-color: #993399;}
@@ -20,14 +20,32 @@
 .radio-PDA {background-color: #000000;}
 .radio-RC  {background-color: #00FFFF;}
 </style>
-  <div class="progress">
-  <?php
-  array_pop($radio);
-  foreach ($radio as $channel => $num) {
-    $pct = 0;
-    if ($num) $pct = ($num/array_sum($radio))*100;
-    echo '<div class="progress-bar radio-'.$channel.'" style="width: '.$pct.'%;">
-    <span>'.$channel.'-'.$num.'</span></div>';
-  }
-  ?>
-  </div>
+<div id="radio"></div>
+<script>
+
+var channels = {'COM':'#008000',
+'SCI':'#993399',
+'HEA':'#193a7a',
+'SEC':'#a30000',
+'MED':'#337296',
+'ENG':'#fb5613',
+'CAR':'#a8732b',
+'SRV':'#6eaa2c',
+'SYN':'#6d3f40',
+'DEA':'#686868',
+'OTH':'#ff00ff',
+'PDA':'#000000',
+'RC' :'#00FFFF'};
+
+var chart = c3.generate({
+    bindto: '#radio',
+    data: {
+      json: <?php echo json_encode($radio); ?>,
+      type: 'donut',
+    },
+    
+    color: 
+      ['#008000','#993399','#193a7a','#a30000','#337296','#fb5613','#a8732b', '#6eaa2c','#6d3f40','#686868','#ff00ff','#000000','#00FFFF']
+});
+
+</script>

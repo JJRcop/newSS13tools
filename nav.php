@@ -7,8 +7,9 @@
         <span class="sr-only">Toggle navigation</span>
         <i class="fa fa-navicon fa-lg" style="color: white;"></i>
       </button>
+      <div id="deathChart"></div> 
       <a class="navbar-brand" href="<?php echo APP_URL;?>index.php">
-        <i class="fa fa-bar-chart"></i>  SS13 Tools
+      SS13 Tools
       </a>
     </div>
     <div id="navbar" class="collapse navbar-collapse">
@@ -45,7 +46,6 @@
               <a href="<?php echo APP_URL;?>tools/DMIdiff.php">
               DMI diff viewer</a>
             </li>
-
           </ul>
         </li>
         <?php endif; ?>

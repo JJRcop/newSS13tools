@@ -141,4 +141,23 @@ class death {
     return $db->resultSet();
   }
 
+  public function countDeathsByDays($days=7){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT count(DISTINCT id) AS deaths,
+      DATE_FORMAT(tod,'%d/%m/%Y') AS `day`
+      FROM ss13death
+      WHERE tod >= DATE(NOW()) - INTERVAL ? DAY
+      GROUP BY DAY(tod);");
+    $db->bind(1,$days);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultSet();
+  }
+
 }

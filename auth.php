@@ -64,7 +64,9 @@ switch ($step){
     echo "No other information, <strong>including your password</strong> ";
     echo "will be shared with <code>".APP_URL."</code><br><br>";
     echo "<a href='auth.php?step=2' style='background: blue; color: white;";
-    echo "padding: 10px;'>Proceed</a><br><br>";
+    echo "padding: 10px;'>Proceed</a>&nbsp;";
+    echo "<a href='index.php2' style='background: red; color: white;";
+    echo "padding: 10px;'>Cancel</a><br><br>";
     echo "<small style='text-align: right'>For more information, ";
     echo "<a href='https://tgstation13.org/phpBB/viewtopic.php?f=45&t=9922'";
     echo "target='_blank'>click here</a>.</font>";

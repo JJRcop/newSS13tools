@@ -91,78 +91,98 @@ function DMIDiff($new,$old){
   <table class="table table-condensed table-bordered">
   <thead>
     <tr>
-      <th colspan="2">Remote</th>
-      <th colspan="2">Local</th>
-    </tr>
-    <tr>
       <th>Name</th>
-      <th>Icon</th>
-      <th>Name</th>
-      <th>Icon</th>
+      <th>New Icon</th>
+      <th>Old Icon</th>
     </tr>
   </thead>
     <tbody>
       <?php
       $i = 0;
+      $diff = array();
       while($i < $max) {
         if(isset($remote[$i]) && isset($local[$i])){
-          if(sha1($remote[$i]['base64']) != sha1($local[$i]['base64'])) {
-            echo "<tr class='warning'>";
+          if(isset($local[$i]['dir'])){
+            $diff[$local[$i]['state']]['local'] = $local[$i]['dir'];
           } else {
-            echo "<tr>";
+            $diff[$local[$i]['state']]['local'] = $local[$i]['base64'];
           }
-          echo "<td><code>".$remote[$i]['state']."</code></td><td>";
-          if (isset($remote[$i]['dir'])){
-            foreach ($remote[$i]['dir'] as $dir) {
-              echo "<img src='data:image/png;base64,".$dir."'/>";
-            }
+          
+          if(isset($remote[$i]['dir'])){
+            $diff[$remote[$i]['state']]['remote'] = $remote[$i]['dir'];
           } else {
-            echo "<img src='data:image/png;base64,".$remote[$i]['base64']."'/>";
+            $diff[$remote[$i]['state']]['remote'] = $remote[$i]['base64'];
           }
-          echo "</td>";
-
-          echo "<td><code>".$local[$i]['state']."</code></td><td>";
-          if (isset($local[$i]['dir'])){
-            foreach ($local[$i]['dir'] as $dir) {
-              echo "<img src='data:image/png;base64,".$dir."'/>";
-            }
-          } else {
-            echo "<img src='data:image/png;base64,".$local[$i]['base64']."'/>";
-          }
-          echo "</td>";
-          echo "</tr>";
         } elseif(isset($remote[$i])){
-          echo "<tr class='success'>";
-          echo "<td><i class='fa fa-plus'></i> ";
-          echo "<code>".$remote[$i]['state']."</code></td><td colspan='4'>";
-          if (isset($remote[$i]['dir'])){
-            foreach ($remote[$i]['dir'] as $dir) {
-              echo "<img src='data:image/png;base64,".$dir."'/>";
-            }
+          if(isset($remote[$i]['dir'])){
+            $diff[$remote[$i]['state']]['remote'] = $remote[$i]['dir'];
           } else {
-            echo "<img src='data:image/png;base64,".$remote[$i]['base64']."'/>";
+            $diff[$remote[$i]['state']]['remote'] = $remote[$i]['base64'];
           }
-          echo "</td>";
-          echo "</tr>";
         } else {
-          echo "<tr class='danger'>";
-          echo "<td><i class='fa fa-minus'></i> ";
-          echo "<code>".$local[$i]['state']."</code></td><td colspan='4'>";
-          if (isset($local[$i]['dir'])){
-            foreach ($local[$i]['dir'] as $dir) {
-              echo "<img src='data:image/png;base64,".$dir."'/>";
-            }
+          if(isset($local[$i]['dir'])){
+            $diff[$local[$i]['state']]['local'] = $local[$i]['dir'];
           } else {
-            echo "<img src='data:image/png;base64,".$local[$i]['base64']."'/>";
+            $diff[$local[$i]['state']]['local'] = $local[$i]['base64'];
           }
-          echo "</td>";
-          echo "</tr>";
         }
-
         $i++;
       }
-
-      ?>
+      foreach ($diff as $state => $icon):?>
+      <?php if(isset($icon['remote']) && isset($icon['local'])):?>
+        <?php if (hash('sha256',implode($icon['remote'])) != hash('sha256',implode($icon['local']))):?>
+          <tr class="warning">
+        <?php else:?>
+          <tr>
+        <?php endif;?>
+        <td><code><?php echo $state;?></code></td>
+          <td>
+            <?php if (is_array($icon['remote'])){
+              foreach ($icon['remote'] as $dir) {
+                echo "<img src='data:image/png;base64,".$dir."'/>";
+              }
+            } else{
+              echo "<img src='data:image/png;base64,".$icon['remote']."'/>";
+            }?>
+          </td>
+          <td>
+            <?php if (is_array($icon['local'])){
+              foreach ($icon['local'] as $dir) {
+                echo "<img src='data:image/png;base64,".$dir."'/>";
+              }
+            } else{
+              echo "<img src='data:image/png;base64,".$icon['local']."'/>";
+            }?>
+          </td>
+        </tr>
+      <?php elseif (isset($icon['remote'])) :?>
+        <tr class="success">
+          <td><code><?php echo $state;?></code></td>
+          <td colspan="2">
+            <?php if (is_array($icon['remote'])){
+              foreach ($icon['remote'] as $dir) {
+                echo "<img src='data:image/png;base64,".$dir."'/>";
+              }
+            } else{
+              echo "<img src='data:image/png;base64,".$icon['remote']."'/>";
+            }?>
+          </td>
+        </tr>
+      <?php else:?>
+        <tr class="danger">
+          <td><code><?php echo $state;?></code></td>
+          <td colspan="2">
+            <?php if (is_array($icon['local'])){
+              foreach ($icon['local'] as $dir) {
+                echo "<img src='data:image/png;base64,".$dir."'/>";
+              }
+            } else{
+              echo "<img src='data:image/png;base64,".$icon['local']."'/>";
+            }?>
+          </td>
+        </tr>
+      <?php endif;?>
+      <?php endforeach;?>
     </tbody>
   </table>
 

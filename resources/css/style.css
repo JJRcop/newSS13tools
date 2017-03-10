@@ -17,6 +17,12 @@ img {
   width: 100%;
   height: auto;
 }
+#deathChart {
+  float: left;
+  margin: 0 5px 0 0;
+  padding: 9px 0 0 ;
+}
+
 thead {
   background: white;
 }

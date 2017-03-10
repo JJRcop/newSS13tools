@@ -30,7 +30,6 @@
     <h2>Recent deaths <small><a href='death/deaths.php'>See more</a></small></h2>
     <ul class="list-unstyled">
       <?php 
-      $death = new death();
       $deaths = $death->getDeaths(10,TRUE);
       if(!$deaths){
         echo "<li>No deaths found</li>";
