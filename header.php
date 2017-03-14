@@ -58,7 +58,7 @@ var chart = c3.generate({
     },
     size: {
       height: 32,
-      width: 64
+      width: 32
     },
     legend: {
       show: false

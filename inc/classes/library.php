@@ -139,4 +139,25 @@ class library {
     }
     return $db->single()->total;
   }
+
+  public function flagBook($book){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $user = new user();
+    if($user->level < 2){
+      die("You do not have the proper access credentials to flag books.");
+    }
+    $book = new library($book);
+    $db->query("INSERT INTO f451 (book, flagger, `date`) VALUES (?, ?, NOW())");
+    $db->bind(1,$book->id);
+    $db->bind(2,$user->ckey);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return alert("Database error: ".$e->getMessage(),FALSE);
+    }
+    return alert("$book->title has been flagged for deletion.",0);
+  }
 }
