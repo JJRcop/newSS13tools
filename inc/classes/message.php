@@ -57,7 +57,7 @@ class message {
       return FALSE;
     }
     $db->query("SELECT * FROM tbl_messages
-      WHERE ss13messages.targetckey = ?");
+      WHERE ss13messages.targetckey = ? ORDER BY `timestamp` DESC");
     $db->bind(1, $ckey);
     try {
       $db->execute();

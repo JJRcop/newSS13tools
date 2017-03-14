@@ -61,9 +61,14 @@ $player = $player->getPlayerByCkey($ckey);
         <strong class="list-group-item-heading">(<i class="fa fa-flask"></i>) Grief Index™</strong>
           0
       </li> -->
-      <li class="list-group-item">
+      <li class="list-group-item ipaddr">
         <strong class="list-group-item-heading">Last IP</strong>
-          <?php echo $player->ip;?> <div class="ql">(<a href="#"><i class="fa fa-ban"></i></a>)(<a href="#"><i class="fa fa-plug"></i></a>)(<a href="#"><i class="fa fa-user"></i></a>)(<a href="#"><i class="fa fa-search"></i></a>)</div>
+          <?php echo $player->ip;?>
+            <div class="ql">
+              (<a href="bans.php?ip=<?php echo $player->ip;?>"><i class="fa fa-ban"></i></a>)
+              (<a href="#"><i class="fa fa-plug"></i></a>)
+              (<a href="#"><i class="fa fa-user"></i></a>)
+            </div>
       </li>
       <li class="list-group-item">
         <strong class="list-group-item-heading">Last CID</strong>
@@ -83,32 +88,35 @@ $player = $player->getPlayerByCkey($ckey);
 
 <div class="row">
 <?php if ($player->messages):?>
-  <div class="page-header">
-    <h2>Messages <?php echo (count($player->messages) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#messages'>Show</a> ":""?><small>(<?php echo count($player->messages);?>)</small></h2>
-  </div>
-<?php else:?>
-  <div class="page-header">
-    <h2>No messages on record</h2>
-  </div>
-<?php endif;?>
-  <div class="<?php echo (count($player->messages) > 5)?"collapse":""?>" id="messages">
-<?php if ($player->messages){
-  foreach ($player->messages as $message) {
-    include('messageData.php');
-  }
-} else {
-  echo alert("No messages to show",1);
-}?>
+  <div class="col-md-6">
+    <div class="page-header">
+      <h2>Messages <?php echo (count($player->messages) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#messages'>Show</a> ":""?><small>(<?php echo count($player->messages);?>)</small></h2>
+    </div>
+  <?php else:?>
+    <div class="page-header">
+      <h2>No messages on record</h2>
+    </div>
+  <?php endif;?>
+    <div class="<?php echo (count($player->messages) > 5)?"collapse":""?>" id="messages">
+  <?php if ($player->messages){
+    foreach ($player->messages as $message) {
+      include('messageData.php');
+    }
+  } else {
+    echo alert("No messages to show",1);
+  }?>
+    </div>
   </div>
 
 <?php if ($player->bans):?>
-  <div class="page-header">
-    <h2>Bans <?php echo (count($player->bans) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#bans'>Show</a> ":""?><small>(<?php echo count($player->bans);?>)</small></h2>
-  </div>
-<?php else:?>
-  <div class="page-header">
-    <h2>No Bans on record</h2>
-  </div>
+  <div class="col-md-6">
+    <div class="page-header">
+      <h2>Bans <?php echo (count($player->bans) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#bans'>Show</a> ":""?><small>(<?php echo count($player->bans);?>)</small></h2>
+    </div>
+  <?php else:?>
+    <div class="page-header">
+      <h2>No Bans on record</h2>
+    </div>
 <?php endif;?>
   <div class="<?php echo (count($player->bans) > 5)?"collapse":""?>" id="bans">
 <?php if ($player->bans){
@@ -120,5 +128,7 @@ $player = $player->getPlayerByCkey($ckey);
 }?>
   </div>
 </div>
+</div>
+
 
 <?php require_once('../footer.php');?>

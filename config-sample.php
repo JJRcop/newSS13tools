@@ -11,6 +11,8 @@ define('APP_NAME','SS13 Tools'); //Name of the application
 
 define('DATE_FORMAT','Y-m-d H:i:s'); //Date format
 
+define('UA','UA-XXXXXXXX-X'); //Google analytics tracking code
+
 ###### Database settings for the stats database ######
 define('DB_METHOD', 'mysql');//Probably won't need to change
 define('DB_NAME', 'CHANGEME');

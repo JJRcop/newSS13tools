@@ -53,6 +53,13 @@
       </td>
     </tr>
 
+    <tr>
+      <td>Analytics tracking</td>
+      <td class="<?php echo (defined('UA'))?'success':'danger';?>">
+        <?php echo ($db->abort)?'defined, tracking':'not defined, not tracking';?>
+      </td>
+    </tr>
+
   </tbody>
 </table>
 

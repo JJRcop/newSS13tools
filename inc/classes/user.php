@@ -1,5 +1,7 @@
 <?php class user{
 
+  //BUT ALSO PLAYERS!!
+
   public $ckey; //Ckey
   public $byond; //Their byond key, unsanitized
 
@@ -168,6 +170,25 @@
     $player->messages = $message->getPlayerMessages($player->ckey);
     $player = $this->parseUser($player,TRUE);
     return $player;
+  }
+
+  public function getConnectedPlayers(){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT * FROM ss13connection_log
+      WHERE `datetime` > (SELECT ss13feedback.time
+      FROM ss13feedback
+      WHERE var_name = 'round_end'
+      ORDER BY ss13feedback.time DESC
+      LIMIT 0,1);");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultSet();
   }
   
 }
