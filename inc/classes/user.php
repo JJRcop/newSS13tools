@@ -54,6 +54,7 @@
     switch ($user->rank) {
       case 'Coder':
       $user->backColor = '#009900';
+      $user->foreColor = "#FFF";
       $user->icon = "<i class='fa fa-code'></i>";
       $user->level = 1;
       break;
@@ -72,6 +73,7 @@
 
       case 'Barista':
         $user->backColor = '#6b4711';
+        $user->foreColor = "#FFF";
         $user->icon = "<i class='fa fa-coffee'></i>";
         $user->level = 2;
       break;
@@ -84,13 +86,15 @@
 
       case 'HeadAdmin':
       case 'Headmin':
-        $user->foreColor = '#A00';
+        $user->backColor = '#A00';
+        $user->foreColor = "#FFF";
         $user->icon  = "<i class='fa fa-star'></i>";
         $user->level = 3;
       break;
 
       case 'Host': 
-        $user->foreColor = '#A00';
+        $user->backColor = '#A00';
+        $user->foreColor = "#FFF";
         $user->icon = "<i class='fa fa-server'></i>";
         $user->level = 3;
       break;
