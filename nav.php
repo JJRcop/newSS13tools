@@ -15,7 +15,7 @@
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
       <li><a href="<?php echo APP_URL;?>status.php">Project Status</a></li>
-        <?php if ($user->legit): ?>
+        <?php if ($user->level): ?>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"
           role="button" aria-expanded="false">Tools
@@ -81,6 +81,11 @@
           <li>
             <a href="<?php echo APP_URL;?>library/catalog.php">Library</a>
           </li>
+        <?php endif;?>
+        <?php if ($user->level):?>
+        <li class='tgdb-link'>
+          <a href="<?php echo APP_URL;?>tgdb/index.php">TGDB</a>
+        </li>
         <?php endif;?>
       </ul>
       <?php if($user->legit):?>

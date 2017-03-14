@@ -120,13 +120,21 @@ tr.perma,
   background: transparent;
   color: inherit;
 }
-.tgdb-navbar {
+
+.navbar.tgdb-navbar {
+  margin-top: -10px;
+}
+.tgdb-navbar,
+.tgdb-link {
   background-image: -webkit-linear-gradient(#6d94bf, #446e9b 50%, #3e648d);
   background-image: linear-gradient(#6d94bf, #446e9b 50%, #3e648d);
   background-repeat: no-repeat;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff6d94bf', endColorstr='#ff3e648d', GradientType=0);
   filter: none;
-  margin-top: -10px;
+}
+
+.tgdb-link a {
+  color: white;
 }
 
 .tgdb-navbar .navbar-nav > li > a,
