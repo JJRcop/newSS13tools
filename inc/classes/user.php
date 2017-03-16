@@ -46,7 +46,7 @@
     //Ok, time to get their and set up display variables
     
     //Defaults
-    $user->backColor = "#DDD";
+    $user->backColor = "#EEE";
     $user->foreColor = "#444";
     $user->icon = '';
     $user->level = 0;
@@ -130,7 +130,28 @@
       if(empty($user->standing)) $user->standing = array('Not banned');
       $user->standing = implode(", ",$user->standing);
     }
+    $user->href = APP_URL."tgdb/viewPlayer.php?ckey=$user->ckey";
+    $user->link = "<a style='color: inherit;' href='$user->href'>$user->ckey</a>";
+
+    $user->ipql = "<div class='ql'>(";
+    $user->ipql.= "<a href='".APP_URL."tgdb/bans.php?ip=$user->ip'>";
+    $user->ipql.= "<i class='fa fa-ban'></i></a>)";
+    $user->ipql.= "(<a href='".APP_URL."tgdb/players.php?ip=$user->ip'>";
+    $user->ipql.= "<i class='fa fa-user'></i></a>)";
+    $user->ipql.= "(<a href='".APP_URL."tgdb/conn.php?ip=$user->ip'>";
+    $user->ipql.= "<i class='fa fa-plug'></i></a>)";
+    $user->ipql.= "</div>";
+
+    $user->cidql = "<div class='ql'>(";
+    $user->cidql.= "<a href='".APP_URL."tgdb/bans.php?cid=$user->computerid'>";
+    $user->cidql.= "<i class='fa fa-ban'></i></a>)";
+    $user->cidql.= "(<a href='".APP_URL."tgdb/players.php?cid=$user->computerid'>";
+    $user->cidql.= "<i class='fa fa-user'></i></a>)";
+    $user->cidql.= "(<a href='".APP_URL."tgdb/conn.php?cid=$user->computerid'>";
+    $user->cidql.= "<i class='fa fa-plug'></i></a>)";
+    $user->cidql.= "</div>";
     return $user;
+
   }
 
   public function getUser($ckey){
@@ -176,23 +197,106 @@
     return $player;
   }
 
-  public function getConnectedPlayers(){
+  public function getConnectionLog($filterby, $filter){
     $db = new database();
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM ss13connection_log
-      WHERE `datetime` > (SELECT ss13feedback.time
+    $where = "WHERE `datetime` > (SELECT ss13feedback.time
       FROM ss13feedback
       WHERE var_name = 'round_end'
       ORDER BY ss13feedback.time DESC
-      LIMIT 0,1);");
+      LIMIT 0,1)";
+    if ($filterby && $filter) {
+      switch ($filterby){
+        case 'IP':
+        case 'ip':
+          $where = "ip";
+          $filter = ip2long($filter);
+        break;
+
+        case 'CID':
+        case 'cid':
+          $where = "computerid";
+          $filter = $filter;
+        break;
+      }
+      $where = "WHERE $where = ?";
+    }
+    $db->query("SELECT * FROM ss13connection_log
+      $where;");
+    if($where){
+      $db->bind(1, $filter);
+    }
     try {
       $db->execute();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
     return $db->resultSet();
+  }
+
+  public function getPlayerList($filterby=null,$filter=null){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $where = "WHERE lastseen > (SELECT ss13feedback.time
+      FROM ss13feedback
+      WHERE var_name = 'round_end'
+      ORDER BY ss13feedback.time DESC
+      LIMIT 0,1)";
+    if ($filterby && $filter) {
+      switch ($filterby){
+        case 'IP':
+        case 'ip':
+          $where = "ip";
+          $filter = ip2long($filter);
+        break;
+
+        case 'CID':
+        case 'cid':
+          $where = "computerid";
+          $filter = $filter;
+        break;
+      }
+      $where = "WHERE $where = ?";
+    }
+    $db->query("SELECT * FROM ss13player
+      $where
+      ORDER BY lastseen DESC;");
+    if($where){
+      $db->bind(1, $filter);
+    }
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    foreach ($players = $db->resultSet() as &$player){
+      $player = $this->parseUser($player);
+    }
+    return $players;
+  }
+
+  public function flagAuth(){
+    if(DEFINED('LOG_AUTH')){
+      $db = new database(TRUE);
+      if($db->abort){
+        return FALSE;
+      }
+      $db->query("INSERT INTO flagged_auth (ckey, remote_addr, db_addr, `timestamp`) VALUES (?, ?, ?, NOW())");
+      $db->bind(1, $this->ckey);
+      $db->bind(2, ip2long($_SERVER['REMOTE_ADDR']));
+      $db->bind(3, ip2long($this->ip));
+      try {
+        $db->execute();
+      } catch (Exception $e) {
+        return returnError("Database error: ".$e->getMessage());
+      }
+      return true;
+      }
+    return false;
   }
   
 }

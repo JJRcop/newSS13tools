@@ -39,11 +39,7 @@
       <th>CID</th>
       <td class='cid'><?php echo $ban->computerid;?>
         <?php if ($ban->computerid):?>
-            <div class="ql">
-              (<a href="bans.php?cid=<?php echo $ban->computerid;?>"><i class="fa fa-ban"></i></a>)
-              (<a href="#"><i class="fa fa-plug"></i></a>)
-              (<a href="#"><i class="fa fa-user"></i></a>)
-            </div>
+            <?php echo $ban->cidql;?>
           <?php endif;?></td>
       <?php if ($ban->status == 'Expired'):?>
         <th>Ban expired</th>
@@ -56,11 +52,7 @@
       <th>IP</th>
       <td class='ipaddr'><?php echo $ban->ip;?>
         <?php if ($ban->ip):?>
-            <div class="ql">
-              (<a href="bans.php?ip=<?php echo $ban->ip;?>"><i class="fa fa-ban"></i></a>)
-              (<a href="#"><i class="fa fa-plug"></i></a>)
-              (<a href="#"><i class="fa fa-user"></i></a>)
-            </div>
+          <?php echo $ban->ipql;?>
         <?php endif;?></td>
       <th>Ban was issued on</th>
       <td><?php echo $ban->serverip;?></td>

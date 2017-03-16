@@ -212,6 +212,24 @@ class ban {
       $ban->edits = str_replace("</cite>", "</cite></p>", $ban->edits);
     }
 
+    $ban->ipql = "<div class='ql'>(";
+    $ban->ipql.= "<a href='".APP_URL."tgdb/bans.php?ip=$ban->ip'>";
+    $ban->ipql.= "<i class='fa fa-ban'></i></a>)";
+    $ban->ipql.= "(<a href='".APP_URL."tgdb/players.php?ip=$ban->ip'>";
+    $ban->ipql.= "<i class='fa fa-user'></i></a>)";
+    $ban->ipql.= "(<a href='".APP_URL."tgdb/conn.php?ip=$ban->ip'>";
+    $ban->ipql.= "<i class='fa fa-plug'></i></a>)";
+    $ban->ipql.= "</div>";
+
+    $ban->cidql = "<div class='ql'>(";
+    $ban->cidql.= "<a href='".APP_URL."tgdb/bans.php?cid=$ban->computerid'>";
+    $ban->cidql.= "<i class='fa fa-ban'></i></a>)";
+    $ban->cidql.= "(<a href='".APP_URL."tgdb/players.php?cid=$ban->computerid'>";
+    $ban->cidql.= "<i class='fa fa-user'></i></a>)";
+    $ban->cidql.= "(<a href='".APP_URL."tgdb/conn.php?cid=$ban->computerid'>";
+    $ban->cidql.= "<i class='fa fa-plug'></i></a>)";
+    $ban->cidql.= "</div>";
+
     return $ban;
   }
 

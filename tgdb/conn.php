@@ -16,14 +16,23 @@ if (isset($_GET['cid'])){
 }
 ?>
 
-<?php $player = new user();
-$connections = $user->getConnectedPlayers();?>
+<?php
+$connections = $user->getConnectionLog($filterby, $filter);?>
 
 <div class="page-header">
-  <h1>''''Active'''' Connections</h1>
+  <h1>Players <small>
+  <?php if ($filter):?>
+    <i class="fa fa-filter"></i> <?php echo $filterby;?>: <?php echo $filter;?>
+      <a href="conn.php">Clear filter</a>
+  <?php else:?>
+    Showing active(ish) connections
+  <?php endif;?>
+  </small>
+  </h1>
 </div>
 
 <?php
+if(!$filter):
 $bagil = array();
 $sybil = array();
 foreach ($connections as $c){
@@ -91,6 +100,29 @@ foreach ($connections as $c){
     </table>
   </div>
 </div>
-
+<?php else:?>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>ckey</th>
+        <th>IP</th>
+        <th>CID</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($connections as $c): ?>
+      <tr>
+        <td>
+          <a href='viewPlayer.php?ckey=<?php echo $c->ckey;?>'>
+            <?php echo $c->ckey;?>
+          </a>
+        </td>
+        <td><?php echo long2ip($c->ip);?></td>
+        <td><?php echo $c->computerid;?></td>
+      </tr>
+    <?php endforeach;?>
+    </tbody>
+  </table>
+<?php endif;?>
 
 <?php require_once('../footer.php');?>

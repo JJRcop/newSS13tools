@@ -105,13 +105,18 @@ switch ($step){
       foreach($body as $k => $v){
         setcookie($k,$v,time()+1296000,DIRECTORY,DOMAIN,USE_SSL); // 15 day expiry
       }
-      // $_SESSION = [];
-      // session_destroy();
+      $user = new user();
+      if($user->level){
+        if($user->ip != $_SERVER['REMOTE_ADDR']) {
+          $user->flagAuth();
+        }
+      }
+
       echo "<font style='font-family: sans-serif; width: 75%;";
       echo "margin: 100px auto; display: block; background: #eee;";
       echo "border: 1px solid #DDD; padding:20px;'>";
       echo "<h2>Success!</h2>";
-      echo "<code>".APP_URL."</code> now recognizes you as $body->byond_key. ";
+      echo "<code>".APP_URL."</code> now recognizes you as $user->byond. ";
       echo "<br><br><a style='background: blue; color: white;";
       echo "padding: 10px;' href='".APP_URL."'>Continue</a>";
     }

@@ -88,7 +88,6 @@ $player = $player->getPlayerByCkey($ckey);
 
 <div class="row">
 <?php if ($player->messages):?>
-  <div class="col-md-6">
     <div class="page-header">
       <h2>Messages <?php echo (count($player->messages) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#messages'>Show</a> ":""?><small>(<?php echo count($player->messages);?>)</small></h2>
     </div>
@@ -106,10 +105,8 @@ $player = $player->getPlayerByCkey($ckey);
     echo alert("No messages to show",1);
   }?>
     </div>
-  </div>
 
 <?php if ($player->bans):?>
-  <div class="col-md-6">
     <div class="page-header">
       <h2>Bans <?php echo (count($player->bans) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#bans'>Show</a> ":""?><small>(<?php echo count($player->bans);?>)</small></h2>
     </div>
@@ -128,7 +125,7 @@ $player = $player->getPlayerByCkey($ckey);
 }?>
   </div>
 </div>
-</div>
+
 
 
 <?php require_once('../footer.php');?>
