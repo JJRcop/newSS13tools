@@ -160,4 +160,22 @@ class library {
     }
     return alert("$book->title has been flagged for deletion.",0);
   }
+
+  public function bb2HTML($bbcode){
+    // $bbcode = nl2br($bbcode);
+    $bbcode = preg_replace("/(\[)(\/)?(center|large|list|u|B|b|small|i)(\])/","<$2$3>",$bbcode);
+    $bbcode = preg_replace("/(\[)(br|hr|field)(\])/","<$2>",$bbcode);
+    $bbcode = str_replace('<large>', "<font size='4'>", $bbcode);
+    $bbcode = str_replace('</large>', "</font>", $bbcode);
+    $bbcode = str_replace('<list>', "\n<ul class='list-unstyled'>", $bbcode);
+    $bbcode = str_replace('</list>', "</ul>\n", $bbcode);
+    $bbcode = str_replace('<field>', "<input />", $bbcode);
+    $bbcode = str_replace('</field>', "", $bbcode);
+    $bbcode = str_replace('<br>', "<br>\n", $bbcode);
+    $bbcode = str_replace('[sign]', "<em>[signature line]</em>", $bbcode);
+    $bbcode = str_replace('[tab]', "&nbsp;&nbsp;&nbsp;&nbsp;", $bbcode);
+    $bbcode = preg_replace("/(\[)(\*)(\])(.*)(\n)/m","<li>$4</li>\n",$bbcode);
+    // $bbcode = nl2br($bbcode);
+    return $bbcode;
+  }
 }

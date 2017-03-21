@@ -64,15 +64,12 @@ $player = $player->getPlayerByCkey($ckey);
       <li class="list-group-item ipaddr">
         <strong class="list-group-item-heading">Last IP</strong>
           <?php echo $player->ip;?>
-            <div class="ql">
-              (<a href="bans.php?ip=<?php echo $player->ip;?>"><i class="fa fa-ban"></i></a>)
-              (<a href="#"><i class="fa fa-plug"></i></a>)
-              (<a href="#"><i class="fa fa-user"></i></a>)
-            </div>
+          <?php echo $player->ipql;?>
+            
       </li>
-      <li class="list-group-item">
+      <li class="list-group-item cid">
         <strong class="list-group-item-heading">Last CID</strong>
-          <?php echo $player->computerid;?> <div class="ql">(<a href="#"><i class="fa fa-ban"></i></a>)(<a href="#"><i class="fa fa-plug"></i></a>)(<a href="#"><i class="fa fa-user"></i></a>)</div>
+          <?php echo $player->computerid;?> <?php echo $player->cidql;?>
       </li>
       <li class="list-group-item">
         <strong class="list-group-item-heading">IPs seen</strong>
