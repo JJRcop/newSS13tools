@@ -160,4 +160,8 @@ class death {
     return $db->resultSet();
   }
 
+  public function liveDeaths(){
+    
+  }
+
 }

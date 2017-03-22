@@ -124,6 +124,24 @@ class library {
     return $db->resultset();
   }
 
+  public function getDuplicates(){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT count(DISTINCT id) AS count, group_concat(id) as ids, title
+      FROM ss13library
+      WHERE content != ''
+      GROUP BY content
+      ORDER BY count DESC;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultset();
+  }
+
   public function countBooks(){
     $db = new database();
     if($db->abort){

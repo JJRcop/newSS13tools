@@ -31,7 +31,7 @@ $players = $user->getPlayerList($filterby, $filter);?>
   </h1>
 </div>
 
-<table class="table table-bordered table-condensed">
+<table class="table table-bordered table-condensed" style="table-layout: fixed;">
   <thead>
     <tr>
       <th>ckey</th>

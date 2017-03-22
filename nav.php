@@ -89,6 +89,11 @@
                 Catalog
               </a>
             </li>
+            <li>
+              <a href="<?php echo APP_URL;?>library/duplicates.php">
+                Find Duplicate Books
+              </a>
+            </li>
             <?php endif;?>
             <li><a href="<?php echo APP_URL;?>library/paper.php">Paper Renderer</a></li>
           </ul>

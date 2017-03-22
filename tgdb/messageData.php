@@ -1,7 +1,7 @@
   <div class="panel panel-<?php echo $message->class;?>">
     <div class="panel-heading">
       <h3 class="panel-title">
-        <?php echo $message->icon;?> <?php echo $message->type;?> for
+        <?php echo $message->icon;?> <?php echo $message->privacy;?> <?php echo $message->type;?> for
         <?php echo $message->ckeylink;?> by
         <?php echo $message->adminckey;?>, <?php echo $message->timeStamp;?>
         <p class="pull-right"><?php echo $message->permalink;?></p>
@@ -11,7 +11,7 @@
      <p><?php echo $message->text;?></p>
     </div>
     <div class="panel-footer">
-      <small><?php echo $message->privacy;?>
+      <small>
         <?php echo ($message->edits)?"(Edited, see $message->permalink for details)":"";?>
       </small>
     </div>

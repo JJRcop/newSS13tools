@@ -83,15 +83,18 @@ class message {
 
     $message->timeStamp = timeStamp($message->timestamp);
 
-    $message->icon = "<i class='fa fa-sticky-note'></i>";
+    $message->icon = "<i class='fa fa-sticky-note' title='Note'";
+    $message->icon.= " data-toggle='tooltip'></i>";
     $message->class = 'warning';
 
     $message->privacy = '';
 
     if ($message->secret && 'note' == $message->type) {
-      $message->privacy = "(This is a secret $message->type)";
+      $message->privacy = "<i class='fa fa-eye-slash' title='Secret note'";
+      $message->privacy.= "data-toggle='tooltip'></i>";
     } elseif ('note' == $message->type){
-      $message->privacy = "(This is a visible $message->type)";
+      $message->privacy = "<i class='fa fa-eye' title='Visible note'";
+      $message->privacy.= "data-toggle='tooltip'></i>";
     } else {
       $message->privacy = '';
     }
@@ -103,18 +106,22 @@ class message {
       break;
 
       case 'message':
-        $message->icon = "<i class='fa fa-bullhorn'></i>";
+        $message->icon = "<i class='fa fa-bullhorn' title='Message'";
+        $message->icon.= " data-toggle='tooltip'></i>";
         $message->class = 'success';
       break;
 
       case 'message sent':
-        $message->icon = "<i class='fa fa-check'></i> ";
-        $message->icon.= "<i class='fa fa-bullhorn'></i>";
+        $message->icon = "<i class='fa fa-bullhorn' title='Message'";
+        $message->icon.= " data-toggle='tooltip'></i> ";
+        $message->icon.= "<i class='fa fa-check' title='Delivered'";
+        $message->icon.= " data-toggle='tooltip'></i>";
         $message->class = 'success';
       break;
 
       case 'watchlist entry':
-        $message->icon = "<i class='fa fa-eye'></i>";
+        $message->icon = "<i class='fa fa-exclamation'";
+        $message->icon.= "title='Watchlist Entry' data-toggle='tooltip'></i>";
         $message->class = 'danger';
       break;
     }

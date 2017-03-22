@@ -26,34 +26,35 @@
       <td class="<?php echo $ban->statusClass;?>">
         <?php echo $ban->status;?>
       </td>
-      <th>Duration</th>
-      <td><?php echo $ban->duration;?></td>
+      <th>IP</th>
+      <td class='ipaddr'><?php echo $ban->ip;?>
+        <?php if ($ban->ip):?>
+          <?php echo $ban->ipql;?>
+        <?php endif;?></td>
     </tr>
     <tr>
-      <th>Banned from</th>
-      <td><?php echo $ban->scope;?></td>
       <th>Ban issued</th>
       <td><?php echo $ban->bantimestamp;?></td>
-    </tr>
-    <tr>
       <th>CID</th>
       <td class='cid'><?php echo $ban->computerid;?>
         <?php if ($ban->computerid):?>
             <?php echo $ban->cidql;?>
-          <?php endif;?></td>
+          <?php endif;?>
+      </td>
+    </tr>
+    <tr>
       <?php if ($ban->status == 'Expired'):?>
         <th>Ban expired</th>
       <?php else:?>
         <th>Ban expires</th>
       <?php endif;?>
       <td><?php echo $ban->expirationtimestamp;?></td>
+      <th>Banned from</th>
+      <td><?php echo $ban->scope;?></td>
     </tr>
     <tr>
-      <th>IP</th>
-      <td class='ipaddr'><?php echo $ban->ip;?>
-        <?php if ($ban->ip):?>
-          <?php echo $ban->ipql;?>
-        <?php endif;?></td>
+      <th>Duration</th>
+      <td><?php echo $ban->duration;?></td>
       <th>Ban was issued on</th>
       <td><?php echo $ban->serverip;?></td>
     </tr>

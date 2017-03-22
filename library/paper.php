@@ -1,6 +1,4 @@
-
 <?php 
-
 $bbcode = null;
 $bbcode = filter_input(INPUT_POST, 'bbcode', FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW);
 if ($bbcode){
