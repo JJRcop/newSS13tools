@@ -53,20 +53,46 @@
 
     switch ($user->rank) {
       case 'Coder':
-      $user->backColor = '#009900';
-      $user->foreColor = "#FFF";
-      $user->icon = "<i class='fa fa-code'></i>";
-      $user->level = 1;
+        $user->backColor = '#009900';
+        $user->foreColor = "#FFF";
+        $user->icon = "<i class='fa fa-code'></i>";
+        $user->level = 1;
+      break;
+
+      case 'Badmin':
+        $user->backColor = "#000";
+        $user->foreColor = "#FFF";
+        $user->icon = "<i class='fa fa-asterisk'></i>";
+        $user->level = 1;
+      break;
+
+      case 'AdminCandidate':
+        $user->backColor = "#9570c0";
+        $user->foreColor = "#FFF";
+        $user->icon = "<i class='fa fa-university'></i>";
+        $user->level = 1;
+      break;
+
+      case 'TrialAdmin':
+        $user->backColor = "#9570c0";
+        $user->foreColor = "#FFF";
+        $user->icon = "<i class='fa fa-gavel'></i>";
+        $user->level = 2;
       break;
 
       case 'GameAdmin': 
       case 'Game Admin':
-      case 'TrialAdmin':
       case 'CoderMin':
-      case 'GameMaster':
         $user->backColor = "#9570c0";
         $user->foreColor = "#FFF";
         $user->icon = "<i class='fa fa-dot-circle-o'></i>";
+        $user->level = 2;
+      break;
+
+      case 'AdminTrainer':
+        $user->backColor = "#9570c0";
+        $user->foreColor = "#FFF";
+        $user->icon = "<i class='fa fa-scales'></i>";
         $user->level = 2;
       break;
 
@@ -87,7 +113,7 @@
       case 'GameMaster': 
         $user->backColor = '#A00';
         $user->foreColor = "#FFF";
-        $user->icon = "<i class='fa fa-star'></i>";
+        $user->icon = "<i class='fa fa-star-o'></i>";
         $user->level = 3;
       break;
 
@@ -111,6 +137,7 @@
     $user->label.= "style='background-color: $user->backColor;";
     $user->label.= "color: $user->foreColor;'>$user->icon $user->ckey";
     $user->label.= "</span>";
+
     if ($data) { //For viewing player info pages
       $user->standing = array();
       if (!$user->bans){
