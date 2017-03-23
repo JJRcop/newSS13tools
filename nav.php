@@ -75,6 +75,12 @@
                 Stats by month
               </a>
             </li>
+            <li class="divider"></li>
+            <li>
+              <a href="<?php echo APP_URL;?>stats/adminConnections.php">
+                Do admins play?
+              </a>
+            </li>
           </ul>
         </li>
         <li class="dropdown">

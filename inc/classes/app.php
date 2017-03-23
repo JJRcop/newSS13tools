@@ -127,4 +127,28 @@
     return $result;
   }
 
+  public function doAdminsPlay(){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT ss13player.*,
+      count(DISTINCT ss13connection_log.id) AS connections
+      FROM ss13player
+      LEFT JOIN ss13connection_log ON ss13connection_log.ckey = ss13player.ckey
+      WHERE ss13connection_log.datetime BETWEEN (NOW() - INTERVAL 30 DAY) AND NOW()
+      AND ss13player.lastadminrank != 'Player'
+      GROUP BY ss13player.ckey;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $user = new user();
+    foreach ($result = $db->resultset() as &$r){
+      $r = $user->parseUser($r);
+    }
+    return $result;
+  }
+
 }

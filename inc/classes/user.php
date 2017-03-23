@@ -64,10 +64,16 @@
       case 'TrialAdmin':
       case 'CoderMin':
       case 'GameMaster':
-      case 'ClockcultEmpress':
         $user->backColor = "#9570c0";
         $user->foreColor = "#FFF";
-        $user->icon = "<i class='fa fa-eye'></i>";
+        $user->icon = "<i class='fa fa-dot-circle-o'></i>";
+        $user->level = 2;
+      break;
+
+      case 'ClockcultEmpress':
+        $user->backColor = "#e6a500";
+        $user->foreColor = "#FFF";
+        $user->icon = "<i class='fa fa-cog'></i>";
         $user->level = 2;
       break;
 
@@ -80,6 +86,7 @@
 
       case 'GameMaster': 
         $user->backColor = '#A00';
+        $user->foreColor = "#FFF";
         $user->icon = "<i class='fa fa-star'></i>";
         $user->level = 3;
       break;
