@@ -1,13 +1,14 @@
 <?php require_once('../header.php') ;?>
 
 <?php
-$activity = $app->doAdminsPlay();
-var_dump($activity);?>
+$activity = $user->doAdminsPlay();?>
 <div class="page-header">
   <h1>Admin Connection Activity</h1>
 </div>
 
-<table class="table table-condensed table-bordered">
+<p class="lead">This (exceptionally slow) page shows admin connection logs for the last thirty days.</p>
+
+<table class="table table-condensed table-bordered sort">
   <thead>
     <tr>
       <th>ckey</th>

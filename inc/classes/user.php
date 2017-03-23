@@ -305,5 +305,29 @@
       }
     return false;
   }
+
+  public function doAdminsPlay(){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT ss13player.*,
+      count(DISTINCT ss13connection_log.id) AS connections
+      FROM ss13connection_log
+      LEFT JOIN ss13player ON ss13connection_log.ckey = ss13player.ckey
+      WHERE ss13connection_log.datetime >= DATE(NOW()) - INTERVAL 30 DAY
+      AND ss13player.lastadminrank != 'Player'
+      GROUP BY ss13player.ckey
+      ORDER BY connections DESC;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    foreach ($result = $db->resultset() as &$r){
+      $r = $this->parseUser($r);
+    }
+    return $result;
+  }
   
 }
