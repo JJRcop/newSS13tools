@@ -21,7 +21,6 @@ if ($year && $month):?>
   </div>
     <p class="lead">Across <?php echo $stat->rounds;?> rounds (where this statistic was recorded):</p>
     <?php
-    var_dump($stat);
     $stat->details = json_decode($stat->data,TRUE);
     if (!$stat->details && $stat->value) {
       include(ROOTPATH.'/stats/statspages/bigNum.php');
