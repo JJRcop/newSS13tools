@@ -15,6 +15,9 @@
           <i class="fa fa-exclamation-circle"></i> Report Issue
         </a>
       </div>
+      <div class="col-md-4">
+      Data should be considered preliminary and non-operational.
+      </div>
     </div>
   </footer>
 </div>

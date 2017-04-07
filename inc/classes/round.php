@@ -162,6 +162,22 @@
     return  $db->resultset();
   }
 
+  public function getFeedback(){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT var_name, var_value, details
+      FROM tbl_feedback WHERE round_id = ?");
+    $db->bind(1,$round);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return  $db->resultset();
+  }
+
   public function getLogs($round,$json=false){
     if ($round->start && $round->end && $round->server){
       $round->start = date('H:i:s',strtotime($round->start));

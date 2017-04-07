@@ -10,7 +10,7 @@ class stat {
   public $last;
   public $total;
 
-  public function __construct($stat=false, $server=false, $start=false, $end=false){
+  public function __construct($stat=false){
     if ($stat){
       if(!$this->isStat($stat)) return false;
       $stat = $this->getStat($stat);
@@ -310,6 +310,7 @@ class stat {
       case 'mining_uranium_produced':
       case 'mining_voucher_redeemed':
       case 'mobs_killed_mining':
+      case 'map_name':
       // case 'newscaster_channels':
       // case 'newscaster_newspapers_printed':
       // case 'newscaster_stories':
@@ -480,7 +481,7 @@ class stat {
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM tracked_months");
+    $db->query("SELECT * FROM tracked_months ORDER BY year DESC, month DESC");
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -503,5 +504,54 @@ class stat {
       var_dump("Database error: ".$e->getMessage());
     }
     return $db->resultSet();
+  }
+
+  public function getSavedDatapoints(){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT distinct var_name FROM monthly_stats");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      var_dump("Database error: ".$e->getMessage());
+    }
+    return $db->resultSet();
+  }
+
+  public function getHistoricData($stat){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT * FROM monthly_stats WHERE var_name = ? ORDER BY month, year");
+    $db->bind(1, $stat);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      var_dump("Database error: ".$e->getMessage());
+    }
+    return $db->resultSet();
+  }
+
+  public function getMonthlyStat($year, $month, $stat){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT * FROM monthly_stats WHERE var_name = ?
+      AND year = ?
+      AND month = ?");
+    $db->bind(1,$stat);
+    $db->bind(2,$year);
+    $db->bind(3,$month);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      var_dump("Database error: ".$e->getMessage());
+    }
+    $stat = $db->single();
+    return $this->parseFeedback($stat);
   }
 }

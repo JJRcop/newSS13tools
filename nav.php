@@ -71,7 +71,7 @@
             </li>
             <li><a href="<?php echo APP_URL;?>death/deaths.php">Deaths</a></li>
             <li>
-              <a href="<?php echo APP_URL;?>stats/statsByMonth.php">
+              <a href="<?php echo APP_URL;?>stats/monthlyStats.php">
                 Stats by month
               </a>
             </li>

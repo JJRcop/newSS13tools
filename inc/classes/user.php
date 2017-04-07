@@ -62,7 +62,7 @@
       case 'Badmin':
         $user->backColor = "#000";
         $user->foreColor = "#FFF";
-        $user->icon = "<i class='fa fa-asterisk'></i>";
+        $user->icon = "<i class='fa fa-snowflake-o'></i>";
         $user->level = 1;
       break;
 
