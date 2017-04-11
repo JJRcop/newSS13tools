@@ -1,7 +1,7 @@
 <div class="jumbotron">
   <h1>
     <small><?php echo $stat->var_name;?>:</small>
-      <?php echo $stat->var_value;?>
+      <?php echo $stat->details;?>
   </h1>
   <?php if(isset($stat->rounds)):?>
     <p class="lead">Tracked across <?php echo $stat->rounds;?> rounds</p>

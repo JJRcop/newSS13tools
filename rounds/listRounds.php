@@ -80,8 +80,8 @@ if (isset($_GET['page'])){
       <th>Round ID</th>
       <th>Duration</th>
       <th>Mode</th>
-      <th>Server</th>
       <th>Status</th>
+      <th>Server</th>
     </tr>
   </thead>
   <tbody>
@@ -90,38 +90,15 @@ if (isset($_GET['page'])){
     if (!$rounds) {
       echo "<tr><td colspan='5'>No rounds found</td></tr>";
     } else{
-      foreach($rounds as $round){
-        if (!$round->duration){
-          //BAD ROUND
-          echo "<tr id='$round->round_id' class='round bad-round'>";
-          $status = "<i class='fa fa-flag'></i>";
-
-          //NUKE
-        } elseif ($round->status == 'nuke' || $round->status == 'nuke - unhandled ending') {
-          echo "<tr id='$round->round_id' class='round warning'>";
-          $status = "<i class='fa fa-certificate'></i>";
-
-          //ERROR
-        } elseif ($round->status != 'proper completion'){
-          echo "<tr id='$round->round_id' class='round danger'>";
-          $status = "<i class='fa fa-times'></i>";
-
-          //PROPER
-        } else {
-          echo "<tr id='$round->round_id' class='round'>";
-          $status = "<i class='fa fa-check'></i>";
-        }
-        echo "<td>$status <a href='viewRound.php?round=$round->round_id'>$round->round_id</a></td>";
-        if ($round->duration){
-          echo "<td>$round->duration <small>(ended at $round->end GMT)</td>";
-          echo "<td class='mode $round->game_mode'>".ucfirst($round->game_mode)."</td>";
-          echo "<td>$round->server</td>";
-        } else {
-          echo "<td colspan='3'>Something went wrong and stats for this round are incomplete.</td>";
-        }
-        echo "<td>$round->status</td>";
-        echo "</tr>";
-      }
+      foreach($rounds as $round): ?>
+        <tr>
+        
+          <td><?php echo $round->link;?></td>
+          <td><?php echo $round->duration;?></td>
+          <td><?php echo "$round->modeIcon $round->game_mode";?></td>
+          <td><?php echo "$round->resultIcon $round->result";?></td>
+          <td><?php echo $round->server;?></td>
+      <?php endforeach;
     }
     ?>
   </tbody>

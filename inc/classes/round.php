@@ -84,10 +84,8 @@
     } else {
       if (!$round->status) $round->status = false;
     }
-    if (!$round->result) {
-      $round->result = $round->status;
-    }
-    $round->permalink = APP_URL."/rounds/viewRound.php?round=$round->round_id";
+    $round->permalink = APP_URL."rounds/viewRound.php?round=$round->round_id";
+    $round->link = "<a href='$round->permalink'>#$round->round_id</a>";
     return $round;
   }
 
@@ -244,7 +242,8 @@
     $logs = str_replace('</span>', '', $logs);
     $logs = str_replace('*no key*/', '', $logs);
     $logs = str_replace(')) : ',') : ',$logs);
-    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE)(:\s)/","$2#-#$4#-#", $logs);
+    $logs = str_replace("SAY: Ghost/","GHOST: ", $logs);
+    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE|GHOST)(:\s)/","$2#-#$4#-#", $logs);
     $logs = utf8_encode($logs);
     $logs = explode("\r\n",$logs);
     array_filter($logs);
@@ -438,6 +437,26 @@
       $data = $stat->parseFeedback($data);
     }
     return $feedback;
+  }
+
+  public function getRoundStat($round, $stat){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT * FROM tbl_feedback
+      WHERE round_id = ? AND var_name = ?");
+    $db->bind(1,$round);
+    $db->bind(2,$stat);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $stat = new stat();
+    $data = $db->single();
+    $stat = $stat->parseFeedback($data);
+    return $stat;
   }
 
 }

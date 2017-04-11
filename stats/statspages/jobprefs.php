@@ -1,3 +1,15 @@
+<div class="jumbotron">
+  <h1>
+    <small>Stats for</small> <?php echo $stat->var_name;?>
+  </h1>
+  <?php if(isset($stat->rounds)):?>
+    <p class="lead">Tracked across <?php echo $stat->rounds;?> rounds</p>
+  <?php endif;?>
+  <?php if(isset($stat->round_id)):?>
+    <p class="lead">From round <?php echo $round->link;?></p>
+  <?php endif;?>
+</div>
+
 <table class="tabl table-bordered table-condensed sort">
   <thead>
     <tr>
@@ -10,7 +22,7 @@
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($prefs as $job => $d):?>
+    <?php foreach ($stat->details as $job => $d):?>
       <tr>
         <td>
           <a href="https://tgstation13.org/wiki/<?php echo $job;?>" target="_blank">

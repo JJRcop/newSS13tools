@@ -1,20 +1,9 @@
-<div class="jumbotron">
-  <h1>
-    <small>Stats for</small> <?php echo $stat->var_name;?>
-    <?php if(isset($date)):?>
-      <small>in <?php echo $date->format("F Y");?></small>
-    <?php endif;?>
-  </h1>
-  <p class="lead">Tracked 
-  <?php if(isset($stat->rounds)):?>
-    across <?php echo $stat->rounds;?> rounds, and
-  <?php endif;?>
-  <?php echo $stat->var_value;?> times in total</p>
-  <?php if(isset($stat->round_id)):?>
-    <p class="lead">From round <?php echo $round->link;?></p>
-  <?php endif;?>
-</div>
-
+<ul class="list-inline">
+<li><strong>Total</strong> - <?php echo $stat->var_value;?></li>
+<?php foreach($stat->details as $channel => $num):?>
+  <li><strong><?php echo $channel;?></strong> - <?php echo $num;?></li>
+<?php endforeach;?>
+</ul>
 <div class="row">
   <div class="col-md-6">
   <table class="table table-condensed table-bordered">
@@ -39,7 +28,6 @@
     </div>
   </div>
 </div>
-
 <script>
 
 var chart = c3.generate({

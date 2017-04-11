@@ -4,16 +4,9 @@ if (isset($_GET['json'])) $json = filter_input(INPUT_GET, 'json', FILTER_VALIDAT
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 
-if($json) {
-  require_once('../config.php');
-  header('Content-Type: application/json');
-  $round = new round($round,TRUE,FALSE,TRUE);
-  echo json_encode($round);
-  die();
-} else{
-  require_once('../header.php');
-  $round = new round($round,TRUE);
-}
+require_once('../header.php');
+$round = new round($round,TRUE);
+
 ?>
 
 <?php if (!$round->round_id):?>
@@ -49,35 +42,17 @@ json_encode($round->data)); ?></code></div>
 
 <div id="rawdata">
   <h3>Raw data</h3>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Data point</th>
-        <th>Value</th>
-        <th>Details</th>
-      </tr>
-    </thead>
-    <tbody>
+  <ul class="list-unstyled">
     <?php foreach ($round->data as $k => $v) :?>
-      <tr>
-        <td>
-          <a href='<?php echo APP_URL;?>stats/singleStat.php?stat=<?php echo $k;?>'>
+      <li>
+        <code>
+          <a href='<?php echo APP_URL;?>rounds/viewRoundStat.php?stat=<?php echo $k;?>&round=<?php echo $round->round_id;?>'>
             <?php echo $k;?>
           </a>
-        </td>
-        <td><?php echo $v['value']; ?></td>
-        <td><?php if (is_array($v['details'])){ ?>
-              <?php if (0 < count($v['details'])):?>
-              <?php var_dump($v['details']);?>
-              <?php endif;?>
-            <?php } else {
-              echo $v['details'];
-            }?>
-        </td>
-      </tr>
+        </code>
+      </li>
     <?php endforeach;?>
-    </tbody>
-  </table>
+    </ul>
 </div>
 
 <?php require_once('statspages/pagination.php');?>

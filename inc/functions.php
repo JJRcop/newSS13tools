@@ -66,8 +66,21 @@ function iconStack($icon, $top, $class=null,$flip=false){
 </span>";
 }
 
-function icon($icon, $class=null){
-  return iconStack($icon,'circle-thin',$class);
+function baseIcon($icon,$base){
+  $html = "<span class='fa-stack fa-lg'>";
+  if(is_array($icon)){
+    foreach ($icon as $i){
+      $html.= "<i class='fa fa-$i fa-stack-1x'></i>";
+    }
+  } else {
+    $html.= "<i class='fa fa-$icon fa-stack-1x'></i>";
+  }
+  $html.= "<i class='fa fa-$base fa-stack-2x'></i></span>";
+  return $html;
+}
+
+function icon($icon){
+  return baseIcon($icon,'circle-thin');
 }
 
 function alert($msg, $level='info'){

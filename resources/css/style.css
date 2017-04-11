@@ -54,6 +54,7 @@ tr.bad-round {
 .EMOTE    { font-style: italic; }
 .GAME     { color: #00c000; font-weight: bold; }
 .PDA      { color: #800000; }
+.GHOST    { color: #5c00e6; }
 .log-wrap {
   width: 100%;
   overflow-x: auto;

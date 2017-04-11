@@ -33,11 +33,4 @@ if (isset($round->data->job_preferences)){
   <?php
   include 'jobprefs.php';?>
   </div>
-<?php }
-if (isset($round->data->radio_usage)):
-  $radio = $round->data->radio_usage['details'];?>
-  <div class="page-header">
-    <h2>Radio Usage</h2>
-  </div>
-  <?php include 'radio.php';?>
-<?php endif; ?>
+<?php } ?>

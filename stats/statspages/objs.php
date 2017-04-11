@@ -1,5 +1,17 @@
+<div class="jumbotron">
+  <h1>
+    <small>Stats for</small> <?php echo $stat->var_name;?>
+  </h1>
+  <?php if(isset($stat->rounds)):?>
+    <p class="lead">Tracked across <?php echo $stat->rounds;?> rounds</p>
+  <?php endif;?>
+  <?php if(isset($stat->round_id)):?>
+    <p class="lead">From round <?php echo $round->link;?></p>
+  <?php endif;?>
+</div>
+
 <table class="table table-bordered table-condensed">
-  <?php $tF = 0; $tS = 0; foreach ($details as $objective => $count): ?>
+  <?php $tF = 0; $tS = 0; foreach ($stat->details as $objective => $count): ?>
     <tr>
       <th>
         <?php echo $objective;?>
