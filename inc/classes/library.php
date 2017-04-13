@@ -180,6 +180,7 @@ class library {
   }
 
   public function bb2HTML($bbcode){
+    if(empty(trim($bbcode))) return false;
     // $bbcode = nl2br($bbcode);
     $bbcode = preg_replace("/(\[)(\/)?(center|large|list|u|B|b|small|i)(\])/","<$2$3>",$bbcode);
     $bbcode = preg_replace("/(\[)(br|hr|field)(\])/","<$2>",$bbcode);

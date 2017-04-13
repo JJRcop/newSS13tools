@@ -16,6 +16,8 @@
   public $firstSeenTimeStamp;
   public $lastSeenTimeStamp;
 
+  public $txtVerify = FALSE;
+
   public function __construct(){
     if(isset($_COOKIE['byond_ckey'])){
       $user = $this->getUser($_COOKIE['byond_ckey']);
@@ -26,7 +28,6 @@
       if('OK' == $_COOKIE['status']) $user->legit = TRUE;
       $user->ckey = $_COOKIE['byond_ckey'];
       $user->byond = $_COOKIE['byond_key'];
-
       foreach ($user as $k => $v){
         $this->$k = $v;
       }
@@ -41,6 +42,15 @@
     $user->lastSeenTimeStamp = timeStamp($user->lastseen);
     if(is_int($user->ip)){
       $user->ip = long2ip($user->ip);
+    }
+
+    if(defined('TXT_RANK_VERIFY')){
+      if(!file_exists(ROOTPATH.'/tmp/admins.json')){
+        $app = new app();
+        $app->downloadAdminsTxt();
+      }
+      $user->rank = $this->verifyAdminRank($user->ckey);
+      $user->txtVerify = TRUE;
     }
 
     //Ok, time to get their and set up display variables
@@ -355,6 +365,11 @@
       $r = $this->parseUser($r);
     }
     return $result;
+  }
+
+  public function verifyAdminRank($ckey){
+    $ranks = json_decode(file_get_contents(ROOTPATH.'/tmp/admins.json'));
+    return $ranks->{$ckey};
   }
   
 }

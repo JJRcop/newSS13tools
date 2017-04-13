@@ -127,4 +127,31 @@
     return $result;
   }
 
+  public function downloadAdminsTxt(){
+    if(is_array(TXT_RANK_VERIFY)){
+      $url = pick(TXT_RANK_VERIFY);
+    } else {
+      $url = TXT_RANK_VERIFY;
+    }
+    $client = new GuzzleHttp\Client();
+    $res = $client->request('GET',$url,[
+      'headers' => ['Accept-Encoding' => 'gzip'],
+      ]);
+    $admins = $res->getBody()->getContents();
+    $admins = explode("\r\n",$admins);
+    $admins = array_filter($admins);
+    $arr = array();
+    foreach($admins as $admin){
+      if(strpos($admin, '#')!==false){
+        continue;
+      }
+      $admin = explode(' = ',$admin);
+      $arr[strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $admin[0]))] = $admin[1];
+    }
+    $adminsFile = fopen(ROOTPATH.'/tmp/admins.json', 'w+');
+    fwrite($adminsFile, json_encode($arr));
+    fclose($adminsFile);
+    return true;
+  }
+
 }

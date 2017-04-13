@@ -1,7 +1,9 @@
 <?php
 require_once('header.php');
+$app = new app();
 
-$round = new newRound(68756);
-var_dump($round);
+$test = function() use(&$app){
+  return $this->downloadAdminsTxt();
+};
 
-require_once('footer.php');
+var_dump($test);

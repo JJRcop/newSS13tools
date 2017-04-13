@@ -44,7 +44,8 @@ $('.form').submit(function(e){
     method: 'POST',
   })
   .success(function(i){
-  $('#render').html(i);
+    $('#render').html(i);
+    console.log(i);
   })
 });
 </script>
