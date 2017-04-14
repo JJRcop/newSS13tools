@@ -193,6 +193,7 @@ class stat {
       //Single string stats
       //These can just be reported. When aggregated, they need to be
       //concatenated carefully
+      case 'admin_verb':
       case 'chaplain_weapon': //Spaces
       case 'emergency_shuttle':
       case 'end_error': //Spaces
@@ -250,8 +251,10 @@ class stat {
       case 'slime_babies_born':
       case 'slime_cores_used':
       case 'slime_core_harvested':
+      case 'surgeries_completed':
       case 'traitor_success':
       case 'traitor_uplink_items_bought':
+      case 'traitor_random_uplink_items_gott':
       case 'vending_machine_usage':
       case 'warp_cube':
       case 'wisp_lantern':
@@ -274,6 +277,7 @@ class stat {
       //Strings that have a value piped (|) onto the end of the string.
       //We need to group and add these values
 
+      case 'admin_toggle':
       case 'cargo_imports':
       case 'chemical_reaction':
       case 'export_sold_amount':
@@ -426,6 +430,11 @@ class stat {
       //Where the value just needs to be displayed
       //Or summed when aggregating
       case 'admin_cookies_spawned':
+      case 'ahelp_close':
+      case 'ahelp_icissue':
+      case 'ahelp_reject':
+      case 'ahelp_resolve':
+      case 'ahelp_unresolved':
       case 'alert_comms_blue':
       case 'alert_comms_green':
       case 'alert_keycard_auth_maint':
@@ -495,7 +504,6 @@ class stat {
       case 'round_end_clients':
       case 'round_end_ghosts':
       case 'supply_mech_collection_redeemed':
-      case 'surgeries_completed':
       case 'surgery_initiated':
       case 'surgery_step_failed':
       case 'surgery_step_success':
@@ -506,7 +514,7 @@ class stat {
       break;
 
       default:
-        var_dump("UNTRACKED UNTRACKED UNTRACKED");
+        var_dump("UNTRACKED UNTRACKED UNTRACKED TELL NED TELL NED TELL NED");
       break;
     }
     if('' === $stat->details) $stat->details = null;

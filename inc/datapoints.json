@@ -2,13 +2,34 @@
   "data":
   [
     {
+      "var_name": ""
+    },
+    {
       "var_name": "admin_cookies_spawned"
     },
     {
       "var_name": "admin_secrets_fun_used"
     },
     {
+      "var_name": "admin_toggle"
+    },
+    {
       "var_name": "admin_verb"
+    },
+    {
+      "var_name": "ahelp_close"
+    },
+    {
+      "var_name": "ahelp_icissue"
+    },
+    {
+      "var_name": "ahelp_reject"
+    },
+    {
+      "var_name": "ahelp_resolve"
+    },
+    {
+      "var_name": "ahelp_unresolved"
     },
     {
       "var_name": "alert_comms_blue"
@@ -50,6 +71,9 @@
       "var_name": "ban_appearance_unban"
     },
     {
+      "var_name": "ban_edit"
+    },
+    {
       "var_name": "ban_job"
     },
     {
@@ -68,6 +92,15 @@
       "var_name": "ban_tmp_mins"
     },
     {
+      "var_name": "ban_unban"
+    },
+    {
+      "var_name": "ban_warn"
+    },
+    {
+      "var_name": "benchmark"
+    },
+    {
       "var_name": "cargo_imports"
     },
     {
@@ -78,6 +111,9 @@
     },
     {
       "var_name": "changeling_powers"
+    },
+    {
+      "var_name": "changeling_power_purchase"
     },
     {
       "var_name": "changeling_success"
@@ -96,6 +132,9 @@
     },
     {
       "var_name": "colonies_dropped"
+    },
+    {
+      "var_name": "comment"
     },
     {
       "var_name": "cult_objective"
@@ -155,7 +194,25 @@
       "var_name": "engine_started"
     },
     {
+      "var_name": "Engi_equipment_bought"
+    },
+    {
       "var_name": "escaped_human"
+    },
+    {
+      "var_name": "escaped_on_pod_1"
+    },
+    {
+      "var_name": "escaped_on_pod_2"
+    },
+    {
+      "var_name": "escaped_on_pod_3"
+    },
+    {
+      "var_name": "escaped_on_pod_5"
+    },
+    {
+      "var_name": "escaped_on_shuttle"
     },
     {
       "var_name": "escaped_total"
@@ -177,6 +234,12 @@
     },
     {
       "var_name": "game_mode"
+    },
+    {
+      "var_name": "god_objective"
+    },
+    {
+      "var_name": "god_success"
     },
     {
       "var_name": "gun_fired"
@@ -239,7 +302,40 @@
       "var_name": "megafauna_kills"
     },
     {
+      "var_name": "mining_adamantine_produced"
+    },
+    {
+      "var_name": "mining_clown_produced"
+    },
+    {
+      "var_name": "mining_diamond_produced"
+    },
+    {
       "var_name": "mining_equipment_bought"
+    },
+    {
+      "var_name": "mining_glass_produced"
+    },
+    {
+      "var_name": "mining_gold_produced"
+    },
+    {
+      "var_name": "mining_iron_produced"
+    },
+    {
+      "var_name": "mining_plasma_produced"
+    },
+    {
+      "var_name": "mining_rglass_produced"
+    },
+    {
+      "var_name": "mining_silver_produced"
+    },
+    {
+      "var_name": "mining_steel_produced"
+    },
+    {
+      "var_name": "mining_uranium_produced"
     },
     {
       "var_name": "mining_voucher_redeemed"
@@ -267,6 +363,9 @@
     },
     {
       "var_name": "pick_used_mining"
+    },
+    {
+      "var_name": "preferences_verb"
     },
     {
       "var_name": "radio_usage"
@@ -326,7 +425,19 @@
       "var_name": "slime_core_harvested"
     },
     {
+      "var_name": "supply_mech_collection_redeemed"
+    },
+    {
       "var_name": "surgeries_completed"
+    },
+    {
+      "var_name": "surgery_initiated"
+    },
+    {
+      "var_name": "surgery_step_failed"
+    },
+    {
+      "var_name": "surgery_step_success"
     },
     {
       "var_name": "survived_human"
@@ -336,6 +447,9 @@
     },
     {
       "var_name": "traitor_objective"
+    },
+    {
+      "var_name": "traitor_random_uplink_items_gott"
     },
     {
       "var_name": "traitor_success"
@@ -354,6 +468,9 @@
     },
     {
       "var_name": "wizard_objective"
+    },
+    {
+      "var_name": "wizard_spell_improved"
     },
     {
       "var_name": "wizard_spell_learned"
