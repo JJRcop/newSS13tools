@@ -17,7 +17,10 @@ if ($year && $month):?>
 
   $stat = $stat->getMonthlyStat($date->format("Y"),$date->format("m"),$viewStat);?>
     <?php
-    $stat->details = json_decode($stat->data,TRUE);
+    // $stat->details = json_decode($stat->data,TRUE);
+    if(is_array($stat->details) && $stat->include == 'bigText') {
+      $stat->include = 'singleString';
+    }
     include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');
     ?>
 
@@ -27,7 +30,7 @@ if ($year && $month):?>
 
     $date = new dateTime("$month/01/$year");
 
-    $stats = $stat->getMonthlyStats($date->format("Y"),$date->format("m"));?>
+    $stats = $stat->getMonthlyStat($date->format("Y"),$date->format("m"));?>
 
     <div class="page-header">
       <h1>Stats for <?php echo $date->format("F Y");?></h1>

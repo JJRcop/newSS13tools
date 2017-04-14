@@ -81,52 +81,112 @@ class stat {
     return $db->resultSet();
   }
 
-  public function getMonthlyStats($year, $month){
+  public function getMonthlyStat($year, $month, $stat=false){
     $db = new database(TRUE);
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT var_name FROM monthly_stats WHERE month = ? AND year = ?");
+    $findStat = '';
+    $select = 'var_name';
+
+    if($stat){
+      $findStat = "AND var_name = ?";
+      $select = '*';
+    }
+    $db->query("SELECT $select
+      FROM monthly_stats
+      WHERE month = ? AND year = ?
+      $findStat;");
     $db->bind(1,$month);
     $db->bind(2,$year);
+    if($stat) $db->bind(3, $stat);
     try {
       $db->execute();
     } catch (Exception $e) {
       var_dump("Database error: ".$e->getMessage());
     }
-    return $db->resultSet();
+    if($stat){
+      $result = $db->single();
+      $result->details = json_decode($result->details,TRUE);
+      return $this->parseFeedback($result,FALSE,TRUE);
+    } else {
+      return $db->resultset();
+    }
   }
 
-  public function getMonthlyStat($year, $month, $stat){
+  public function generateMonthlyStats($month=null, $year=null){
+    if (!$month && !$year){
+      $month = date('m');
+      $year = date('Y');
+    }
+    $date = new DateTime("Previous month");
+    $start = $date->format("Y-m-01 00:00:00");
+    $end = $date->format("Y-m-t 23:59:59");
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
+    $db->execute();
+    $db->query("SELECT ss13feedback.var_name,
+          count(distinct ss13feedback.round_id) as rounds,
+          SUM(ss13feedback.var_value) AS `var_value`,
+          IF (ss13feedback.details = '', NULL, GROUP_CONCAT(ss13feedback.details SEPARATOR '#-#')) AS details
+          FROM ss13feedback
+          WHERE DATE(ss13feedback.time) BETWEEN ? AND ?
+          AND ss13feedback.var_name != ''
+          GROUP BY ss13feedback.var_name
+          ORDER BY ss13feedback.var_name ASC;");
+    $db->bind(1,$start);
+    $db->bind(2,$end);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $results = $db->resultSet();
     $db = new database(TRUE);
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM monthly_stats WHERE var_name = ?
-      AND year = ?
-      AND month = ?");
-    $db->bind(1,$stat);
-    $db->bind(2,$year);
-    $db->bind(3,$month);
+    $db->query("INSERT INTO monthly_stats
+          (rounds, var_name, details, var_value, month, year)
+          VALUES(?, ?, ?, ?, ?, ?)");
+    $i = 0;
+    foreach ($results as &$r){
+      $r = $this->parseFeedback($r,TRUE);
+      $db->bind(1,$r->rounds);
+      $db->bind(2,$r->var_name);
+      $db->bind(3,json_encode($r->details));
+      $db->bind(4,$r->var_value);
+      $db->bind(5,$date->format("m"));
+      $db->bind(6,$date->format("Y"));
+      try {
+        $db->execute();
+      } catch (Exception $e) {
+        var_dump("Database error: ".$e->getMessage());
+      }
+      $i++;
+    }
+    $db->query("INSERT INTO tracked_months
+      (year, month, stats, `timestamp`)
+      VALUES(?, ?, ?, NOW())");
+    $db->bind(1,$date->format("Y"));
+    $db->bind(2,$date->format("m"));
+    $db->bind(3,$i);
     try {
       $db->execute();
     } catch (Exception $e) {
-      var_dump("Database error: ".$e->getMessage());
+      return "Database error: ".$e->getMessage();
     }
-    $stat = $db->single();
-    return $this->parseFeedback($stat);
+    return "Added $i stats for ".$date->format("F, Y");
   }
 
-  public function parseFeedback(&$stat,$aggregate=FALSE){
+  public function parseFeedback(&$stat,$aggregate=FALSE,$skip=FALSE){
     //AT THE MINIMUM, `stat` needs to be an object with properties:
     //`var_name`
     //`var_value`
     //`details`
-    $skip = false;
-    if (!isset($stat->details) && isset($stat->data)){
-      $stat->details = json_decode($stat->data,TRUE);
-      $skip = true;
-    }
 
     switch ($stat->var_name){
 
@@ -144,9 +204,6 @@ class stat {
       case 'religion_deity': //Spaces
       case 'religion_name': //Spaces
       case 'revision':
-      case 'round_end': //Spaces
-      case 'round_end_result': //Spaces
-      case 'round_start': //Spaces
       case 'server_ip':
       case 'shuttle_fasttravel':
       case 'shuttle_manipulator':
@@ -172,7 +229,6 @@ class stat {
       case 'circuit_printed':
       case 'clockcult_scripture_recited':
       case 'colonies_dropped':
-      case 'cult_objective':
       case 'cult_runes_scribed':
       case 'engine_started':
       case 'event_ran':
@@ -180,6 +236,7 @@ class stat {
       case 'gun_fired':
       case 'handcuffs':
       case 'hivelord_core':
+      case 'immortality_talisman':
       case 'item_deconstructed':
       case 'jaunter':
       case 'lazarus_injector':
@@ -197,6 +254,7 @@ class stat {
       case 'traitor_uplink_items_bought':
       case 'vending_machine_usage':
       case 'warp_cube':
+      case 'wisp_lantern':
       case 'wizard_spell_learned':
       case 'wizard_success':
       case 'zone_targeted':
@@ -325,20 +383,43 @@ class stat {
       case 'changeling_objective':
       case 'traitor_objective':
       case 'wizard_objective':
-        $stat->details = array_count_values(explode(' ',$stat->details));
-        $objs = array();
-        foreach ($stat->details as $obj => $count){
-          $obj = explode('|',$obj);
-          $objective = str_replace('/datum/objective/', '',$obj[0]);
-          $status = str_replace(',', '', $obj[1]);
-          if (array_key_exists($objective, $objs)){
-            @$objs[$objective][$status]+= $count;
-          } else {
-            @$objs[$objective][$status]+= $count;
-          }
+      case 'cult_objective':
+        if($aggregate){
+          $stat->details = str_replace('#-#', ' ', $stat->details);
         }
-        $stat->details = $objs;
+        if(!is_array($stat->details)){
+          $stat->details = array_count_values(explode(' ',$stat->details));
+          $objs = array();
+          foreach ($stat->details as $obj => $count){
+            $obj = explode('|',$obj);
+            $objective = str_replace('/datum/objective/', '',$obj[0]);
+            $status = str_replace(',', '', $obj[1]);
+            if (array_key_exists($objective, $objs)){
+              @$objs[$objective][$status]+= $count;
+            } else {
+              @$objs[$objective][$status]+= $count;
+            }
+          }
+          $stat->details = $objs;
+        }
         $stat->include = 'objs';
+      break;
+
+      case 'round_end':
+      case 'round_start':
+        var_dump($stat->details);
+        if($aggregate){
+          $stat->details = explode('#-#',$stat->details);
+          $stat->details = array_count_values($stat->details);
+        }
+        $hours = array();
+        foreach ($stat->details as $d){
+          $hour = date('H',strtotime($d));
+          @$hours[$hour]+= 1;
+        }
+        $stat->details = $hours;
+        arsort($stat->details);
+        $stat->include = 'bigText';
       break;
 
       //Value stats
@@ -389,7 +470,6 @@ class stat {
       case 'god_objective':
       case 'god_success':
       case 'high_research_level':
-      case 'immortality_talisman':
       case 'mecha_durand_created':
       case 'mecha_firefighter_created':
       case 'mecha_gygax_created':
@@ -421,9 +501,12 @@ class stat {
       case 'surgery_step_success':
       case 'survived_human':
       case 'survived_total':
-      case 'wisp_lantern':
         $stat->var_value = (int) $stat->var_value;
         $stat->include = 'bigNum';
+      break;
+
+      default:
+        var_dump("UNTRACKED UNTRACKED UNTRACKED");
       break;
     }
     if('' === $stat->details) $stat->details = null;
