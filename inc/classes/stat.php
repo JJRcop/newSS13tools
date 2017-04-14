@@ -283,9 +283,10 @@ class stat {
       case 'export_sold_amount':
       case 'export_sold_cost':
       case 'food_harvested':
+      case 'item_printed':
       case 'item_used_for_combat':
       case 'ore_mined':
-      case 'item_printed':
+      case 'preferences_verb':
         if(!$skip){
           if($aggregate){
             $stat->details = str_replace('#-#', ' ', $stat->details);
@@ -514,7 +515,7 @@ class stat {
       break;
 
       default:
-        var_dump("UNTRACKED UNTRACKED UNTRACKED TELL NED TELL NED TELL NED");
+        echo alert("<strong>ERROR 501:</strong> $stat->var_name is untracked. Tell Ned. TELL NED!!",'danger');
       break;
     }
     if('' === $stat->details) $stat->details = null;
