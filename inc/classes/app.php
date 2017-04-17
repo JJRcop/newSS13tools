@@ -15,6 +15,10 @@
     'tools' => 1 //Icon tools
   );
 
+  private $cleanUpTargets = array(
+    ROOTPATH.'/logs/admintxt.log',
+  );
+
   public function __construct($info=false) {
     if ($info){
       $this->doesLocalRepoExist = $this->doesLocalRepoExist();
@@ -152,6 +156,19 @@
     fwrite($adminsFile, json_encode($arr));
     fclose($adminsFile);
     return true;
+  }
+
+  public function isCLI(){
+    return (php_sapi_name() === 'cli');
+  }
+
+  public function cleanUp(){
+    $i = 0;
+    foreach ($this->cleanUpTargets as $target){
+      var_dump(unlink($target));
+      $i++;
+    }
+    return "Deleted $i files";
   }
 
 }

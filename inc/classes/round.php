@@ -122,7 +122,8 @@
       IF (proper.details IS NULL, error.details, proper.details) AS `status`,
       MAX(next.round_id) AS `next`,
       MIN(prev.round_id) AS `prev`,
-      result.details AS result
+      result.details AS result,
+      name.details AS name
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
@@ -131,6 +132,7 @@
       LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
       LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
       LEFT JOIN ss13feedback AS `result` ON ss13feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
+      LEFT JOIN ss13feedback AS `name` ON ss13feedback.round_id = name.round_id AND name.var_name = 'station_renames'
       LEFT JOIN ss13feedback AS `next` ON next.round_id = ss13feedback.round_id + 1
       LEFT JOIN ss13feedback AS `prev` ON prev.round_id = ss13feedback.round_id - 1
       WHERE ss13feedback.var_name='round_end'

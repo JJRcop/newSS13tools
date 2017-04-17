@@ -13,11 +13,11 @@
       <li class="list-group-item">Cached month-by-month stats</li>
       <li class="list-group-item">Month-by-month stats</li>
       <li class="list-group-item">Tgstation forum auth</li>
+      <li class="list-group-item">Make monthly stats faster</li>
     </ul>
 
     <h2>Near-future</h2>
     <ul class="options-list">
-      <li class="list-group-item">Make monthly stats faster</li>
       <li class="list-group-item">Round list calendar view</li>
       <li class="list-group-item">Split stats by server</li>
       <li class="list-group-item">Daily death maps</li>
@@ -35,6 +35,14 @@
       <h1>Changelog</h1>
     </div>
     <ul class="list-group">
+      <li class="list-group-item">
+        <h4 class="list-group-heading">14-01-2017</h4>
+        <ul class="list-unstyled">
+          <li><i class="fa fa-plus text-success"></i> Admin ranks can now be verified based on external txt files!</li>
+          <li><i class="fa fa-plus text-success"></i> #coderbus has been exceptionally responsive in terms of fixing bugs and adding new datapoints to the stats. Be sure to say thanks!</li>
+          <li><i class="fa fa-check text-info"></i> There's a ton of work being done on refactoring stats.</li>
+        </ul>
+      </li>
       <li class="list-group-item">
         <h4 class="list-group-heading">09-03-2017</h4>
         <ul class="list-unstyled">

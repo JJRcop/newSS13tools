@@ -193,7 +193,6 @@ class stat {
       //Single string stats
       //These can just be reported. When aggregated, they need to be
       //concatenated carefully
-      case 'admin_verb':
       case 'chaplain_weapon': //Spaces
       case 'emergency_shuttle':
       case 'end_error': //Spaces
@@ -205,10 +204,12 @@ class stat {
       case 'religion_deity': //Spaces
       case 'religion_name': //Spaces
       case 'revision':
+      case 'round_end_result':
       case 'server_ip':
       case 'shuttle_fasttravel':
       case 'shuttle_manipulator':
       case 'shuttle_purchase':
+      case 'station_renames':
         if($aggregate){
           $stat->details = explode('#-#',$stat->details);
           $stat->details = array_count_values($stat->details);
