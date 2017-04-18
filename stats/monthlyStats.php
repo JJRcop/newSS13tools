@@ -21,6 +21,7 @@ if ($year && $month):?>
     if(is_array($stat->details) && $stat->include == 'bigText') {
       $stat->include = 'singleString';
     }
+    var_dump($stat);
     include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');
     ?>
 

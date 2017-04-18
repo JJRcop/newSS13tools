@@ -44,7 +44,7 @@
 
   public function updateLocalRepo(){
     if ($this->doesLocalRepoExist){
-      return rtrim(shell_exec("cd ".DMEDIR." && git pull"));
+      return rtrim(shell_exec("cd ".DMEDIR." && git fetch origin && git reset --hard origin/master"));
     }
   }
 

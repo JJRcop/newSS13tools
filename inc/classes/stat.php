@@ -114,6 +114,24 @@ class stat {
     }
   }
 
+  public function getRoundsForMonth($start, $end){
+    $db = new database();
+    $db->query("SELECT count(DISTINCT round_id) AS rounds,
+      concat(MONTH(ss13feedback.time),'-',YEAR(ss13feedback.time)) AS `date`,
+      MIN(round_id) AS firstround,
+      MAX(round_id) AS lastround
+      FROM ss13feedback
+      WHERE ss13feedback.time BETWEEN ? AND ?");
+    $db->bind(1,$start);
+    $db->bind(2,$end);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->single();
+  }
+
   public function generateMonthlyStats($month=null, $year=null){
     if (!$month && !$year){
       $month = date('m');
@@ -150,8 +168,8 @@ class stat {
       return FALSE;
     }
     $db->query("INSERT INTO monthly_stats
-          (rounds, var_name, details, var_value, month, year)
-          VALUES(?, ?, ?, ?, ?, ?)");
+      (rounds, var_name, details, var_value, month, year, `timestamp`)
+      VALUES(?, ?, ?, ?, ?, ?, NOW())");
     $i = 0;
     foreach ($results as &$r){
       $r = $this->parseFeedback($r,TRUE);
@@ -168,12 +186,16 @@ class stat {
       }
       $i++;
     }
+    $roundCount = $this->getRoundsForMonth($start, $end);
     $db->query("INSERT INTO tracked_months
-      (year, month, stats, `timestamp`)
-      VALUES(?, ?, ?, NOW())");
+      (year, month, stats, rounds, firstround, lastround, `timestamp`)
+      VALUES(?, ?, ?, ?, ?, ?, NOW())");
     $db->bind(1,$date->format("Y"));
     $db->bind(2,$date->format("m"));
     $db->bind(3,$i);
+    $db->bind(4,$roundCount->rounds);
+    $db->bind(5,$roundCount->firstround);
+    $db->bind(6,$roundCount->lastround);
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -227,6 +249,7 @@ class stat {
       case 'assembly_made':
       case 'cell_used':
       case 'changeling_powers':
+      case 'changeling_power_purchase':
       case 'changeling_success':
       case 'circuit_printed':
       case 'clockcult_scripture_recited':
@@ -234,6 +257,7 @@ class stat {
       case 'cult_runes_scribed':
       case 'engine_started':
       case 'event_ran':
+      case 'event_admin_cancelled':
       case 'food_made':
       case 'gun_fired':
       case 'handcuffs':
@@ -288,6 +312,7 @@ class stat {
       case 'item_used_for_combat':
       case 'ore_mined':
       case 'preferences_verb':
+      case 'wizard_spell_improved':
         if(!$skip){
           if($aggregate){
             $stat->details = str_replace('#-#', ' ', $stat->details);
@@ -413,7 +438,6 @@ class stat {
 
       case 'round_end':
       case 'round_start':
-        var_dump($stat->details);
         if($aggregate){
           $stat->details = explode('#-#',$stat->details);
           $stat->details = array_count_values($stat->details);
