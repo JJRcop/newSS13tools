@@ -150,10 +150,12 @@
         continue;
       }
       $admin = explode(' = ',$admin);
-      $arr[strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $admin[0]))] = $admin[1];
+      $ckey = strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $admin[0]));
+      $ckey = trim(rtrim($ckey));
+      $arr[$ckey] = trim(rtrim($admin[1]));
     }
     $adminsFile = fopen(ROOTPATH.'/tmp/admins.json', 'w+');
-    fwrite($adminsFile, json_encode($arr));
+    fwrite($adminsFile,json_encode($arr));
     fclose($adminsFile);
     return true;
   }
