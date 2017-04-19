@@ -227,7 +227,6 @@ class stat {
       case 'religion_name': //Spaces
       case 'revision':
       case 'round_end_result':
-      case 'server_ip':
       case 'shuttle_fasttravel':
       case 'shuttle_manipulator':
       case 'shuttle_purchase':
@@ -450,6 +449,16 @@ class stat {
         $stat->details = $hours;
         arsort($stat->details);
         $stat->include = 'bigText';
+      break;
+
+      case 'server_ip':
+        if($aggregate){
+          $stat->details = explode('#-#',$stat->details);
+          $stat->details = array_count_values($stat->details);
+          arsort($stat->details);
+        }
+        if(is_array($stat->details)) $stat->var_value = array_sum($stat->details);
+        $stat->include = 'singleString';
       break;
 
       //Value stats

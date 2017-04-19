@@ -52,20 +52,35 @@ if ($year && $month):?>
     <h1>Stats by month</h1>
   </div>
 
-  <ul class="list-unstyled">
-    <?php foreach ($stats as $date):
-    $count = $date->stats;
-    $date = new dateTime("$date->month/01/$date->year");
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Datapoints</th>
+        <th># of Rounds</th>
+        <th>First Round ID</th>
+        <th>Last Round ID</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($stats as $month):
+    $date = new dateTime("$month->month/01/$month->year");
     $link = APP_URL."stats/monthlyStats.php?year=".$date->format('Y');
     $link.= "&month=".$date->format('m');
     ?>
-      <li>
-        <a href="<?php echo $link;?>">
-          <?php echo $date->format('F Y')." - $count datapoints";?>
+      <tr>
+        <td><a href="<?php echo $link;?>">
+          <?php echo $date->format('F Y');?>
         </a>
-      </li>
+        </td>
+        <td><?php echo $month->stats;?></td>
+        <td><?php echo $month->rounds;?></td>
+        <td><?php echo $month->firstround;?></td>
+        <td><?php echo $month->lastround;?></td>
+      </tr>
     <?php endforeach;?>
-  </ul>
+  </tbody>
+  </table>
 <?php endif; ?>
 
 <?php require_once('../footer.php') ;?>
