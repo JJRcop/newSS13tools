@@ -132,12 +132,39 @@ class stat {
     return $db->single();
   }
 
+  public function regenerateMonthlyStats($month, $year){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("DELETE FROM monthly_stats WHERE month = ? AND year = ?");
+    $db->bind(1,$month);
+    $db->bind(2,$year);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+
+    $db->query("DELETE FROM tracked_months WHERE month = ? AND year = ?");
+    $db->bind(1,$month);
+    $db->bind(2,$year);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $return = "Cleared stats for $month, $year ";
+    $return.= $this->generateMonthlyStats($month,$year);
+    return $return;
+  }
+
   public function generateMonthlyStats($month=null, $year=null){
     if (!$month && !$year){
-      $month = date('m');
-      $year = date('Y');
+      $date = new DateTime("Previous month");
+    } else {
+      $date = new DateTime("$year-$month-01 00:00:00");
     }
-    $date = new DateTime("Previous month");
     $start = $date->format("Y-m-01 00:00:00");
     $end = $date->format("Y-m-t 23:59:59");
     $db = new database();

@@ -79,7 +79,7 @@ if ($year && $month):?>
         <td><?php echo $month->lastround;?></td>
       </tr>
     <?php endforeach;?>
-  </tbody>
+    </tbody>
   </table>
 <?php endif; ?>
 

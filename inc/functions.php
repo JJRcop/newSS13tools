@@ -188,3 +188,15 @@ function auto_link_text($text) {
     return "<a href='{$matches[0]}' target='_blank'>{$matches[0]}</a>";
   }, $text);
 }
+
+function returnError($msg) {
+  return json_encode(array('message'=>$msg,'level'=>0));
+}
+
+function returnMessage($msg) {
+  return json_encode(array('message'=>$msg,'level'=>2));
+}
+
+function returnSuccess($msg) {
+return json_encode(array('message'=>$msg,'level'=>1));
+}
