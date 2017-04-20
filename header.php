@@ -1,8 +1,10 @@
 <?php require_once('config.php');
 PHP_Timer::start();
+if(!isset($skip)) $skip = false;
 $app = new app();
 $user = new user();
 $death = new death();
+
 ?>
 
 <!DOCTYPE html>
@@ -29,10 +31,12 @@ $death = new death();
 if (defined('NOTICE')){
   echo NOTICE;
 }
-
-$die = $app->restrictionCheck($user);
-if ($app->die) exit($die); //Application will exit if user is not auth'd
-$deathGraph = $death->countDeathsByDays();?>
+if(!$skip):
+  $die = $app->restrictionCheck($user);
+  if ($app->die) exit($die); //Application will exit if user is not auth'd
+  $deathGraph = $death->countDeathsByDays();
+endif;
+?>
 
 <script>
 var chart = c3.generate({

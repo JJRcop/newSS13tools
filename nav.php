@@ -12,6 +12,7 @@
       SS13 Tools
       </a>
     </div>
+    <?Php if(!$skip):?>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
       <li><a href="<?php echo APP_URL;?>status.php">Project Status</a></li>
@@ -120,5 +121,6 @@
         </ul>
       <?php endif;?>
     </div><!--/.nav-collapse -->
+    <?php endif;?>
   </div>
 </nav>
