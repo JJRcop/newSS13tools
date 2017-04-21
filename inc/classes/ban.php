@@ -118,11 +118,13 @@ class ban {
   }
 
   public function parseBan(&$ban) {
-    //The ban status should be done on MySQL, this is a crutch and I don't like
-    //it :(
-    $ban->reason = auto_link_text($ban->reason);
+    $ban->rules = array();
+    $ban= $this->parseBanReason($ban);
     $round = new round();
     $ban->serverip = $round->mapServer(long2ip($ban->server_ip).":".$ban->server_port);
+
+    //The ban status should be done on MySQL, this is a crutch and I don't like
+    //it :(
 
     $ban->status = 'Active';
     $ban->statusClass = 'danger';
@@ -230,6 +232,17 @@ class ban {
     $ban->cidql.= "<i class='fa fa-plug'></i></a>)";
     $ban->cidql.= "</div>";
 
+    return $ban;
+  }
+
+  public function parseBanReason(&$ban){
+    $ban->reason = auto_link_text($ban->reason);
+
+    if(str_contains($ban->reason, "IC in") || str_contains($ban->reason, "OOC in")  ){
+      $rules['number'] = 3;
+      $rules['text'] = "IC in OOC";
+      $ban->rules[] = $rules;
+    }
     return $ban;
   }
 

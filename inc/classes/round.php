@@ -240,6 +240,7 @@
     $logs = str_replace("-censored(private logtype)-\r\n", '', $logs);
     $logs = str_replace(" : ",': ',$logs);
     $logs = str_replace("-\r\n", '', $logs);
+    $logs = str_replace("<span class='notice'>",'',$logs);
     $logs = str_replace("<span class='boldannounce'>",'',$logs);
     $logs = str_replace('</span>', '', $logs);
     $logs = str_replace('*no key*/', '', $logs);

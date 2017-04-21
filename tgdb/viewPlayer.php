@@ -29,7 +29,7 @@ $player = $player->getPlayerByCkey($ckey);
     <ul class="list-group">
       <li class="list-group-item" style="background: <?php echo $player->backColor;?>; color: <?php echo $player->foreColor;?>;">
         <strong class="list-group-item-heading">Last rank</strong>
-          <?php echo $player->lastadminrank;?>
+          <?php echo $player->rank;?>
       </li>
       <?php if(strpos($player->standing,'Permanent') !== FALSE):?>
         <li class="list-group-item perma">
@@ -80,6 +80,14 @@ $player = $player->getPlayerByCkey($ckey);
           <?php echo $player->CIDs;?>
       </li>
     </ul>
+  </div>
+  <div class="col-md-4">
+    <div class="well">
+      <strong>Quick share</strong>
+      <p style="font-family: monospace;"><?php echo "[ckey] $player->ckey | [Rank] $player->rank | [Active] $player->firstSeenTimeStamp - $player->lastSeenTimeStamp | [Connections] $player->connections | [IPs] $player->IPs | [CIDs] $player->CIDs | [Standing] $player->standing | [Link] $player->href ]";?>
+      </p>
+    </div>
+
   </div>
 </div>
 

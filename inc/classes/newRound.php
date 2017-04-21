@@ -2,10 +2,27 @@
 
 class newRound {
 
-  public function __construct($round=null,$full=false) {
+  public function __construct($round=null,$data=false) {
     if($round){
       $round = $this->getRound($round);
       $round = $this->parseRound($round);
+
+      if(is_array($data)){
+        foreach ($data as $get){
+          switch ($get){
+
+            //Getting and parsing round logs
+            case 'logs':
+              if ($round->logs){
+                $round = $this->getRoundLogs($round);
+              } else {
+                $round->logs = false;
+              }
+            break;
+          }
+        }
+      }
+
       foreach ($round as $k => $v){
         $this->$k = $v;
       }
@@ -18,11 +35,12 @@ class newRound {
   public function parseRound(&$round){
     if ($round->start) $round->start = date("Y-m-d H:i:s",strtotime($round->start));
     $round->end = date("Y-m-d H:i:s",strtotime($round->end));
-
-    if ($round->start && $round->game_mode){
+    $round->server = $this->mapServer($round->server);
+    if ($round->start && $round->end){
       $round->logs = true; //Round has logs
-      $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/".date('Y/m-F/d-l',strtotime($round->end)).".txt";
-
+      $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/";
+      $round->logURL.= date('Y/m-F/d-l',strtotime($round->end)).".txt";
+      $round->logCache = ROOTPATH."/tmp/".$round->round_id."-".$round->server."-logs.json";
       //End state doesn't get called if the map changes or something, so we can
       //set this manually if all the conditions are met
       if (!$round->status) $round->status = 'proper completion';
@@ -79,6 +97,67 @@ class newRound {
       return FALSE;
     }
     
+  }
+
+  public function mapServer($ip) {
+    $ip = explode(':',$ip);
+    if (!isset($ip[1])) return 'Unknown';
+
+    //Per MSO, we should be looking at the port #s.
+    switch ($ip[1]){
+      case '2337':
+        return 'Basil';
+      break;
+
+      case '1337':
+        return 'Sybil';
+      break;
+
+      default: 
+        return 'Unknown';
+      break;
+    }
+  }
+
+  public function getRoundLogs(&$round){
+    if(file_exists($round->logCache)){
+      $round->logs = $this->getCachedLogs($round->logCache);
+      $round->fromCache = TRUE;
+    } else {
+      $round->logs = $this->getRemoteLogs($round->logURL);
+      $round->fromCache = FALSE;
+    }
+    return $round;
+  }
+
+  public function getCachedLogs($cache){
+    $logs = file_get_contents($cache);
+    return json_decode($logs);
+  }
+
+  public function getRemoteLogs($URL){
+    $logs = $this->fetchRemoteLogs($URL);
+    $logs = $this->getLogs($logs);
+    return $logs;
+  }
+
+  public function fetchRemoteLogs($URL){
+    $file = str_replace(REMOTE_LOG_SRC, '', $URL);
+    $file = str_replace("/", '-', $file);
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_RETURNTRANSFER => TRUE,
+      CURLOPT_URL => $url,
+      CURLOPT_USERAGENT => "atlantaned.space log parser",
+      CURLOPT_SSL_VERIFYPEER => FALSE,
+      CURLOPT_SSL_VERIFYHOST => FALSE,
+      CURLOPT_FOLLOWLOCATION => TRUE,
+      CURLOPT_REFERER => "atlantaned.space",
+      CURLOPT_ENCODING => 'gzip',
+    ));
+    $logs = curl_exec($curl);
+    curl_close($curl);
+    return $logs;
   }
 
 }

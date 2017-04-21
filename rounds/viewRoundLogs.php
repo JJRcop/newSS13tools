@@ -3,6 +3,7 @@ $json = false;
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 if (isset($_GET['json'])) $json = filter_input(INPUT_GET, 'json', FILTER_VALIDATE_BOOLEAN);
+if (isset($_GET['regen'])) $regen = filter_input(INPUT_GET, 'regen', FILTER_VALIDATE_BOOLEAN);
 
 if($json) {
   require_once('../config.php');
