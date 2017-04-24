@@ -203,7 +203,11 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM tbl_player WHERE ckey = ? LIMIT 1");
+    $db->query("SELECT tbl_player.*,
+      count(DISTINCT ss13connection_log.id) AS connections
+      FROM tbl_player
+      LEFT JOIN tbl_connection_log ON tbl_connection_log.ckey = tbl_player.ckey
+      WHERE tbl_player.ckey = ? LIMIT 1");
     $db->bind(1,$ckey);
     try {
       $db->execute();

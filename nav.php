@@ -113,7 +113,7 @@
       </ul>
       <?php if($user->legit):?>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#"><?php echo $user->label;?></a></li>
+          <li><a href="<?php echo APP_URL;?>me.php"><?php echo $user->label;?></a></li>
         </ul>
       <?php else: ?>
         <ul class="nav navbar-nav navbar-right">
