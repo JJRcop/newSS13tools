@@ -375,5 +375,32 @@
     $ranks = json_decode(file_get_contents(ROOTPATH.'/tmp/admins.json'));
     return $ranks->{$ckey};
   }
+
+  public function getActiveHours($ckey=null) {
+    $where = null;
+    if ($ckey){
+      $where = "WHERE ckey = ?";
+    }
+    $db = new database();
+    $db->query("SELECT HOUR(`datetime`) AS `hour`,
+      IF (count(DISTINCT id) IS NULL, 0, count(DISTINCT id)) AS connections
+      FROM ss13connection_log
+      $where
+      GROUP BY HOUR(`datetime`);");
+    if($ckey) {
+      $db->bind(1, $ckey);
+    }
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultset();
+    $result = array();
+    foreach ($db->resultset() as $r){
+      $result[$r->hour] = $r->connections;
+    }
+    return $result;
+  }
   
 }

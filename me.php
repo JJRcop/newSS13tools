@@ -16,6 +16,40 @@ require_once('header.php');?>
 
 <p class='lead'>You have wasted 0 hours playing Space Station 13, because time spent doing something you enjoy isn't wasted time.</p>
 
+<div class="page-header">
+  <h2>Your active hours</h2>
+</div>
+
+<div id="c">
+</div>
+
+<?php $hours = $user->getActiveHours($user->ckey);?>
+
+<script>
+
+var chart = c3.generate({
+    bindto: '#c',
+    data: {
+      json: <?php echo json_encode($hours); ?>,
+      keys: {
+        value: ['hour', 'connections'],
+      },
+      x: 'hour',
+      y: 'connections',
+      type: 'bar',
+    },
+    axis: {
+      x: {
+        type: 'category',
+        tick: {
+          culling: false
+        }
+      }
+    }
+});
+
+</script>
+
 <?php endif;?>
 
 <?php require_once('footer.php');

@@ -78,6 +78,11 @@
             </li>
             <li class="divider"></li>
             <li>
+              <a href="<?php echo APP_URL;?>stats/hours.php">
+                When do people play?
+              </a>
+            </li>
+            <li>
               <a href="<?php echo APP_URL;?>stats/adminConnections.php">
                 Do admins play?
               </a>

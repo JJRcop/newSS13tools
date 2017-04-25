@@ -82,16 +82,11 @@ $player = $player->getPlayerByCkey($ckey);
     </ul>
   </div>
   <div class="col-md-4">
-    <div class="well">
-      <strong>Quick share</strong>
-      <p style="font-family: monospace;"><?php echo "[ckey] $player->ckey | [Rank] $player->rank | [Active] $player->firstSeenTimeStamp - $player->lastSeenTimeStamp | [Connections] $player->connections | [IPs] $player->IPs | [CIDs] $player->CIDs | [Standing] $player->standing | [Link] $player->href ]";?>
-      </p>
-    </div>
-
   </div>
 </div>
 
 <div class="row">
+<div class="col-md-12">
 <?php if ($player->messages):?>
     <div class="page-header">
       <h2>Messages <?php echo (count($player->messages) > 5)?"<a class='btn btn-xs btn-primary' data-toggle='collapse' href='#messages'>Show</a> ":""?><small>(<?php echo count($player->messages);?>)</small></h2>
@@ -129,7 +124,42 @@ $player = $player->getPlayerByCkey($ckey);
   echo alert("No bans to show",1);
 }?>
   </div>
+  </div>
 </div>
+
+<div class="page-header">
+  <h2>Active hours</h2>
+</div>
+
+<div id="c">
+</div>
+
+<?php $hours = $user->getActiveHours($user->ckey);?>
+
+<script>
+
+var chart = c3.generate({
+    bindto: '#c',
+    data: {
+      json: <?php echo json_encode($hours); ?>,
+      keys: {
+        value: ['hour', 'connections'],
+      },
+      x: 'hour',
+      y: 'connections',
+      type: 'bar',
+    },
+    axis: {
+      x: {
+        type: 'category',
+        tick: {
+          culling: false
+        }
+      }
+    }
+});
+
+</script>
 
 
 
