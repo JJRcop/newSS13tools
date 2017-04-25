@@ -402,5 +402,24 @@
     }
     return $result;
   }
+
+  public function getActiveAdminHours(){
+    $db = new database();
+    $db->query("SELECT count(DISTINCT ss13connection_log.id) AS connections, HOUR(ss13connection_log.datetime) AS `hour` FROM ss13connection_log
+        LEFT JOIN ss13player ON ss13connection_log.ckey = ss13player.ckey
+        WHERE ss13player.lastadminrank != 'Player'
+        GROUP BY HOUR(ss13connection_log.datetime);");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultset();
+    $result = array();
+    foreach ($db->resultset() as $r){
+      $result[$r->hour] = $r->connections;
+    }
+    return $result;
+  }
   
 }
