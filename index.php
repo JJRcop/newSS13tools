@@ -1,7 +1,18 @@
 <?php require_once('header.php'); ?>
+<?php
+$round = new round();
+$rounds = $round->listRounds(1,5);
+$now = new datetime();
+$then = new datetime($rounds{0}->end);
 
+$interval = $then->diff($now);
+$interval = $interval->format('%a');
+if(1 <= $interval) {
+  echo alert("<strong>No recent rounds recorded!</strong> Database might be out of sync!",FALSE);
+}
+?>
 <div class="page-header">
-  <h1>SS13 tools &amp; stats</h1>
+  <h1>SS13 Tools &amp; Stats</h1>
 </div>
 <?php $num = $app->getBigNumbers();?>
 <div class="row">
@@ -44,8 +55,7 @@
   <div class="col-md-6">
   <h2>Recent rounds <small><a href='rounds/listRounds.php'>See more</a></small></h2>
   <ul class="list-unstyled">
-  <?php $round = new round();
-  $rounds = $round->listRounds(1,5);
+  <?php
   if($rounds):
   foreach ($rounds as $round):?>
   <li>
