@@ -23,6 +23,13 @@ $jobby->add('CleanUp', array(
     'enabled' => TRUE,
 ));
 
+$jobby->add('CleanUp', array(
+    'command' => "php ".ROOTPATH."/auto/repoTools.php",
+    'schedule' => '0 0 * * *', //Weekly
+    'output' => ROOTPATH."/logs/repo.log",
+    'enabled' => TRUE,
+));
+
 $jobby->run();
 
 
