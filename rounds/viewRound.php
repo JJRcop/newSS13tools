@@ -5,7 +5,7 @@ if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 
 require_once('../header.php');
-$round = new round($round,TRUE);
+$round = new round($round,array('data'));
 
 ?>
 
@@ -43,11 +43,11 @@ json_encode($round->data)); ?></code></div>
 <div id="rawdata">
   <h3>Raw data</h3>
   <ul class="list-unstyled">
-    <?php foreach ($round->data as $k => $v) :?>
+    <?php foreach ($round->data as $d) :?>
       <li>
         <code>
-          <a href='<?php echo APP_URL;?>rounds/viewRoundStat.php?stat=<?php echo $k;?>&round=<?php echo $round->round_id;?>'>
-            <?php echo $k;?>
+          <a href='<?php echo APP_URL;?>rounds/viewRoundStat.php?stat=<?php echo $d->var_name;?>&round=<?php echo $round->round_id;?>'>
+            <?php echo $d->var_name;?>
           </a>
         </code>
       </li>

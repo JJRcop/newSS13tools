@@ -15,75 +15,62 @@
   public $fromCache = false;
   public $data = false;
 
-  public function __construct($id=null,$data=false,$logs=false,$json=false) {
-    if ($id){
-      $round = $this->getRound($id);
-
-      //If we found the round, parse it...
-      if(!$round) return false;
+  public function __construct($round=null,$data=false) {
+    if($round){
+      $round = $this->getRound($round);
       $round = $this->parseRound($round);
+      // var_dump($round);
+      if(is_array($data)){
+        foreach ($data as $get){
+          switch ($get){
 
-      //Set properties from round parse
+            //Getting and parsing round logs
+            case 'logs':
+              if ($round->logs){
+                $round = $this->getRoundLogs($round);
+              } else {
+                $round->logs = false;
+              }
+            break;
+
+            //Get and parse round stats(feedback)
+            case 'data':
+              $round->data = $this->getRoundFeedback($round->round_id);
+              $round->data = $this->parseRoundFeedback($round->data);
+            break;
+
+          }
+        }
+      }
       foreach ($round as $k => $v){
         $this->$k = $v;
       }
-
-      //Get round feedback
-      if ($data){
-        $this->data = new stdClass;
-        $feedback = $this->getRoundFeedback($this->round_id);
-        $feedback = $this->parseRoundFeedback($feedback);
-        
-        //This is ugly, but it prevents us from having to loop through every
-        //statistic if we want to look up something
-        //There is probably a better way to do this though
-        foreach($feedback as $data){
-          $name = $data->var_name;
-          if (!$name) continue; //Fixes round #65941 which had an empty var
-          $this->data->$name['value'] = $data->var_value;
-          $this->data->$name['details'] = $data->details;
-        }
-
-        //Because I'm lazy
-        if ( isset($this->data->traitor_objective)
-          || isset($this->data->wizard_objective)
-          || isset($this->data->changeling_objective)) {
-          $this->hasObjectives = true;
-        }
-      }
-
-      //Or we're pulling down logs
-      if ($logs){
-        if (!$this->status){
-          $this->logs = false;
-        } else {
-            $logs = $this->getlogs($round,$json);
-            if (!$json) {
-              $this->logs = $this->parselogs($logs,$round);
-            } else {
-              $this->logs = $logs;
-            }
-          }
-        }
+      // var_dump($round);
       return $round;
+    } else {
+      return false;
     }
-    return false;
   }
 
   public function parseRound(&$round){
     if ($round->start) $round->start = date("Y-m-d H:i:s",strtotime($round->start));
     $round->end = date("Y-m-d H:i:s",strtotime($round->end));
     $round->server = $this->mapServer($round->server);
-    if ($round->start && $round->game_mode){
-      $round->logs = true; //Round has logs
-      $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/".date('Y/m-F/d-l',strtotime($round->end)).".txt";
-
+    if ($round->start && $round->end && $round->server){
+      $round->logs = true; //Round has logs we can find
+      $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/";
+      $round->logURL.= date('Y/m-F/d-l',strtotime($round->end)).".txt";
+      $round->logCache = ROOTPATH."/tmp/".$round->round_id."-".$round->server."-logs.json";
       //End state doesn't get called if the map changes or something, so we can
       //set this manually if all the conditions are met
       if (!$round->status) $round->status = 'proper completion';
     } else {
-      if (!$round->status) $round->status = 'proper completion';
+      if (!$round->status) $round->status = false;
     }
+    if (!$round->result) {
+      $round->result = ucfirst($round->status);
+    }
+    $round->status = ucfirst($round->status);
     $round->permalink = APP_URL."rounds/viewRound.php?round=$round->round_id";
     $round->link = "<a href='$round->permalink'>#$round->round_id</a>";
     return $round;
@@ -178,43 +165,90 @@
     return  $db->resultset();
   }
 
-  public function getLogs($round,$json=false){
-    if ($round->start && $round->end && $round->server){
-      $round->start = date('H:i:s',strtotime($round->start));
-      $round->end = date('H:i:s',strtotime($round->end));
+    public function getRoundLogs(&$round){
+    if(file_exists($round->logCache)){
+      $round->logs = $this->getCachedLogs($round->logCache);
+      $round->fromCache = TRUE;
     } else {
-      return false;
+      $round->logs = $this->getRemoteLogs($round->logURL);
+      $round = $this->extractRoundLogs($round);
+      $round->fromCache = FALSE;
     }
-    $logsavefile = "../".TMPDIR."/".$round->round_id."-".$round->server."-logs.json";
-    $this->fromCache = FALSE;
-    //Check if we've already saved logs for this round
-    if (file_exists($logsavefile)){
-      $this->fromCache = TRUE;
-      //If so, spew em out
-      if($json){
-        $logs = file_get_contents($logsavefile);
-      } else {
-        $logs = json_decode(file_get_contents($logsavefile));
-      }
-    } else {
-      //If not, retrieve them
-      $this->fromCache = FALSE;
-      $logs = $this->getRemoteLogs($round->logURL);
-      $logs = $this->cleanUpLogs($logs);
-      $lines = $this->findRoundBounds($logs,$round);
-      $logs = $this->getLinesFromLogs($logs,$lines);
-      foreach ($logs as &$log){
-        $log = explode('#-#',$log);
-      }
-      //Cache locally
-      $logsavefile = fopen($logsavefile,"w+");
-      fwrite($logsavefile,json_encode($logs,JSON_UNESCAPED_UNICODE));
-      fclose($logsavefile);
-    }
-    return $logs;
+    return $round;
+  }
+
+  public function getCachedLogs($cache){
+    $logs = file_get_contents($cache);
+    return json_decode($logs);
   }
 
   public function getRemoteLogs($url){
+    $logs = $this->fetchRemoteLogs($url);
+    $logs = $this->cleanUpLogs($logs);
+    return $logs;
+  }
+
+  public function cleanUpLogs($logs){
+    //This method is ONLY for cleaning out useless lines from the logs
+    
+    //For the sake of transparency, this method is heavily documented
+    //
+    //-censored lines have no value in public logs, and are removed entirely
+    $logs = str_replace("-censored(misc)-\r\n",'',$logs);
+    $logs = str_replace("-censored(sql logs)-\r\n",'',$logs);
+    $logs = str_replace("-censored(asay/apm/ahelp/notes/etc)-\r\n",'',$logs);
+    $logs = str_replace(" from -censored(ip/cid)- ",' ',$logs);
+    $logs = str_replace("-censored(private logtype)-\r\n", '', $logs);
+
+    //For some reason, some lines are a single - and a return. These lines are
+    //removed
+    $logs = str_replace("-\r\n", '', $logs);
+
+    //[hh:mm:ss]SAY: [mob name]/[ckey] : Something said
+    //This line removes the spaces:   ^ ^
+    $logs = str_replace(" : ",': ',$logs);
+
+    //HTML spans are superfluous and removed
+    $logs = str_replace("<span class='notice'>",'',$logs);
+    $logs = str_replace("<span class='boldannounce'>",'',$logs);
+    $logs = str_replace('</span>', '', $logs);
+
+    //*no key* are mob emotes from mobs that aren't player controlled
+    $logs = str_replace('*no key*/', '', $logs);
+
+    //Deadchat(dsay) lines are prefixed with ghost/, this changes that to GHOST
+    $logs = str_replace("SAY: Ghost/","GHOST: ", $logs);
+
+    //This line splits the line into three parts:
+    // Timestamp
+    // Type
+    // Content
+    //The #-# is a line that I can easily break on in another method
+    //
+    //TODO: Randomize the #-# to stop people from (un)intentionally breaking
+    //the parser
+    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE|GHOST)(:\s)/","$2#-#$4#-#", $logs);
+
+    //UTF8 encode (hey look who was ahead of the curve)
+    $logs = utf8_encode($logs);
+
+    //And split everything into a nice big array that we can iterate over
+    $logs = explode("\r\n",$logs);
+
+    //Remove empty lines
+    array_filter($logs);
+
+    //Remove the last line
+    array_pop($logs);
+
+    foreach ($logs as &$log){
+      $log = explode('#-#',$log);
+    }
+
+    return $logs;
+  }
+
+  public function fetchRemoteLogs($url){
     $file = str_replace(REMOTE_LOG_SRC, '', $url);
     $file = str_replace("/", '-', $file);
     $curl = curl_init();
@@ -233,100 +267,52 @@
     return $logs;
   }
 
-  public function cleanUpLogs(&$logs){
-    $logs = str_replace("-censored(misc)-\r\n",'',$logs);
-    $logs = str_replace("-censored(asay/apm/ahelp/notes/etc)-\r\n",'',$logs);
-    $logs = str_replace(" from -censored(ip/cid)- ",' ',$logs);
-    $logs = str_replace("-censored(private logtype)-\r\n", '', $logs);
-    $logs = str_replace(" : ",': ',$logs);
-    $logs = str_replace("-\r\n", '', $logs);
-    $logs = str_replace("<span class='notice'>",'',$logs);
-    $logs = str_replace("<span class='boldannounce'>",'',$logs);
-    $logs = str_replace('</span>', '', $logs);
-    $logs = str_replace('*no key*/', '', $logs);
-    $logs = str_replace(')) : ',') : ',$logs);
-    $logs = str_replace("SAY: Ghost/","GHOST: ", $logs);
-    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE|GHOST)(:\s)/","$2#-#$4#-#", $logs);
-    $logs = utf8_encode($logs);
-    $logs = explode("\r\n",$logs);
-    array_filter($logs);
-    array_pop($logs);
-    return $logs;
+  public function extractRoundLogs($round){
+    $bounds = $this->getRoundBounds($round);
+    $start = $bounds['start']['pos'];
+    $end = $bounds['end']['pos'];
+    $end = $end-$start+1;
+    $round->logs = array_slice($round->logs, $start, $end);
+    $this->cacheParsedLogs($round);
+    return $round;
   }
 
-  public function findRoundBounds($logs,$round){
+  public function getRoundBounds($round){
     function diffSort($a, $b) {
       return ($a['diff'] < $b['diff']) ? -1 : 1;
     }
+
     $starts = array();
     $ends = array();
-    $i = 0;
-    foreach ($logs as $log){
+    $startTime = new DateTime($round->start);
+    $endTime = new DateTime($round->end);
+    $i = -1;
+    foreach ($round->logs as $log){
       $i++;
-      $log = explode('#-#',$log);
-      $log['line'] = $i;
-      $log[4] = strtotime($log[0]);
-      if ('Loading Banlist' == $log[2]) {
+      if ($log[1] === 'ADMIN' && $log[2] === 'Loading Banlist'){
+        $log['time'] = $startTime->format("Y-m-d ").$log[0];
+        $log['diff'] = abs(strtotime($log['time']) - strtotime($round->start));
+        $log['pos'] = $i;
         $starts[] = $log;
       }
-
-      if (strpos($log[2],'Rebooting World. ') !== FALSE) {
+      if ($log[1] === 'GAME' && strpos($log[2],'Rebooting World.') !== FALSE){
+        $log['time'] = $endTime->format("Y-m-d ").$log[0];
+        $log['diff'] = abs(strtotime($log['time']) - strtotime($round->end));
+        $log['pos'] = $i;
         $ends[] = $log;
       }
     }
-
-    $bounds['start'] = $starts;
-    $bounds['end'] = $ends;
-
-
-    foreach ($bounds['start'] as &$start){
-      $start['diff'] = strtotime($round->start) - $start[4];
-    }
-
-    foreach ($bounds['end'] as &$end){
-      $end['diff'] = abs(strtotime($round->end) - $end[4]);
-    }
-
-    usort($bounds['start'],'diffsort');
-    usort($bounds['end'],'diffsort');
-
-    $startline = 0;
-    $endline = 0;
-    foreach ($bounds['start'] as $start){
-      if ($start['diff'] > 0) {
-        $startline = $start['line'];
-        break;
-      }
-    }
-
-    foreach ($bounds['end'] as $end){
-      $endline = $end['line'];
-      break;
-    }
-    $return['start'] = $startline;
-    $return['end'] = $endline-$startline;
+    usort($starts,'diffsort');
+    usort($ends,'diffsort');
+    $return['start'] = $starts[0];
+    $return['end'] = $ends[0];
     return $return;
   }
 
-  public function getLinesFromLogs($logs, $lines){
-    $logs = array_slice($logs, $lines['start']+1,$lines['end']);
-    return $logs;
-  }
-
-  public function parseLogs(&$logs, $round){
-    $i = 0;
-    foreach ($logs as &$log){
-      $i++;
-      $ld = $log;
-      // if (strpos($ld[2],' has renamed the station as ') !== FALSE){
-      //   $this->attachStationNameToRoundID($ld[2],$round);
-      // }
-      @$log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>#$i</a></td><td class='ts'>[".$ld[0]."]";
-      @$log.= "</td><td class='lt'>".$ld[1].": </td><td>";
-      @$log.= $ld[2];
-      @$log.="</td></tr>";
-    }
-    return $logs;
+  public function cacheParsedLogs($round){
+    $logsavefile = fopen($round->logCache,"w+");
+    fwrite($logsavefile,json_encode($round->logs,JSON_UNESCAPED_UNICODE));
+    fclose($logsavefile);
   }
 
   public function attachStationNameToRoundID($log, $round){

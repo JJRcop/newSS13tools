@@ -13,7 +13,7 @@ if($json) {
   die();
 } else {
   require_once('../header.php');
-  $round = new round($round,FALSE,TRUE);
+  $round = new round($round,array('logs'));
 }
 ?>
 
@@ -65,10 +65,21 @@ if($json) {
   <table class="logs">
   <tbody>
     <?php
-      foreach ($round->logs as $log){
-        echo $log;
-      }
-    ?>
+    $i = 0;
+     foreach ($round->logs as &$log){
+       $i++;
+       $ld = $log;
+       // if (strpos($ld[2],' has renamed the station as ') !== FALSE){
+       //   $this->attachStationNameToRoundID($ld[2],$round);
+       // }
+       $log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>#$i</a></td><td class='ts'>[".$ld[0]."]";
+       $log.= "</td><td class='lt'>".$ld[1].": </td><td>";
+       $log.= $ld[2];
+       $log.="</td></tr>";
+       echo $log;   
+     }
+ 
+     ?>
   </tbody>
   </table>
 </div>

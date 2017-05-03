@@ -290,6 +290,7 @@ class stat {
       case 'hivelord_core':
       case 'immortality_talisman':
       case 'item_deconstructed':
+      case 'item_used_for_combat':
       case 'jaunter':
       case 'lazarus_injector':
       case 'mining_equipment_bought':
@@ -335,7 +336,6 @@ class stat {
       case 'export_sold_cost':
       case 'food_harvested':
       case 'item_printed':
-      case 'item_used_for_combat':
       case 'ore_mined':
       case 'preferences_verb':
       case 'wizard_spell_improved':
@@ -484,6 +484,19 @@ class stat {
           $stat->details = array_count_values($stat->details);
           arsort($stat->details);
         }
+        if(is_array($stat->details)) $stat->var_value = array_sum($stat->details);
+        $stat->include = 'singleString';
+      break;
+
+      case 'testmerged_prs':
+        if($aggregate){
+          $stat->details = explode('#-#',$stat->details);
+          $stat->details = array_count_values($stat->details);
+          arsort($stat->details);
+        }
+        $stat->details = explode(' ',$stat->details);
+        $stat->details = array_count_values($stat->details);
+        arsort($stat->details);
         if(is_array($stat->details)) $stat->var_value = array_sum($stat->details);
         $stat->include = 'singleString';
       break;
