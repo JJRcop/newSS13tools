@@ -150,7 +150,8 @@ class death {
       DATE_FORMAT(tod,'%d/%m/%Y') AS `day`
       FROM ss13death
       WHERE tod >= DATE(NOW()) - INTERVAL ? DAY
-      GROUP BY DAY(tod);");
+      GROUP BY DAY(tod)
+      ORDER BY DAY(tod) ASC");
     $db->bind(1,$days);
     try {
       $db->execute();
