@@ -82,7 +82,7 @@
       //set this manually if all the conditions are met
       if (!$round->status) $round->status = 'proper completion';
     } else {
-      if (!$round->status) $round->status = false;
+      if (!$round->status) $round->status = 'proper completion';
     }
     $round->permalink = APP_URL."rounds/viewRound.php?round=$round->round_id";
     $round->link = "<a href='$round->permalink'>#$round->round_id</a>";
