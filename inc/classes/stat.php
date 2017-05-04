@@ -490,15 +490,17 @@ class stat {
 
       case 'testmerged_prs':
         if($aggregate){
-          $stat->details = explode('#-#',$stat->details);
+          $stat->details = str_replace('#-#',' ',$stat->details);
+        }
+        if(!$skip){
+          $stat->details = explode(' ',$stat->details);
           $stat->details = array_count_values($stat->details);
+        }
+        if(is_array($stat->details)){
+          $stat->var_value = array_sum($stat->details);
           arsort($stat->details);
         }
-        $stat->details = explode(' ',$stat->details);
-        $stat->details = array_count_values($stat->details);
-        arsort($stat->details);
-        if(is_array($stat->details)) $stat->var_value = array_sum($stat->details);
-        $stat->include = 'singleString';
+        $stat->include = 'PRs';
       break;
 
       //Value stats

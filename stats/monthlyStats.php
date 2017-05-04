@@ -8,7 +8,6 @@ $viewStat = null;
 $month = filter_input(INPUT_GET, 'month', FILTER_SANITIZE_NUMBER_INT);
 $year = filter_input(INPUT_GET, 'year', FILTER_SANITIZE_NUMBER_INT);
 $viewStat = filter_input(INPUT_GET, 'stat', FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH);
-
 if ($year && $month):?>
   <?php if ($viewStat): //Viewing a SINGLE STAT for month/year ?>
 
@@ -21,6 +20,7 @@ if ($year && $month):?>
     if(is_array($stat->details) && $stat->include == 'bigText') {
       $stat->include = 'singleString';
     }
+
     include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');
     ?>
 
