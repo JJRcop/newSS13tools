@@ -67,6 +67,19 @@ $round = new round($round,array('data'));
     <th>Logs available</th>
     <td><?php echo ($round->logs)?"Yes (<a href='viewRoundLogs.php?round=<?php echo $round->round_id;?>'>view</a>)":"No";?></td>
   </tr>
+  </table>
+  
+  <table class="table table-bordered table-condensed">
+  <?php if(isset($round->data->testmerged_prs)):?>
+    <tr><th colspan="2">Testmerged PRs</th>
+    <td colspan="2"><?php
+    $stat = $round->data->testmerged_prs;
+    foreach ($stat->details as $k => $v){
+      echo "<a target='_blank'";
+      echo "href='https://github.com/".PROJECT_GITHUB."/issues/$k'>#$k</a> ";
+    }?>
+    </td></tr>
+  <?php endif;?>
 </table>
 
 <?php if($round->game_mode != 'nuclear emergency' && $round->status == 'Nuke'):?>
@@ -119,6 +132,27 @@ $round = new round($round,array('data'));
     </ul>
 </div>
 
-<?php require_once('statspages/pagination.php');?>
+<nav>
+  <ul class="pager">
+  <?php if ($round->prev): ?>
+    <li class="previous">
+        <a href="viewRound.php?round=<?php echo $round->prev;?>">
+        <span aria-hidden="true">&larr;</span>
+        Previous round</a>
+    </li>
+  <?php endif;?>
+
+  <li><a href="listRounds.php">
+    <i class="fa fa-list"></i> Round listing</a>
+  </li>
+
+  <?php if ($round->next): ?>
+    <li class="next">
+      <a href="viewRound.php?round=<?php echo $round->next;?>">Next round
+      <span aria-hidden="true">&rarr;</span></a>
+    </li>
+  <?php endif;?>
+  </ul>
+</nav>
 
 <?php require_once('../footer.php'); ?>

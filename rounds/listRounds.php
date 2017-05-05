@@ -78,11 +78,11 @@ if (isset($_GET['page'])){
   <thead>
     <tr>
       <th>Round ID</th>
+      <th>Mode</th>
+      <th>Status</th>
       <th>Duration</th>
       <th>Start</th>
       <th>End</th>
-      <th>Mode</th>
-      <th>Status</th>
       <th>Server</th>
     </tr>
   </thead>
@@ -94,13 +94,12 @@ if (isset($_GET['page'])){
     } else{
       foreach($rounds as $round): ?>
         <tr>
-        
           <td><?php echo $round->link;?></td>
+          <td><?php echo $round->modeIcon.ucfirst($round->game_mode);?></td>
+          <td><?php echo "$round->resultIcon $round->result";?></td>
           <td><?php echo $round->duration;?></td>
           <td><?php echo $round->start;?></td>
           <td><?php echo $round->end;?></td>
-          <td><?php echo "$round->modeIcon $round->game_mode";?></td>
-          <td><?php echo "$round->resultIcon $round->result";?></td>
           <td><?php echo $round->server;?></td>
       <?php endforeach;
     }

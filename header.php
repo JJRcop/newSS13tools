@@ -27,7 +27,6 @@ $death = new death();
 <body>
 <div class="container">
 <?php require_once('nav.php');
-
 if (defined('NOTICE')){
   echo NOTICE;
 }
