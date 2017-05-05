@@ -6,33 +6,76 @@ $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 
 require_once('../header.php');
 $round = new round($round,array('data'));
-var_dump($round);
+// var_dump($round);
 ?>
 
 <?php if (!$round->round_id):?>
-  <div class="alert alert-danger">Round not found: #<?php echo $_GET['round'];?></div>
+  <div class="alert alert-danger">
+    Round not found: #<?php echo $_GET['round'];?>
+  </div>
 <?php die(); endif;?>
 
-<?php if(DEBUG):?>
-<div class="alert alert-info">The hash for this round is <code><?php echo hash('sha256',
-json_encode($round->data)); ?></code></div>
-<?php endif;?>
+<nav>
+  <ul class="pager">
+  <?php if ($round->prev): ?>
+    <li class="previous">
+        <a href="viewRound.php?round=<?php echo $round->prev;?>">
+        <span aria-hidden="true">&larr;</span>
+        Previous round</a>
+    </li>
+  <?php endif;?>
 
-<?php require_once('statspages/pagination.php');?>
+  <li><a href="listRounds.php">
+    <i class="fa fa-list"></i> Round listing</a>
+  </li>
+
+  <?php if ($round->next): ?>
+    <li class="next">
+      <a href="viewRound.php?round=<?php echo $round->next;?>">Next round
+      <span aria-hidden="true">&rarr;</span></a>
+    </li>
+  <?php endif;?>
+  </ul>
+</nav>
 
 <div class="page-header">
-  <h1>Round #<?php echo $round->round_id;?>
-    <small>Ended <?php echo $round->end;?>
-    <?php if ($round->logs): ?>
-      <a href='viewRoundLogs.php?round=<?php echo $round->round_id;?>'
-    class='btn btn-info btn-xs'>
-        <i class="fa fa-tasks"></i>
-        View logs
-      </a>
-    <?php endif; ?>
-    </small>
-  </h1>
+  <h1>Round #<?php echo $round->round_id;?></h1>
 </div>
+
+<table class="table table-bordered table-condensed">
+  <tr>
+    <th>Game Mode</th>
+    <td><?php echo $round->modeIcon.ucfirst($round->game_mode);?></td>
+    <th>Result</th>
+    <td><?php echo $round->result;?></td>
+  </tr>
+  <tr>
+    <th>Start</th>
+    <td><?php echo $round->start;?></td>
+    <th>Ending Status</th>
+    <td><?php echo $round->status;?></td>
+  </tr>
+  <tr>
+    <th>End</th>
+    <td><?php echo $round->end;?></td>
+    <th>Server</th>
+    <td><?php echo $round->server;?></td>
+  </tr>
+  <tr>
+    <th>Duration</th>
+    <td><?php echo $round->duration;?></td>
+    <th>Logs available</th>
+    <td><?php echo ($round->logs)?"Yes (<a href='viewRoundLogs.php?round=<?php echo $round->round_id;?>'>view</a>)":"No";?></td>
+  </tr>
+</table>
+
+<?php if($round->game_mode != 'nuclear emergency' && $round->status == 'Nuke'):?>
+  <div class="alert alert-warning"><?php echo iconStack('certificate','trophy','fa-inverse', TRUE);?> <strong>RARE ENDING</strong></div>
+<?php endif;?>
+
+<?php if($round->status == 'Restart vote'):?>
+  <div class="alert alert-success"><?php echo iconStack('certificate','hand-paper-o','fa-inverse', TRUE);?> <strong>RARE VOTE</strong> Democracy works!</div>
+<?php endif;?>
 
 <div class="row">
 

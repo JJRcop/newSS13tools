@@ -74,6 +74,9 @@
     if (!$round->result) {
       $round->result = ucfirst($round->status);
     }
+    $round->modeIcon = json_decode(file_get_contents(ROOTPATH."/inc/mode.json"),TRUE)[$round->game_mode];
+    $round->modeIcon = "<i class='fa fa-$round->modeIcon'></i> ";
+
     $round->status = ucfirst($round->status);
     $round->permalink = APP_URL."rounds/viewRound.php?round=$round->round_id";
     $round->link = "<a href='$round->permalink'>#$round->round_id</a>";
