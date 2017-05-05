@@ -1,19 +1,4 @@
-<div class="jumbotron">
-  <h1>
-    <small>Stats for</small> <?php echo $stat->var_name;?>
-    <?php if(isset($date)):?>
-      <small>in <?php echo $date->format("F Y");?></small>
-    <?php endif;?>
-  </h1>
-  <p class="lead">Tracked 
-  <?php if(isset($stat->rounds)):?>
-    across <?php echo $stat->rounds;?> rounds, and
-  <?php endif;?>
-  <?php echo $stat->var_value;?> times in total</p>
-  <?php if(isset($stat->round_id)):?>
-    <p class="lead">From round <?php echo $round->link;?></p>
-  <?php endif;?>
-</div>
+<?php require_once("statsHeader.php");?>
 
 <div class="row">
   <div class="col-md-6">

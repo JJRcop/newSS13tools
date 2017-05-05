@@ -1,3 +1,5 @@
+<?php require_once("statsHeader.php");?>
+
 <ul class="list-inline">
 <li><strong>Total</strong> - <?php echo $stat->var_value;?></li>
 <?php foreach($stat->details as $channel => $num):?>

@@ -6,7 +6,7 @@ $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 
 require_once('../header.php');
 $round = new round($round,array('data'));
-
+var_dump($round);
 ?>
 
 <?php if (!$round->round_id):?>
@@ -34,11 +34,32 @@ json_encode($round->data)); ?></code></div>
   </h1>
 </div>
 
-<?php include('statspages/loginfo.php');?>
+<div class="row">
 
-<?php include('statspages/game_mode.php');?>
+  <?php if(isset($round->data->traitor_objective)):?>
+    <div class="col-md-4"><?php
+    $stat = $round->data->traitor_objective;
+    $smol = true;
+    include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
+    </div>
+  <?php endif;?>
 
-<?php include('statspages/pages.php'); ?>
+  <?php if(isset($round->data->changeling_objective)):?>
+    <div class="col-md-4"><?php
+    $stat = $round->data->changeling_objective;
+    $smol = true;
+    include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
+    </div>
+  <?php endif;?>
+
+  <?php if(isset($round->data->wizard_objective)):?>
+    <div class="col-md-4"><?php
+    $stat = $round->data->wizard_objective;
+    $smol = true;
+    include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
+    </div>
+  <?php endif;?>
+</div>
 
 <div id="rawdata">
   <h3>Raw data</h3>

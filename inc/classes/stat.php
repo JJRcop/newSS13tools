@@ -468,14 +468,10 @@ class stat {
           $stat->details = explode('#-#',$stat->details);
           $stat->details = array_count_values($stat->details);
         }
-        $hours = array();
-        foreach ($stat->details as $d){
-          $hour = date('H',strtotime($d));
-          @$hours[$hour]+= 1;
+        if(!$skip){
+          $stat->details = date('H',strtotime($stat->details));
         }
-        $stat->details = $hours;
-        arsort($stat->details);
-        $stat->include = 'bigText';
+        $stat->include = 'bigNum';
       break;
 
       case 'server_ip':

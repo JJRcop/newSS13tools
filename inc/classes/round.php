@@ -35,8 +35,12 @@
 
             //Get and parse round stats(feedback)
             case 'data':
-              $round->data = $this->getRoundFeedback($round->round_id);
-              $round->data = $this->parseRoundFeedback($round->data);
+              $data = $this->getRoundFeedback($round->round_id);
+              $data = $this->parseRoundFeedback($data);
+              $round->data = new StdClass();
+              foreach ($data as $d){
+                $round->data->{$d->var_name} = $d;
+              }
             break;
 
           }

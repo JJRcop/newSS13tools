@@ -1,3 +1,5 @@
+<?php if(!isset($smol)) $smol = false;?>
+<?php if (!$smol):?>
 <div class="jumbotron">
   <h1>
     <small>Stats for</small> <?php echo $stat->var_name;?>
@@ -9,6 +11,12 @@
     <p class="lead">From round <?php echo $round->link;?></p>
   <?php endif;?>
 </div>
+
+<?php else:?>
+  <div class="page-header">
+    <h2><?php echo $stat->var_name;?></h2>
+  </div>
+<?php endif;?>
 
 <table class="table table-bordered table-condensed">
   <?php $tF = 0; $tS = 0; foreach ($stat->details as $objective => $count): ?>
