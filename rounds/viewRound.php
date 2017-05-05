@@ -70,6 +70,7 @@ $round = new round($round,array('data'));
   </table>
   
   <table class="table table-bordered table-condensed">
+
   <?php if(isset($round->data->testmerged_prs)):?>
     <tr><th colspan="2">Testmerged PRs</th>
     <td colspan="2"><?php
@@ -79,6 +80,30 @@ $round = new round($round,array('data'));
       echo "href='https://github.com/".PROJECT_GITHUB."/issues/$k'>#$k</a> ";
     }?>
     </td></tr>
+  <?php endif;?>
+
+  <?php if(isset($round->data->station_renames)):
+  $data = $round->data->station_renames->details;?>
+    <tr>
+      <th colspan="2">Station Name</th>
+      <td colspan="2"><?php echo $data;?></td>
+    </tr>
+  <?php endif;?>
+
+  <?php if(isset($round->data->emergency_shuttle)):
+  $data = $round->data->emergency_shuttle->details;?>
+    <tr>
+      <th colspan="2">Emergency Shuttle</th>
+      <td colspan="2"><?php echo $data;?></td>
+    </tr>
+  <?php endif;?>
+
+  <?php if(isset($round->data->shuttle_purchase)):
+  $data = $round->data->shuttle_purchase->details;?>
+    <tr>
+      <th colspan="2">Shuttle Purchased</th>
+      <td colspan="2"><?php echo $data;?></td>
+    </tr>
   <?php endif;?>
 </table>
 
