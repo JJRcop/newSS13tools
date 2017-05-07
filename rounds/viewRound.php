@@ -71,6 +71,14 @@ $round = new round($round,array('data'));
   
   <table class="table table-bordered table-condensed">
 
+  <?php if(isset($round->data->map_name)):
+  $data = $round->data->map_name->details;?>
+    <tr>
+      <th colspan="2">Map</th>
+      <td colspan="2"><?php echo str_replace('_',' ',$data);?></td>
+    </tr>
+  <?php endif;?>
+
   <?php if(isset($round->data->testmerged_prs)):?>
     <tr><th colspan="2">Testmerged PRs</th>
     <td colspan="2"><?php
@@ -94,7 +102,7 @@ $round = new round($round,array('data'));
   $data = $round->data->emergency_shuttle->details;?>
     <tr>
       <th colspan="2">Emergency Shuttle</th>
-      <td colspan="2"><?php echo $data;?></td>
+      <td colspan="2"><?php echo str_replace('_',' ',$data);?></td>
     </tr>
   <?php endif;?>
 
@@ -102,10 +110,45 @@ $round = new round($round,array('data'));
   $data = $round->data->shuttle_purchase->details;?>
     <tr>
       <th colspan="2">Shuttle Purchased</th>
-      <td colspan="2"><?php echo $data;?></td>
+      <td colspan="2"><?php echo str_replace('_',' ',$data);?></td>
     </tr>
   <?php endif;?>
 </table>
+
+<hr>
+
+<?php
+$dead = 0;
+$endClients = 0;
+$survivors = 0;
+$survivingHumans = 0;
+$escaped = 0;
+$escapedH = 0;
+if(isset($round->data->round_end_clients)) $endClients = $round->data->round_end_clients->var_value;
+if(isset($round->data->round_end_ghosts)) $dead = $round->data->round_end_ghosts->var_value;
+if(isset($round->data->survived_total)) $survivors = $round->data->survived_total->var_value;
+if(isset($round->data->survived_human)) $survivingHumans = $round->data->survived_human->var_value;
+if(isset($round->data->escaped_total)) $escaped = $round->data->escaped_total->var_value;
+if(isset($round->data->escaped_human)) $escapedH = $round->data->escaped_human->var_value;
+$escaped = $survivors - $escaped;
+$total = $dead + $survivors; ?>
+
+<div class="progress">
+  <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo ($dead/$total)*100;?>%;">
+  <span><?php echo $dead;?> dead</span>
+  </div>
+  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo (($survivors-$escaped)/$total)*100;?>%;">
+  <span><?php echo $survivors;?> survivors</span>
+  </div>
+  <?php if ($escaped):?>
+  <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo ($escaped/$total)*100;?>%;">
+  <span><?php echo $escaped;?> escaped alive</span>
+  </div>
+  <?php endif;?>
+</div>
+<small><p class="text-muted text-right">(This is an approximation)</p></small>
+
+<hr>
 
 <?php if($round->game_mode != 'nuclear emergency' && $round->status == 'Nuke'):?>
   <div class="alert alert-warning"><?php echo iconStack('certificate','trophy','fa-inverse', TRUE);?> <strong>RARE ENDING</strong></div>
