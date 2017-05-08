@@ -8,6 +8,23 @@ img {
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
 }
+
+div#poly {
+  height: 64px;
+  text-align: right;
+  padding: 10px 64px 0 0;
+  margin: -20px 0 -26px 0;
+  position: relative;
+  z-index: 1000;
+}
+
+div#poly img {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 #output {
   text-align: center;
   margin: 0 0 20px 0;
@@ -201,6 +218,22 @@ tr.perma,
   padding: 200px 0 0 0;
   background: rgba(255,255,255,.95);
 }
+
+.say          {}
+.deadsay        {color: #5c00e6;}
+.radio          {color: #008000;}
+.sciradio       {color: #993399;}
+.comradio       {color: #948f02;}
+.secradio       {color: #a30000;}
+.medradio       {color: #337296;}
+.engradio       {color: #fb5613;}
+.suppradio        {color: #a8732b;}
+.servradio        {color: #6eaa2c;}
+.syndradio        {color: #6d3f40;}
+.centcomradio     {color: #686868;}
+.aiprivradio      {color: #ff00ff;}
+.redteamradio           {color: #ff0000;}
+.blueteamradio          {color: #0000ff;}
 
 .tablesorter-headerUnSorted {
   background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); }
