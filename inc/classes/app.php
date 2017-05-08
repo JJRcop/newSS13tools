@@ -18,6 +18,7 @@
   private $cleanUpTargets = array(
     ROOTPATH.'/logs/admintxt.log',
     ROOTPATH.'/logs/repo.log',
+    ROOTPATH.'/logs/poly.log'
   );
 
   public function __construct($info=false) {

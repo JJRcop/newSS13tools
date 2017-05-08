@@ -96,7 +96,7 @@ if (isset($_GET['page'])){
         <tr>
           <td><?php echo $round->link;?></td>
           <td><?php echo $round->modeIcon.ucfirst($round->game_mode);?></td>
-          <td><?php echo "$round->resultIcon $round->result";?></td>
+          <td><?php echo $round->result;?></td>
           <td><?php echo $round->duration;?></td>
           <td><?php echo $round->start;?></td>
           <td><?php echo $round->end;?></td>

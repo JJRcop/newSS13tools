@@ -5,6 +5,9 @@ $icon = null;
 if (isset($_GET['icon'])){
   $icon = filter_input(INPUT_GET, 'icon',
     FILTER_SANITIZE_URL);
+  if (strpos($icon, "https://github.com") !== FALSE){
+    die();
+  }
 }
 
 if ($icon) {

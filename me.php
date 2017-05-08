@@ -1,6 +1,14 @@
 <?php
 require_once('header.php');?>
 
+<?php
+$db = new database();
+$db->query("SELECT COUNT(id) AS deaths FROM ss13death WHERE byondkey = ?");
+$db->bind(1,$user->byond);
+$db->execute();
+$deathCount = $db->single()->deaths;
+?>
+
 <?php if (!$user->ckey):?>
 
   <div class="page-header">
@@ -15,6 +23,8 @@ require_once('header.php');?>
 <p class='lead'>Between your first connection on <strong><?php echo $user->firstseen;?></strong> and your most recent connection on <strong><?php echo $user->lastseen;?></strong>, you have connected <?php echo $user->connections;?> times.</p>
 
 <p class='lead'>You have wasted 0 hours playing Space Station 13, because time spent doing something you enjoy isn't wasted time.</p>
+
+<p class="lead text-muted">But you have died <?php echo $deathCount;?> times which is not as great.</p>
 
 <div class="page-header">
   <h2>Your active hours</h2>

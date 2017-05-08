@@ -23,10 +23,17 @@ $jobby->add('CleanUp', array(
     'enabled' => TRUE,
 ));
 
-$jobby->add('CleanUp', array(
+$jobby->add('RepoTools', array(
     'command' => "php ".ROOTPATH."/auto/repoTools.php",
     'schedule' => '0 0 * * *', //Weekly
     'output' => ROOTPATH."/logs/repo.log",
+    'enabled' => TRUE,
+));
+
+$jobby->add('Poly', array(
+    'command' => "php ".ROOTPATH."/auto/poly.php",
+    'schedule' => '0 0 * * *', //Weekly
+    'output' => ROOTPATH."/logs/poly.log",
     'enabled' => TRUE,
 ));
 

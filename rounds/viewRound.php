@@ -146,7 +146,7 @@ $total = $dead + $survivors; ?>
   </div>
   <?php endif;?>
 </div>
-<small><p class="text-muted text-right">(This is an approximation)</p></small>
+<small><p class="text-muted text-right">(This is an approximation and may not reflect actual station population)</p></small>
 
 <hr>
 
