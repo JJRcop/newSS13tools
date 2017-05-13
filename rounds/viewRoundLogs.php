@@ -1,29 +1,16 @@
-  <?php
-$json = false;
+<?php 
+require_once('../header.php');
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
-if (isset($_GET['json'])) $json = filter_input(INPUT_GET, 'json', FILTER_VALIDATE_BOOLEAN);
-if (isset($_GET['regen'])) $regen = filter_input(INPUT_GET, 'regen', FILTER_VALIDATE_BOOLEAN);
-
-if($json) {
-  require_once('../config.php');
-  header('Content-Type: application/json');
-  $round = new round($round,FALSE,TRUE,TRUE);
-  echo $round->logs;
-  die();
-} else {
-  require_once('../header.php');
-  $round = new round($round,array('logs'));
-}
+$round = new round($round);
 ?>
 
-<?php if (!$round->logs): ?>
-  <p class="lead">Unable to accurately locate logs for round #<?php echo $round->round_id;?>, because either the server or round start time could not be located.</p>
+  <p class="lead">Public logs are broken and will return at some point in the future. Sorry.</p>
     <a href='viewRound.php?round=<?php echo $round->round_id;?>'
   class='btn btn-info btn-xs'>
       <i class="fa fa-arrow-left"></i> Back
     </a>
-<?php die(); endif;?>
+<?php die();?>
 
 <div class="page-header">
   <h1>

@@ -108,6 +108,8 @@ class message {
       case 'message':
         $message->icon = "<i class='fa fa-bullhorn' title='Message'";
         $message->icon.= " data-toggle='tooltip'></i>";
+        $message->icon.= "<i class='fa fa-clock' title='Undelivered'";
+        $message->icon.= " data-toggle='tooltip'></i>";
         $message->class = 'success';
       break;
 

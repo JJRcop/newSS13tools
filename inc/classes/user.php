@@ -63,9 +63,17 @@
 
     switch ($user->rank) {
       case 'Coder':
+      case 'Codermin':
         $user->backColor = '#009900';
         $user->foreColor = "#FFF";
         $user->icon = "<i class='fa fa-code'></i>";
+        $user->level = 1;
+      break;
+
+      case 'HeadCoder':
+        $user->backColor = '#009900';
+        $user->foreColor = "#FFF";
+        $user->icon = "<i class='fa fa-code-fork'></i>";
         $user->level = 1;
       break;
 
@@ -91,6 +99,7 @@
       break;
 
       case 'GameAdmin': 
+      case 'GameAdmIn': 
       case 'Game Admin':
       case 'CoderMin':
         $user->backColor = "#9570c0";

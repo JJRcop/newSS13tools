@@ -33,10 +33,8 @@ if (defined('NOTICE')){
 if(!$skip):
   $die = $app->restrictionCheck($user);
   if ($app->die) exit($die); //Application will exit if user is not auth'd
-  $deathGraph = $death->countDeathsByDays();
-endif;
-?>
-
+  $deathGraph = $death->countDeathsByDays();?>
+  
 <script>
 var chart = c3.generate({
     bindto: '#deathChart',
@@ -71,5 +69,6 @@ var chart = c3.generate({
     }
 });
 </script>
+<?php endif; ?>
 
 

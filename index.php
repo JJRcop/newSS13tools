@@ -17,6 +17,13 @@ if(1 <= $interval) {
 <?php if ($user->legit):?>
   <?php $line = pick(json_decode(file_get_contents(ROOTPATH."/tmp/poly.json"),TRUE)['data']);?>
   <div id="poly" class="engradio">[Poly] &ldquo;<?php echo $line;?>&rdquo; <img src="icons/animal/parrot_sit-1.png" height="64" width="64"  alt="And now a word from Poly" /></div>
+<?php else:?>
+
+<div class="alert alert-warning">
+<strong>Disclaimer</strong><br>
+In not so many words, some of the data in this tool may be offensive. I do not claim any responsibility for this data; I am simply analyzing and reporting it.
+</div>
+
 <?php endif;?>
 <?php $num = $app->getBigNumbers();?>
 <div class="row">

@@ -65,7 +65,7 @@ $round = new round($round,array('data'));
     <th>Duration</th>
     <td><?php echo $round->duration;?></td>
     <th>Logs available</th>
-    <td><?php echo ($round->logs)?"Yes (<a href='viewRoundLogs.php?round=<?php echo $round->round_id;?>'>view</a>)":"No";?></td>
+    <td><?php echo ($round->logs)?"Yes (EVENTUALLY)":"No";?></td>
   </tr>
   </table>
   

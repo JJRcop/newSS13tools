@@ -209,14 +209,7 @@ tr.perma,
 }
 
 #playerSearch {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10000;
-  padding: 200px 0 0 0;
-  background: rgba(255,255,255,.95);
+
 }
 
 .say          {}
