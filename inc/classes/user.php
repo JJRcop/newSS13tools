@@ -366,7 +366,6 @@
       FROM ss13connection_log
       LEFT JOIN ss13player ON ss13connection_log.ckey = ss13player.ckey
       WHERE ss13connection_log.datetime >= DATE(NOW()) - INTERVAL 30 DAY
-      AND ss13player.lastadminrank != 'Player'
       GROUP BY ss13player.ckey
       ORDER BY connections DESC;");
     try {
@@ -375,6 +374,7 @@
       return returnError("Database error: ".$e->getMessage());
     }
     foreach ($result = $db->resultset() as &$r){
+      if('Player' == $r->lastadminrank) continue;
       $r = $this->parseUser($r);
     }
     return $result;
