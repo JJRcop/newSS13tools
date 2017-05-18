@@ -133,17 +133,21 @@
     return $result;
   }
 
+  public function getRemoteFile($url){
+    $client = new GuzzleHttp\Client();
+    $res = $client->request('GET',$url,[
+      'headers' => ['Accept-Encoding' => 'gzip'],
+      ]);
+    return $res->getBody()->getContents();
+  }
+
   public function downloadAdminsTxt(){
     if(is_array(TXT_RANK_VERIFY)){
       $url = pick(TXT_RANK_VERIFY);
     } else {
       $url = TXT_RANK_VERIFY;
     }
-    $client = new GuzzleHttp\Client();
-    $res = $client->request('GET',$url,[
-      'headers' => ['Accept-Encoding' => 'gzip'],
-      ]);
-    $admins = $res->getBody()->getContents();
+    $admins = $this->getRemoteFile($url);
     $admins = explode("\r\n",$admins);
     $admins = array_filter($admins);
     $arr = array();
@@ -160,6 +164,18 @@
     fwrite($adminsFile,json_encode($arr));
     fclose($adminsFile);
     return true;
+  }
+
+  public function getAdminRanks(){
+    if(is_array(TXT_RANK_VERIFY)){
+      $url = pick(TXT_RANK_VERIFY);
+    } else {
+      $url = TXT_RANK_VERIFY;
+    }
+    $url = str_replace('admins.txt', 'admin_ranks.txt', $url);
+    $ranks = $this->getRemoteFile($url);
+    
+    return $ranks;
   }
 
   public function isCLI(){
