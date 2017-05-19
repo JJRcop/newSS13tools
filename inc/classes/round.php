@@ -412,11 +412,16 @@
   }
 
   public function mapServer($ip) {
-    $ip = explode(':',$ip);
-    if (!isset($ip[1])) return 'Unknown';
+    if(':' == $ip{0}){
+      $ip = explode(':',$ip);
+      if (!isset($ip[1])) return 'Unknown';
+      $ip = $ip[1];
+    } else {
+      $ip = str_replace(':', '', $ip);
+    }
 
     //Per MSO, we should be looking at the port #s.
-    switch ($ip[1]){
+    switch ($ip){
       case '2337':
         return 'Basil';
       break;

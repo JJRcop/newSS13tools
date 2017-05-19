@@ -239,14 +239,17 @@ class ban {
     $ban->reason = auto_link_text($ban->reason);
 
     //Probable rule 1
-    if(str_contains($ban->reason, "a non-antag") || str_contains($ban->reason, "nonantag")){
+    if(str_contains($ban->reason, "a non-antag")
+      || str_contains($ban->reason, "nonantag")
+      || str_contains($ban->reason, "Rule 1")){
       $rules['number'] = 1;
       $rules['text'] = "Don't be a dick";
       $ban->rules[] = $rules;
     }
 
     //Probable rule 2
-    if(str_contains($ban->reason, "meta")){
+    if(str_contains($ban->reason, "meta")
+      || str_contains($ban->reason, "Rule 2"){
       $rules['number'] = 2;
       $rules['text'] = "Do not use information gained outside of in character means.";
       $ban->rules[] = $rules;
@@ -256,14 +259,15 @@ class ban {
     if(str_contains($ban->reason, "IC in")
       || str_contains($ban->reason, "OOC in")
       || str_contains($ban->reason, "in OOC")
-      ){
+      || str_contains($ban->reason, "Rule 3"){
       $rules['number'] = 3;
       $rules['text'] = "IC in OOC";
       $ban->rules[] = $rules;
     }
 
     //Probable rule 7
-    if(str_contains($ban->reason, "bait")){
+    if(str_contains($ban->reason, "bait")
+      || str_contains($ban->reason, "Rule 7"){
       $rules['number'] = 7;
       $rules['text'] = "If you regularly come close to breaking the rules without actually breaking them, it will be treated as the rules being broken.";
       $ban->rules[] = $rules;

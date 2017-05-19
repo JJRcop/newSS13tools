@@ -52,6 +52,10 @@ class death {
   }
 
   public function parseDeath(&$death,$short=false){
+    $death->suicide = FALSE;
+    $death->byondkey = strtolower(preg_replace('/[^.a-zA-Z\d]/', '', $death->byondkey));
+    $death->lakey = strtolower(preg_replace('/[^.a-zA-Z\d]/', '', $death->lakey));
+
     $death->pod = str_replace('ÿ','',$death->pod);
     if ($short){
       $death->HTML = "<li class='death'>";
@@ -77,6 +81,14 @@ class death {
     $death->HTML.= $death->bruteHTML.$death->brainHTML.$death->fireHTML.$death->oxyHTML;
     $death->HTML.= "<td>".ucfirst($death->special)."</td>";
     $death->HTML.= "</tr>";
+
+    //They beat themselves to death
+    if($death->byondkey == $death->lakey) $death->suicide = TRUE;
+
+    //They killed themselves with the suicide verb
+    if(($death->bruteloss + $death->brainloss + $death->fireloss + $death->toxloss + $death->cloneloss + $death->staminaloss) == 0 && $death->oxyloss == 200){
+      $death->suicide = true;
+    }
     return $death;
   }
 
