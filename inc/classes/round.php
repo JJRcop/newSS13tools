@@ -117,7 +117,8 @@
       MAX(next.round_id) AS `next`,
       MIN(prev.round_id) AS `prev`,
       result.details AS result,
-      name.details AS name
+      name.details AS name,
+      map.details AS `map`
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
@@ -129,6 +130,7 @@
       LEFT JOIN ss13feedback AS `name` ON ss13feedback.round_id = name.round_id AND name.var_name = 'station_renames'
       LEFT JOIN ss13feedback AS `next` ON next.round_id = ss13feedback.round_id + 1
       LEFT JOIN ss13feedback AS `prev` ON prev.round_id = ss13feedback.round_id - 1
+      LEFT JOIN ss13feedback AS `map` ON ss13feedback.round_id = map.round_id AND map.var_name = 'map_name'
       WHERE ss13feedback.var_name='round_end'
       AND ss13feedback.round_id = ?");
     $db->bind(1, $id);
@@ -353,7 +355,8 @@
       STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y') AS `start`,
       TIMEDIFF(STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration,
       IF (proper.details IS NULL, error.details, proper.details) AS `status`,
-      result.details AS result
+      result.details AS result,
+      map.details AS `map`
       FROM ss13feedback
       LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
       LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
@@ -362,6 +365,7 @@
       LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
       LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
       LEFT JOIN ss13feedback AS `result` ON ss13feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
+      LEFT JOIN ss13feedback AS `map` ON ss13feedback.round_id = map.round_id AND map.var_name = 'map_name'
       WHERE ss13feedback.var_name='round_end'
       ORDER BY ss13feedback.time DESC
       LIMIT ?,?;");

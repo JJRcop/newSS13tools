@@ -373,7 +373,8 @@
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    foreach ($result = $db->resultset() as &$r){
+    $result = $db->resultset();
+    foreach ($result as &$r){
       if('Player' == $r->lastadminrank) continue;
       $r = $this->parseUser($r);
     }

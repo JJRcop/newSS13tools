@@ -67,17 +67,13 @@ $round = new round($round,array('data'));
     <th>Logs available</th>
     <td><?php echo ($round->logs)?"Yes (EVENTUALLY)":"No";?></td>
   </tr>
+  <tr>
+    <th>Map</th>
+    <td><?php echo str_replace('_',' ', $round->map);?></td>
+  </tr>
   </table>
   
   <table class="table table-bordered table-condensed">
-
-  <?php if(isset($round->data->map_name)):
-  $data = $round->data->map_name->details;?>
-    <tr>
-      <th colspan="2">Map</th>
-      <td colspan="2"><?php echo str_replace('_',' ',$data);?></td>
-    </tr>
-  <?php endif;?>
 
   <?php if(isset($round->data->testmerged_prs)):?>
     <tr><th colspan="2">Testmerged PRs</th>

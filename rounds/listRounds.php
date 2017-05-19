@@ -79,6 +79,7 @@ if (isset($_GET['page'])){
     <tr>
       <th>Round ID</th>
       <th>Mode</th>
+      <th>Map</th>
       <th>Status</th>
       <th>Duration</th>
       <th>Start</th>
@@ -96,6 +97,7 @@ if (isset($_GET['page'])){
         <tr>
           <td><?php echo $round->link;?></td>
           <td><?php echo $round->modeIcon.ucfirst($round->game_mode);?></td>
+          <td><?php echo str_replace('_',' ',$round->map);?></td>
           <td><?php echo $round->result;?></td>
           <td><?php echo $round->duration;?></td>
           <td><?php echo $round->start;?></td>
