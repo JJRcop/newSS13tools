@@ -102,6 +102,7 @@
       case 'GameAdmIn': 
       case 'Game Admin':
       case 'CoderMin':
+      case 'GameAdmln':
         $user->backColor = "#9570c0";
         $user->foreColor = "#FFF";
         $user->icon = "<i class='fa fa-dot-circle-o'></i>";
