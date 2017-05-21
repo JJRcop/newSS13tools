@@ -259,7 +259,7 @@ class ban {
     if(str_contains($ban->reason, "IC in")
       || str_contains($ban->reason, "OOC in")
       || str_contains($ban->reason, "in OOC")
-      || str_contains($ban->reason, "Rule 3"){
+      || str_contains($ban->reason, "Rule 3")){
       $rules['number'] = 3;
       $rules['text'] = "IC in OOC";
       $ban->rules[] = $rules;
@@ -267,7 +267,7 @@ class ban {
 
     //Probable rule 7
     if(str_contains($ban->reason, "bait")
-      || str_contains($ban->reason, "Rule 7"){
+      || str_contains($ban->reason, "Rule 7")){
       $rules['number'] = 7;
       $rules['text'] = "If you regularly come close to breaking the rules without actually breaking them, it will be treated as the rules being broken.";
       $ban->rules[] = $rules;
