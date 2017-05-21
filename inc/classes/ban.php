@@ -249,7 +249,7 @@ class ban {
 
     //Probable rule 2
     if(str_contains($ban->reason, "meta")
-      || str_contains($ban->reason, "Rule 2"){
+      || str_contains($ban->reason, "Rule 2")){
       $rules['number'] = 2;
       $rules['text'] = "Do not use information gained outside of in character means.";
       $ban->rules[] = $rules;
