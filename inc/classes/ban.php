@@ -232,6 +232,9 @@ class ban {
     $ban->cidql.= "<i class='fa fa-plug'></i></a>)";
     $ban->cidql.= "</div>";
 
+    $ban->link = APP_URL."/tgdb/viewBan.php?ban=$ban->id";
+    $ban->permalink = "<a href='$ban->link'>#$ban->id</a>";
+
     return $ban;
   }
 

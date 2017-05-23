@@ -191,4 +191,30 @@
     return "Deleted $i files";
   }
 
+  public function getAhelpStats(){
+    $db = new database();
+    $db->query("SELECT ss13feedback.var_name,
+    IF(sum(ss13feedback.var_value) IS NULL, 0, sum(ss13feedback.var_value)) AS count,
+    concat_ws('-', MONTH(ss13feedback.time),DAY(ss13feedback.time)) AS `day`
+    FROM ss13feedback
+    WHERE ss13feedback.var_name LIKE '%ahelp%'
+    AND ss13feedback.time >= DATE(NOW()) - INTERVAL 7 DAY
+    GROUP BY ss13feedback.var_name, DAY(ss13feedback.time);");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $ahelps = $db->resultset();
+
+    $tmp = array();
+    $dates = array();
+    $dayTotals = array();
+    foreach ($ahelps as &$a){
+      $dates[] = $a->day;
+      $tmp[$a->var_name][$a->day] = $a->count;
+    }
+    $dates = array_unique($dates);
+    return $tmp;
+  }
 }

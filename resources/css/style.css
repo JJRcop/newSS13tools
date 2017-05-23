@@ -228,6 +228,14 @@ tr.perma,
 .redteamradio           {color: #ff0000;}
 .blueteamradio          {color: #0000ff;}
 
+.label-brute   {min-width: 36px; display: inline-block; background: pink; color: black;}
+.label-brain   {min-width: 36px; display: inline-block; background: #5995ba; color: black;}
+.label-fire    {min-width: 36px; display: inline-block; background: #e0a003; color: black;}
+.label-oxy     {min-width: 36px; display: inline-block; background: #689bc3; color: white;}
+.label-tox     {min-width: 36px; display: inline-block; background: #61af25; color: black;}
+.label-clone   {min-width: 36px; display: inline-block; background: #ab63d8; color: white;}
+.label-stamina {min-width: 36px; display: inline-block; background: #0e22aa; color: white;}
+
 .tablesorter-headerUnSorted {
   background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); }
 

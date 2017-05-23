@@ -21,7 +21,7 @@
    <p><?php echo $ban->reason;?></p>
    <?php if (!empty($ban->rules)):?>
     <hr>
-    <p><em>The following rules were deteced in this ban:</em></p>
+    <p><em>The following rules were detected in this ban:</em></p>
     <ul class="list-unstyled">
       <?php foreach($ban->rules as $r):?>
         <li><?php echo "<strong>#".$r['number'].":</strong> ".$r['text'];?></li>

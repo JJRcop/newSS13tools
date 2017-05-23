@@ -32,6 +32,9 @@
   <h3>See also:</h3>
   <ul class="list-group">
     <li class="list-group-item">
+      <a href="ahelpStats.php">Ahelp stats</a>
+    </li>
+    <li class="list-group-item">
       <a href="banCounts.php">Number of bans, by type, by admin</a>
     </li>
     <li class="list-group-item">

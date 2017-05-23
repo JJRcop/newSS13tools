@@ -163,25 +163,29 @@
       if (!$user->bans){
         $user->standing[] = 'Not banned';
       } else {
+        $pjb = 0; $jtb = 0; $tb = 0; $pb = 0;
         foreach ($user->bans as $b) {
           if ($b->status == 'Active'){
-            if('JOB_PERMABAN' == $b->bantype){
-              $user->standing[] = 'Permanently Job Banned';
+            if('JOB_PERMABAN' == $b->bantype && $pjb == 0){
+              $user->standing[] = "Permanently Job Banned ($b->permalink)";
+              $pjb++;
             }
-            if('JOB_TEMPBAN' == $b->bantype){
-              $user->standing[] = 'Temporarily Job Banned';
+            if('JOB_TEMPBAN' == $b->bantype && $tjb == 0){
+              $user->standing[] = "Temporarily Job Banned ($b->permalink)";
+              $tjb++;
             }
-            if('TEMPBAN' == $b->bantype){
-              $user->standing[] = 'Temporarily Banned';
+            if('TEMPBAN' == $b->bantype && $tb == 0){
+              $user->standing[] = "Temporarily Banned ($b->permalink)";
+              $tb++;
             }
-            if('PERMABAN' == $b->bantype){
-              $user->standing[] = 'Permanently Banned';
+            if('PERMABAN' == $b->bantype && $pb == 0){
+              $user->standing[] = "Permanently Banned ($b->permalink)";
+              $pb++;
             }
           }
         }
-        $user->standing = array_unique($user->standing);
       }
-      if(empty($user->standing)) $user->standing = array('Not banned');
+      if(empty($user->standing)) $user->standing[] = 'Not banned';
       $user->standing = implode(", ",$user->standing);
     }
     $user->href = APP_URL."tgdb/viewPlayer.php?ckey=$user->ckey";
@@ -375,11 +379,12 @@
       return returnError("Database error: ".$e->getMessage());
     }
     $result = $db->resultset();
+    $admins = array();
     foreach ($result as &$r){
       if('Player' == $r->lastadminrank) continue;
-      $r = $this->parseUser($r);
+      $admins[] = $this->parseUser($r);
     }
-    return $result;
+    return $admins;
   }
 
   public function verifyAdminRank($ckey){
@@ -407,11 +412,18 @@
       return returnError("Database error: ".$e->getMessage());
     }
     return $db->resultset();
-    $result = array();
-    foreach ($db->resultset() as $r){
-      $result[$r->hour] = $r->connections;
+  }
+
+  public function getActiveRoles($ckey){
+    $db = new database();
+    $db->query("SELECT job, minutes FROM ss13role_time WHERE ckey = ?");
+    $db->bind(1, $ckey);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
     }
-    return $result;
+    return $db->resultset();
   }
 
   public function getActiveAdminHours(){

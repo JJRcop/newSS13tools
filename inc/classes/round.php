@@ -412,7 +412,7 @@
   }
 
   public function mapServer($ip) {
-    if(':' == $ip{0}){
+    if(':' == $ip{0} || (strpos($ip,':') !== FALSE)){
       $ip = explode(':',$ip);
       if (!isset($ip[1])) return 'Unknown';
       $ip = $ip[1];

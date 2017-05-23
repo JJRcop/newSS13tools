@@ -127,39 +127,77 @@ $player = $player->getPlayerByCkey($ckey);
   </div>
 </div>
 
-<div class="page-header">
-  <h2>Active hours</h2>
-</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="page-header">
+      <h2>Active hours</h2>
+    </div>
 
-<div id="c">
-</div>
+    <div id="c">
+    </div>
 
-<?php $hours = $user->getActiveHours($user->ckey);?>
+    <?php $hours = $user->getActiveHours($user->ckey);?>
+    <?php $roles = $user->getActiveRoles($user->ckey);?>
 
-<script>
+    <script>
 
-var chart = c3.generate({
-    bindto: '#c',
-    data: {
-      json: <?php echo json_encode($hours); ?>,
-      keys: {
-        value: ['hour', 'connections'],
+    var chart = c3.generate({
+        bindto: '#c',
+        data: {
+          json: <?php echo json_encode($hours); ?>,
+          keys: {
+            value: ['hour', 'connections'],
+          },
+          x: 'hour',
+          y: 'connections',
+          type: 'bar',
+        },
+        axis: {
+          x: {
+            type: 'category',
+            tick: {
+              culling: false
+            }
+          }
+        }
+    });
+
+    </script>
+  </div>
+  <div class="col-md-6">
+    <div class="page-header">
+      <h2>Active roles
+        <small><i class="fa fa-flask"></i> Experimental</small> 
+      </h2>
+    </div>
+    <div id="d">
+    </div>
+  </div>
+  <script>
+
+  var chart = c3.generate({
+      bindto: '#d',
+      data: {
+        json: <?php echo json_encode($roles); ?>,
+        keys: {
+          value: ['job', 'minutes'],
+        },
+        x: 'job',
+        y: 'minutes',
+        type: 'bar',
       },
-      x: 'hour',
-      y: 'connections',
-      type: 'bar',
-    },
-    axis: {
-      x: {
-        type: 'category',
-        tick: {
-          culling: false
+      axis: {
+        x: {
+          type: 'category',
+          tick: {
+            culling: false
+          }
         }
       }
-    }
-});
+  });
 
-</script>
+  </script>
+</div>
 
 
 
