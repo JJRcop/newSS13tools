@@ -61,7 +61,6 @@
     $user->foreColor = "#444";
     $user->icon = '';
     $user->level = 0;
-    $user->rank = 'Player';
 
     switch ($user->rank) {
       case 'Coder':
