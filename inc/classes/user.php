@@ -43,14 +43,15 @@
     if(is_int($user->ip)){
       $user->ip = long2ip($user->ip);
     }
-
-    if(defined('TXT_RANK_VERIFY')){
-      if(!file_exists(ROOTPATH.'/tmp/admins.json')){
-        $app = new app();
-        $app->downloadAdminsTxt();
+    if($user->rank != 'Player'){
+      if(defined('TXT_RANK_VERIFY')){
+        if(!file_exists(ROOTPATH.'/tmp/admins.json')){
+          $app = new app();
+          $app->downloadAdminsTxt();
+        }
+        $user->rank = $this->verifyAdminRank($user->ckey);
+        $user->txtVerify = TRUE;
       }
-      $user->rank = $this->verifyAdminRank($user->ckey);
-      $user->txtVerify = TRUE;
     }
 
     //Ok, time to get their and set up display variables
@@ -60,6 +61,7 @@
     $user->foreColor = "#444";
     $user->icon = '';
     $user->level = 0;
+    $user->rank = 'Player';
 
     switch ($user->rank) {
       case 'Coder':
@@ -218,7 +220,7 @@
       return FALSE;
     }
     $db->query("SELECT tbl_player.*,
-      count(DISTINCT ss13connection_log.id) AS connections
+      count(DISTINCT tbl_connection_log.id) AS connections
       FROM tbl_player
       LEFT JOIN tbl_connection_log ON tbl_connection_log.ckey = tbl_player.ckey
       WHERE tbl_player.ckey = ? LIMIT 1");
@@ -236,14 +238,14 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT ss13player.*,
+    $db->query("SELECT tbl_player.*,
       TIMESTAMPDIFF(HOUR, lastseen, NOW()) AS hoursAgo,
-      count(DISTINCT ss13connection_log.id) AS connections,
-      count(DISTINCT ss13connection_log.ip) AS IPs,
-      count(DISTINCT ss13connection_log.computerid) AS CIDs
-      FROM ss13player
-      LEFT JOIN ss13connection_log ON ss13connection_log.ckey = ss13player.ckey
-      WHERE ss13player.ckey = ?");
+      count(DISTINCT tbl_connection_log.id) AS connections,
+      count(DISTINCT tbl_connection_log.ip) AS IPs,
+      count(DISTINCT tbl_connection_log.computerid) AS CIDs
+      FROM tbl_player
+      LEFT JOIN tbl_connection_log ON tbl_connection_log.ckey = tbl_player.ckey
+      WHERE tbl_player.ckey = ?");
     $db->bind(1,strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $ckey)));
     try {
       $db->execute();
@@ -264,10 +266,10 @@
     if($db->abort){
       return FALSE;
     }
-    $where = "WHERE `datetime` > (SELECT ss13feedback.time
-      FROM ss13feedback
+    $where = "WHERE `datetime` > (SELECT tbl_feedback.time
+      FROM tbl_feedback
       WHERE var_name = 'round_end'
-      ORDER BY ss13feedback.time DESC
+      ORDER BY tbl_feedback.time DESC
       LIMIT 0,1)";
     if ($filterby && $filter) {
       switch ($filterby){
@@ -285,7 +287,7 @@
       }
       $where = "WHERE $where = ?";
     }
-    $db->query("SELECT * FROM ss13connection_log
+    $db->query("SELECT * FROM tbl_connection_log
       $where;");
     if($where){
       $db->bind(1, $filter);
@@ -303,10 +305,10 @@
     if($db->abort){
       return FALSE;
     }
-    $where = "WHERE lastseen > (SELECT ss13feedback.time
-      FROM ss13feedback
+    $where = "WHERE lastseen > (SELECT tbl_feedback.time
+      FROM tbl_feedback
       WHERE var_name = 'round_end'
-      ORDER BY ss13feedback.time DESC
+      ORDER BY tbl_feedback.time DESC
       LIMIT 0,1)";
     if ($filterby && $filter) {
       switch ($filterby){
@@ -324,7 +326,7 @@
       }
       $where = "WHERE $where = ?";
     }
-    $db->query("SELECT * FROM ss13player
+    $db->query("SELECT * FROM tbl_player
       $where
       ORDER BY lastseen DESC;");
     if($where){
@@ -366,12 +368,12 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT ss13player.*,
-      count(DISTINCT ss13connection_log.id) AS connections
-      FROM ss13connection_log
-      LEFT JOIN ss13player ON ss13connection_log.ckey = ss13player.ckey
-      WHERE ss13connection_log.datetime >= DATE(NOW()) - INTERVAL 30 DAY
-      GROUP BY ss13player.ckey
+    $db->query("SELECT tbl_player.*,
+      count(DISTINCT tbl_connection_log.id) AS connections
+      FROM tbl_connection_log
+      LEFT JOIN tbl_player ON tbl_connection_log.ckey = tbl_player.ckey
+      WHERE tbl_connection_log.datetime >= DATE(NOW()) - INTERVAL 30 DAY
+      GROUP BY tbl_player.ckey
       ORDER BY connections DESC;");
     try {
       $db->execute();
@@ -400,7 +402,7 @@
     $db = new database();
     $db->query("SELECT HOUR(`datetime`) AS `hour`,
       IF (count(DISTINCT id) IS NULL, 0, count(DISTINCT id)) AS connections
-      FROM ss13connection_log
+      FROM tbl_connection_log
       $where
       GROUP BY HOUR(`datetime`);");
     if($ckey) {
@@ -416,7 +418,7 @@
 
   public function getActiveRoles($ckey){
     $db = new database();
-    $db->query("SELECT job, minutes FROM ss13role_time WHERE ckey = ?");
+    $db->query("SELECT job, minutes FROM tbl_role_time WHERE ckey = ?");
     $db->bind(1, $ckey);
     try {
       $db->execute();
@@ -428,10 +430,10 @@
 
   public function getActiveAdminHours(){
     $db = new database();
-    $db->query("SELECT count(DISTINCT ss13connection_log.id) AS connections, HOUR(ss13connection_log.datetime) AS `hour` FROM ss13connection_log
-        LEFT JOIN ss13player ON ss13connection_log.ckey = ss13player.ckey
-        WHERE ss13player.lastadminrank != 'Player'
-        GROUP BY HOUR(ss13connection_log.datetime);");
+    $db->query("SELECT count(DISTINCT tbl_connection_log.id) AS connections, HOUR(tbl_connection_log.datetime) AS `hour` FROM tbl_connection_log
+        LEFT JOIN tbl_player ON tbl_connection_log.ckey = tbl_player.ckey
+        WHERE tbl_player.lastadminrank != 'Player'
+        GROUP BY HOUR(tbl_connection_log.datetime);");
     try {
       $db->execute();
     } catch (Exception $e) {

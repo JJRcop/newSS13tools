@@ -26,8 +26,8 @@ class stat {
     $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
     $db->execute();
     $db->query("SELECT var_name,
-      count(distinct ss13feedback.round_id) as rounds,
-      SUM(ss13feedback.var_value) AS `var_value`,
+      count(distinct tbl_feedback.round_id) as rounds,
+      SUM(tbl_feedback.var_value) AS `var_value`,
       IF (tbl_feedback.details = '', NULL, GROUP_CONCAT(tbl_feedback.details SEPARATOR '#-#')) AS details
       FROM tbl_feedback WHERE var_name = ?");
     $db->bind(1,$stat);
@@ -56,8 +56,8 @@ class stat {
     $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
     $db->execute();
     $db->query("SELECT var_name,
-      count(distinct ss13feedback.round_id) as rounds,
-      SUM(ss13feedback.var_value) AS `var_value`,
+      count(distinct tbl_feedback.round_id) as rounds,
+      SUM(tbl_feedback.var_value) AS `var_value`,
       IF (tbl_feedback.details = '', NULL, GROUP_CONCAT(tbl_feedback.details SEPARATOR '#-#')) AS details
       FROM tbl_feedback WHERE var_name = ?");
     $db->bind(1,$stat);
@@ -117,11 +117,11 @@ class stat {
   public function getRoundsForMonth($start, $end){
     $db = new database();
     $db->query("SELECT count(DISTINCT round_id) AS rounds,
-      concat(MONTH(ss13feedback.time),'-',YEAR(ss13feedback.time)) AS `date`,
+      concat(MONTH(tbl_feedback.time),'-',YEAR(tbl_feedback.time)) AS `date`,
       MIN(round_id) AS firstround,
       MAX(round_id) AS lastround
-      FROM ss13feedback
-      WHERE ss13feedback.time BETWEEN ? AND ?");
+      FROM tbl_feedback
+      WHERE tbl_feedback.time BETWEEN ? AND ?");
     $db->bind(1,$start);
     $db->bind(2,$end);
     try {
@@ -173,15 +173,15 @@ class stat {
     }
     $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
     $db->execute();
-    $db->query("SELECT ss13feedback.var_name,
-          count(distinct ss13feedback.round_id) as rounds,
-          SUM(ss13feedback.var_value) AS `var_value`,
-          IF (ss13feedback.details = '', NULL, GROUP_CONCAT(ss13feedback.details SEPARATOR '#-#')) AS details
-          FROM ss13feedback
-          WHERE DATE(ss13feedback.time) BETWEEN ? AND ?
-          AND ss13feedback.var_name != ''
-          GROUP BY ss13feedback.var_name
-          ORDER BY ss13feedback.var_name ASC;");
+    $db->query("SELECT tbl_feedback.var_name,
+          count(distinct tbl_feedback.round_id) as rounds,
+          SUM(tbl_feedback.var_value) AS `var_value`,
+          IF (tbl_feedback.details = '', NULL, GROUP_CONCAT(tbl_feedback.details SEPARATOR '#-#')) AS details
+          FROM tbl_feedback
+          WHERE DATE(tbl_feedback.time) BETWEEN ? AND ?
+          AND tbl_feedback.var_name != ''
+          GROUP BY tbl_feedback.var_name
+          ORDER BY tbl_feedback.var_name ASC;");
     $db->bind(1,$start);
     $db->bind(2,$end);
     try {

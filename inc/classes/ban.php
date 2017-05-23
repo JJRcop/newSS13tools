@@ -56,7 +56,7 @@ class ban {
     $db->query("SELECT tbl_ban.*,
       MAX(next.id) AS `next`,
       MIN(prev.id) AS `prev`,
-      TIMESTAMPDIFF(MINUTE, ss13ban.bantime, ss13ban.expiration_time) AS minutes
+      TIMESTAMPDIFF(MINUTE, tbl_ban.bantime, tbl_ban.expiration_time) AS minutes
       FROM tbl_ban
       LEFT JOIN tbl_ban AS `next` ON next.id = tbl_ban.id + 1
       LEFT JOIN tbl_ban AS `prev` ON prev.id = tbl_ban.id - 1
@@ -93,7 +93,7 @@ class ban {
       $where = "WHERE $where = ?";
     }
     $db->query("SELECT *,
-    TIMESTAMPDIFF(MINUTE, ss13ban.bantime, ss13ban.expiration_time) AS minutes
+    TIMESTAMPDIFF(MINUTE, tbl_ban.bantime, tbl_ban.expiration_time) AS minutes
     FROM tbl_ban
     $where
     ORDER BY id DESC LIMIT ?, ?");
@@ -287,7 +287,7 @@ class ban {
     $db->query("SELECT count(*) AS bans,
       bantype,
       a_ckey AS admin
-      FROM ss13ban
+      FROM tbl_ban
       GROUP BY bantype, a_ckey
       ORDER BY bans DESC;");
     try {
@@ -304,8 +304,8 @@ class ban {
       return FALSE;
     }
     $db->query("SELECT *,
-      TIMESTAMPDIFF(MINUTE, ss13ban.bantime, ss13ban.expiration_time) AS minutes
-      FROM ss13ban WHERE ckey=? ORDER BY bantime DESC");
+      TIMESTAMPDIFF(MINUTE, tbl_ban.bantime, tbl_ban.expiration_time) AS minutes
+      FROM tbl_ban WHERE ckey=? ORDER BY bantime DESC");
     $db->bind(1,strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $ckey)));
     try {
       $db->execute();

@@ -25,17 +25,17 @@ class library {
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT ss13library.*,
+    $db->query("SELECT tbl_library.*,
       MAX(next.id) AS `next`,
       MIN(prev.id) AS `prev`,
       next.title AS nexttitle,
       prev.title AS prevtitle,
       prev.category AS prevcat,
       next.category AS nextcat
-      FROM ss13library
-      LEFT JOIN ss13library AS `next` ON next.id = ss13library.id + 1
-      LEFT JOIN ss13library AS `prev` ON prev.id = ss13library.id - 1
-      WHERE ss13library.id= ?");
+      FROM tbl_library
+      LEFT JOIN tbl_library AS `next` ON next.id = tbl_library.id + 1
+      LEFT JOIN tbl_library AS `prev` ON prev.id = tbl_library.id - 1
+      WHERE tbl_library.id= ?");
     $db->bind(1,$book);
     try {
       $db->execute();
@@ -86,10 +86,10 @@ class library {
       prev.title AS prevtitle,
       prev.category AS prevcat,
       next.category AS nextcat
-      FROM ss13library
-      LEFT JOIN ss13library AS `next` ON next.id = ss13library.id + 1
-      LEFT JOIN ss13library AS `prev` ON prev.id = ss13library.id - 1
-      WHERE ss13library.id=?");
+      FROM tbl_library
+      LEFT JOIN tbl_library AS `next` ON next.id = tbl_library.id + 1
+      LEFT JOIN tbl_library AS `prev` ON prev.id = tbl_library.id - 1
+      WHERE tbl_library.id=?");
     $db->bind(1,$book);
     try {
       $db->execute();
@@ -130,7 +130,7 @@ class library {
       return FALSE;
     }
     $db->query("SELECT count(DISTINCT id) AS count, group_concat(id) as ids, title
-      FROM ss13library
+      FROM tbl_library
       WHERE content != ''
       GROUP BY content
       ORDER BY count DESC;");
@@ -148,7 +148,7 @@ class library {
       return FALSE;
     }
     $db->query("SELECT count(DISTINCT id) AS total
-      FROM ss13library
+      FROM tbl_library
       WHERE content != ''");
     try {
       $db->execute();

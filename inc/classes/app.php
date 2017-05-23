@@ -115,7 +115,7 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("EXPLAIN SELECT count(id) AS deaths FROM ss13death;");
+    $db->query("EXPLAIN SELECT count(id) AS deaths FROM tbl_death;");
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -123,7 +123,7 @@
     }
     $result['deaths'] = $db->single()->rows;
 
-    $db->query("SELECT count(distinct round_id) AS rounds FROM ss13feedback;");
+    $db->query("SELECT count(distinct round_id) AS rounds FROM tbl_feedback;");
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -193,13 +193,13 @@
 
   public function getAhelpStats(){
     $db = new database();
-    $db->query("SELECT ss13feedback.var_name,
-    IF(sum(ss13feedback.var_value) IS NULL, 0, sum(ss13feedback.var_value)) AS count,
-    concat_ws('-', MONTH(ss13feedback.time),DAY(ss13feedback.time)) AS `day`
-    FROM ss13feedback
-    WHERE ss13feedback.var_name LIKE '%ahelp%'
-    AND ss13feedback.time >= DATE(NOW()) - INTERVAL 7 DAY
-    GROUP BY ss13feedback.var_name, DAY(ss13feedback.time);");
+    $db->query("SELECT tbl_feedback.var_name,
+    IF(sum(tbl_feedback.var_value) IS NULL, 0, sum(tbl_feedback.var_value)) AS count,
+    concat_ws('-', MONTH(tbl_feedback.time),DAY(tbl_feedback.time)) AS `day`
+    FROM tbl_feedback
+    WHERE tbl_feedback.var_name LIKE '%ahelp%'
+    AND tbl_feedback.time >= DATE(NOW()) - INTERVAL 7 DAY
+    GROUP BY tbl_feedback.var_name, DAY(tbl_feedback.time);");
     try {
       $db->execute();
     } catch (Exception $e) {

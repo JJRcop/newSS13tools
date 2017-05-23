@@ -107,7 +107,7 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT ss13feedback.round_id,
+    $db->query("SELECT tbl_feedback.round_id,
       server.details AS `server`,
       mode.details AS game_mode,
       STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
@@ -119,20 +119,20 @@
       result.details AS result,
       name.details AS name,
       map.details AS `map`
-      FROM ss13feedback
-      LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
-      LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
-      LEFT JOIN ss13feedback AS `end` ON ss13feedback.round_id = end.round_id AND end.var_name = 'round_end'
-      LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
-      LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
-      LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
-      LEFT JOIN ss13feedback AS `result` ON ss13feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
-      LEFT JOIN ss13feedback AS `name` ON ss13feedback.round_id = name.round_id AND name.var_name = 'station_renames'
-      LEFT JOIN ss13feedback AS `next` ON next.round_id = ss13feedback.round_id + 1
-      LEFT JOIN ss13feedback AS `prev` ON prev.round_id = ss13feedback.round_id - 1
-      LEFT JOIN ss13feedback AS `map` ON ss13feedback.round_id = map.round_id AND map.var_name = 'map_name'
-      WHERE ss13feedback.var_name='round_end'
-      AND ss13feedback.round_id = ?");
+      FROM tbl_feedback
+      LEFT JOIN tbl_feedback AS `server` ON tbl_feedback.round_id = server.round_id AND server.var_name = 'server_ip'
+      LEFT JOIN tbl_feedback AS `mode` ON tbl_feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
+      LEFT JOIN tbl_feedback AS `end` ON tbl_feedback.round_id = end.round_id AND end.var_name = 'round_end'
+      LEFT JOIN tbl_feedback AS `start` ON tbl_feedback.round_id = start.round_id AND start.var_name = 'round_start'
+      LEFT JOIN tbl_feedback AS `error` ON tbl_feedback.round_id = error.round_id AND error.var_name = 'end_error'
+      LEFT JOIN tbl_feedback AS `proper` ON tbl_feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
+      LEFT JOIN tbl_feedback AS `result` ON tbl_feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
+      LEFT JOIN tbl_feedback AS `name` ON tbl_feedback.round_id = name.round_id AND name.var_name = 'station_renames'
+      LEFT JOIN tbl_feedback AS `next` ON next.round_id = tbl_feedback.round_id + 1
+      LEFT JOIN tbl_feedback AS `prev` ON prev.round_id = tbl_feedback.round_id - 1
+      LEFT JOIN tbl_feedback AS `map` ON tbl_feedback.round_id = map.round_id AND map.var_name = 'map_name'
+      WHERE tbl_feedback.var_name='round_end'
+      AND tbl_feedback.round_id = ?");
     $db->bind(1, $id);
     try {
       $db->execute();
@@ -348,7 +348,7 @@
     if($db->abort){
       return FALSE;
     }
-    $database = $db->query("SELECT ss13feedback.round_id,
+    $database = $db->query("SELECT tbl_feedback.round_id,
       server.details AS `server`,
       mode.details AS game_mode,
       STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
@@ -357,17 +357,17 @@
       IF (proper.details IS NULL, error.details, proper.details) AS `status`,
       result.details AS result,
       map.details AS `map`
-      FROM ss13feedback
-      LEFT JOIN ss13feedback AS `server` ON ss13feedback.round_id = server.round_id AND server.var_name = 'server_ip'
-      LEFT JOIN ss13feedback AS `mode` ON ss13feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
-      LEFT JOIN ss13feedback AS `end` ON ss13feedback.round_id = end.round_id AND end.var_name = 'round_end'
-      LEFT JOIN ss13feedback AS `start` ON ss13feedback.round_id = start.round_id AND start.var_name = 'round_start'
-      LEFT JOIN ss13feedback AS `error` ON ss13feedback.round_id = error.round_id AND error.var_name = 'end_error'
-      LEFT JOIN ss13feedback AS `proper` ON ss13feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
-      LEFT JOIN ss13feedback AS `result` ON ss13feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
-      LEFT JOIN ss13feedback AS `map` ON ss13feedback.round_id = map.round_id AND map.var_name = 'map_name'
-      WHERE ss13feedback.var_name='round_end'
-      ORDER BY ss13feedback.time DESC
+      FROM tbl_feedback
+      LEFT JOIN tbl_feedback AS `server` ON tbl_feedback.round_id = server.round_id AND server.var_name = 'server_ip'
+      LEFT JOIN tbl_feedback AS `mode` ON tbl_feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
+      LEFT JOIN tbl_feedback AS `end` ON tbl_feedback.round_id = end.round_id AND end.var_name = 'round_end'
+      LEFT JOIN tbl_feedback AS `start` ON tbl_feedback.round_id = start.round_id AND start.var_name = 'round_start'
+      LEFT JOIN tbl_feedback AS `error` ON tbl_feedback.round_id = error.round_id AND error.var_name = 'end_error'
+      LEFT JOIN tbl_feedback AS `proper` ON tbl_feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
+      LEFT JOIN tbl_feedback AS `result` ON tbl_feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
+      LEFT JOIN tbl_feedback AS `map` ON tbl_feedback.round_id = map.round_id AND map.var_name = 'map_name'
+      WHERE tbl_feedback.var_name='round_end'
+      ORDER BY tbl_feedback.time DESC
       LIMIT ?,?;");
     $db->bind(1,$page);
     $db->bind(2,$count);
@@ -388,7 +388,7 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT count(DISTINCT round_id) AS total FROM ss13feedback;");
+    $db->query("SELECT count(DISTINCT round_id) AS total FROM tbl_feedback;");
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -403,12 +403,12 @@
       return FALSE;
     }
     $db->query("SELECT count(DISTINCT round_id) AS rounds,
-      concat(MONTH(ss13feedback.time),'-',YEAR(ss13feedback.time)) AS `date`,
+      concat(MONTH(tbl_feedback.time),'-',YEAR(tbl_feedback.time)) AS `date`,
       MIN(round_id) AS firstround,
       MAX(round_id) AS lastround
-      FROM ss13feedback
-      WHERE ss13feedback.time BETWEEN '2011-01-01' AND NOW()
-      GROUP BY YEAR(ss13feedback.time), MONTH(ss13feedback.time) ASC;");
+      FROM tbl_feedback
+      WHERE tbl_feedback.time BETWEEN '2011-01-01' AND NOW()
+      GROUP BY YEAR(tbl_feedback.time), MONTH(tbl_feedback.time) ASC;");
   }
 
   public function mapServer($ip) {

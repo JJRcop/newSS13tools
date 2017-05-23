@@ -20,7 +20,7 @@ class message {
       return FALSE;
     }
     $db->query("SELECT * FROM tbl_messages
-      WHERE ss13messages.type != 'memo'
+      WHERE tbl_messages.type != 'memo'
       ORDER BY id DESC LIMIT ?, ?");
     $db->bind(1, $page);
     $db->bind(2, $count);
@@ -41,7 +41,7 @@ class message {
       return FALSE;
     }
     $db->query("SELECT * FROM tbl_messages
-      WHERE ss13messages.id = ?");
+      WHERE tbl_messages.id = ?");
     $db->bind(1, $id);
     try {
       $db->execute();
@@ -57,7 +57,7 @@ class message {
       return FALSE;
     }
     $db->query("SELECT * FROM tbl_messages
-      WHERE ss13messages.targetckey = ? ORDER BY `timestamp` DESC");
+      WHERE tbl_messages.targetckey = ? ORDER BY `timestamp` DESC");
     $db->bind(1, $ckey);
     try {
       $db->execute();
@@ -142,7 +142,7 @@ class message {
       return FALSE;
     }
     $db->query("SELECT * FROM tbl_messages
-      WHERE ss13messages.type = 'watchlist entry'
+      WHERE tbl_messages.type = 'watchlist entry'
       ORDER BY id DESC LIMIT ?, ?");
     $db->bind(1, $page);
     $db->bind(2, $count);

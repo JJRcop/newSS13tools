@@ -8,14 +8,14 @@ class death {
 
   public function getDeaths($count=30,$short=false){
     //Hey! Listen! This query SHOULD only show deaths from rounds that were
-    //completed and had an entry added to `ss13feedback`. This will prevent 
+    //completed and had an entry added to `tbl_feedback`. This will prevent 
     //people from seeing deaths from rounds that are currenty ongoing.
   
     $db = new database();
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM ss13death
+    $db->query("SELECT * FROM tbl_death
       WHERE tod <= DATE(NOW()) - INTERVAL 1 HOUR
       ORDER BY tod DESC
       LIMIT 0, $count;");
@@ -95,7 +95,7 @@ class death {
     }
     $db->query("SELECT COUNT(coord) AS number,
       coord
-      FROM ss13death
+      FROM tbl_death
       WHERE coord != '0, 0, 0'
       AND mapname = 'Box Station'
       GROUP BY coord ORDER BY `number` DESC
@@ -133,12 +133,12 @@ class death {
       return FALSE;
     }
     $db->query("SELECT *
-      FROM ss13death
-      WHERE ss13death.tod < (SELECT MAX(ss13feedback.time) 
-        FROM ss13feedback 
+      FROM tbl_death
+      WHERE tbl_death.tod < (SELECT MAX(tbl_feedback.time) 
+        FROM tbl_feedback 
         WHERE var_name = 'round_end' LIMIT 0,1)
       AND mapname = ?
-      ORDER BY ss13death.tod DESC
+      ORDER BY tbl_death.tod DESC
       LIMIT 0, 1000;");
     $db->bind(1,$map);
     try {
@@ -156,7 +156,7 @@ class death {
     }
     $db->query("SELECT count(DISTINCT id) AS deaths,
       DATE_FORMAT(tod,'%d/%m/%Y') AS `day`
-      FROM ss13death
+      FROM tbl_death
       WHERE tod >= DATE(NOW()) - INTERVAL ? DAY
       GROUP BY DAY(tod)
       ORDER BY DAY(tod) ASC");
