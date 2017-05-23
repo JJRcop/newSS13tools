@@ -136,8 +136,8 @@ $player = $player->getPlayerByCkey($ckey);
     <div id="c">
     </div>
 
-    <?php $hours = $user->getActiveHours($user->ckey);?>
-    <?php $roles = $user->getActiveRoles($user->ckey);?>
+    <?php $hours = $player->getActiveHours($player->ckey);?>
+    <?php $roles = $player->getActiveRoles($player->ckey);?>
 
     <script>
 
