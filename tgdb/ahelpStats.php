@@ -1,7 +1,15 @@
 <?php require_once("../header.php");?>
 <?php require_once('tgdb_nav.php');?>
 <p class="lead">ahelp activity over the last seven days:</p>
-
+<?php $ahelps = $app->getAhelpStats();
+$dates = array();
+$dayTotals = array();
+foreach ($ahelps as &$a){
+  $dates[] = $a->day;
+  $tmp[$a->var_name][$a->day] = $a->count;
+}
+$dates = array_unique($dates);
+?>
 <table class="table table-bordered table-condensed">
   <thead>
     <tr><th></th>
