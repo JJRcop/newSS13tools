@@ -12,8 +12,7 @@ if (!$ckey){
   die(alert("Ckey not found.",FALSE));
 }
 
-$player = new user();
-$player = $player->getPlayerByCkey($ckey);
+$player = $user->getPlayerByCkey($ckey);
 ?>
 
 <div class="page-header">
@@ -135,9 +134,8 @@ $player = $player->getPlayerByCkey($ckey);
 
     <div id="c">
     </div>
-    <?php $etc = new user(); ?>
-    <?php $hours = $etcr->getActiveHours($player->ckey);?>
-    <?php $roles = $etcr->getActiveRoles($player->ckey);?>
+    <?php $hours = $user->getActiveHours($player->ckey);?>
+    <?php $roles = $user->getActiveRoles($player->ckey);?>
 
     <script>
 
