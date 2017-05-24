@@ -12,6 +12,9 @@ require_once('../header.php');?>
       ss13role_time.job
     FROM ss13role_time
     WHERE ss13role_time.job != 'Living'
+    AND ss13role_time.job != 'Ghost'
+    AND ss13role_time.job != 'Special'
+    AND ss13role_time.job != 'Exempt'
     GROUP BY ss13role_time.job
     ORDER BY minutes DESC;");
     try {
