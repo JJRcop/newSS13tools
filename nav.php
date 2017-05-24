@@ -87,6 +87,11 @@
                 Do admins play?
               </a>
             </li>
+            <li>
+              <a href="<?php echo APP_URL;?>stats/jobs.php">
+                What do people play?
+              </a>
+            </li>
           </ul>
         </li>
         <li class="dropdown">

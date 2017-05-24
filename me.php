@@ -63,7 +63,6 @@ require_once('header.php');?>
     </div>
   </div>
   <script>
-
   var chart = c3.generate({
       bindto: '#d',
       data: {
@@ -84,7 +83,6 @@ require_once('header.php');?>
         }
       }
   });
-
   </script>
 </div>
 
