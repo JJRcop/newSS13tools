@@ -17,7 +17,7 @@ try {
 }
 $jobs = $db->resultset();?>
 
-<div id="c">
+<div id="c" style="height: 512px;">
 </div>
 <script>
 var chart = c3.generate({
@@ -35,8 +35,11 @@ var chart = c3.generate({
       x: {
         type: 'category',
         tick: {
-          culling: false
-        }
+          culling: false,
+          rotate: 90,
+          multiline: false
+        },
+        height: 128
       }
     }
 });
