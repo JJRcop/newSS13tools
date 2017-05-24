@@ -25,13 +25,15 @@ require_once('../header.php');?>
     ss13death.job
     FROM ss13death
     WHERE ss13death.tod >= DATE(NOW() - INTERVAL 1 HOUR) - INTERVAL 60 DAY
-    GROUP BY ss13death.job;");
+    GROUP BY ss13death.job
+    ORDER BY deaths DESC;");
     try {
       $db->execute();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
     $deaths = $db->resultset();
+
     ?>
 
     <div id="c" style="height: 512px;">
@@ -64,7 +66,7 @@ require_once('../header.php');?>
   </div>
   <div class="col-md-6">
     <div class="page-header">
-      <h1>Deadliest Jobs</h1>
+      <h1>Deadliest Jobs <small>In the last 60 days</small></h1>
     </div>
     <div id="d" style="height: 512px;">
     </div>
@@ -95,5 +97,56 @@ require_once('../header.php');?>
     </script>
   </div>
 </div>
+
+<?php
+
+foreach ($jobs as &$job){
+  foreach ($deaths as $death){
+    if($job->job == $death->job){
+      $job->deaths = (int) $death->deaths;
+    }
+  }
+}?>
+
+<div class="page-header">
+  <h1>All together now <small>One big, happy, graphed family</small></h1>
+</div>
+
+<div id="e" style="height: 512px;">
+</div>
+<script>
+var chart = c3.generate({
+    bindto: '#e',
+    data: {
+      json: <?php echo json_encode($jobs); ?>,
+      keys: {
+        value: ['job', 'minutes', 'deaths'],
+      },
+      x: 'job',
+      axes: {
+        y: 'minutes',
+        y2: 'deaths'
+      },
+      types:{
+        minutes: 'bar',
+        deaths: 'line'
+      }
+    },
+    axis: {
+      x: {
+        type: 'category',
+        tick: {
+          culling: false,
+          rotate: 90,
+          multiline: false
+        },
+        height: 128
+      },
+      y2: {
+        show: true,
+      }
+    }
+});
+</script>
 
 <?php require_once('../footer.php');
