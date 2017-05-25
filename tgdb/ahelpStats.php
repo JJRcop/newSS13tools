@@ -2,6 +2,7 @@
 <?php require_once('tgdb_nav.php');?>
 <p class="lead">ahelp activity over the last seven days:</p>
 <?php $ahelps = $app->getAhelpStats();
+$tmp = array();
 $dates = array();
 $dayTotals = array();
 foreach ($ahelps as &$a){
@@ -9,6 +10,7 @@ foreach ($ahelps as &$a){
   $tmp[$a->var_name][$a->day] = $a->count;
 }
 $dates = array_unique($dates);
+$ahelps = $tmp;
 ?>
 <table class="table table-bordered table-condensed">
   <thead>

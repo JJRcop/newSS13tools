@@ -8,4 +8,4 @@ if(!$app->isCLI()){
 $app->updateLocalRepo();
 shell_exec('/bin/bash '.ROOTPATH.'/auto/mapmerge.sh '.DMEDIR);
 
-echo "Repo updated and maps merged in ".PHP_Timer::resourceUsage();
+echo date('[r]')." Repo updated and maps merged in ".PHP_Timer::resourceUsage()."\n\r";

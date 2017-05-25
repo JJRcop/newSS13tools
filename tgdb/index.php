@@ -4,9 +4,21 @@
 
 <?php echo alert('## CLASSIFIED ## GA+//NA</strong> This page is classified. This page should not shared with non-admins.');?>
 
+<?php $activeBans = $app->getActiveBanCount();?>
 <div class="page-header">
-  <h1>tgdb</h1>
+  <h1>tgdb
+    <p class="pull-right">
+    <small>Active bans: 
+    <?php foreach($activeBans as $bans): $class='label-danger';?>
+      <?php if(strpos($bans->type, 'PERMA')!==FALSE) $class = 'perma';?>
+      <span class="label <?php echo $class;?>"><?php echo $bans->type;?>: <?php echo $bans->bans;?></span> 
+    <?php endforeach;?>
+    </small>
+    </p>
+  </h1>
 </div>
+
+
 
 <div class="row">
   <div class="col-md-6">

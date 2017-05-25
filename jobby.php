@@ -25,7 +25,7 @@ $jobby->add('CleanUp', array(
 
 $jobby->add('RepoTools', array(
     'command' => "php ".ROOTPATH."/auto/repoTools.php",
-    'schedule' => '0 0 * * *', //Weekly
+    'schedule' => '0 */3 * * *', //Every 3 hours
     'output' => ROOTPATH."/logs/repo.log",
     'enabled' => TRUE,
 ));

@@ -46,6 +46,7 @@
 
   public function updateLocalRepo(){
     if ($this->doesLocalRepoExist){
+      $this->cacheRemoteRepoVersion();
       return rtrim(shell_exec("cd ".DMEDIR." && git fetch origin && git reset --hard origin/master"));
     }
   }
@@ -205,16 +206,21 @@
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $ahelps = $db->resultset();
+    return $db->resultset();
+  }
 
-    $tmp = array();
-    $dates = array();
-    $dayTotals = array();
-    foreach ($ahelps as &$a){
-      $dates[] = $a->day;
-      $tmp[$a->var_name][$a->day] = $a->count;
+  public function getActiveBanCount(){
+    $db = new database();
+    $db->query("SELECT COUNT(tbl_ban.id) AS bans,
+      tbl_ban.bantype AS `type`
+      FROM tbl_ban
+      WHERE tbl_ban.expiration_time > NOW() OR tbl_ban.unbanned IS NULL
+      GROUP BY tbl_ban.bantype;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
     }
-    $dates = array_unique($dates);
-    return $tmp;
+    return $db->resultset();
   }
 }

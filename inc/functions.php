@@ -13,6 +13,10 @@ function str_contains($haystack, $needle) {
   return strpos($haystack, $needle) !== false;
 }
 
+function single($var,$single,$many){
+  return (1 == $var)?"$var $single":"$var $many";
+}
+
 //Adapted from https://gist.github.com/Jadzia626/2323023
 function HSL2RGB($iH, $iS, $iV) {
   if($iH < 0)   $iH = 0;   // Hue:

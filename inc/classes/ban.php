@@ -239,8 +239,8 @@ class ban {
   }
 
   public function parseBanReason(&$ban){
+    $ban->reason_raw = $ban->reason;
     $ban->reason = auto_link_text($ban->reason);
-
     //Probable rule 1
     if(str_contains($ban->reason, "a non-antag")
       || str_contains($ban->reason, "nonantag")
@@ -298,14 +298,21 @@ class ban {
     return $db->resultset();
   }
 
-  public function getPlayerBans($ckey){
+  public function getPlayerBans($ckey,$active=false){
     $db = new database();
     if($db->abort){
       return FALSE;
     }
+    $where = null;
+    if($active){
+      $where = "AND tbl_ban.expiration_time > NOW() OR tbl_ban.unbanned IS NULL";
+    }
     $db->query("SELECT *,
       TIMESTAMPDIFF(MINUTE, tbl_ban.bantime, tbl_ban.expiration_time) AS minutes
-      FROM tbl_ban WHERE ckey=? ORDER BY bantime DESC");
+      FROM tbl_ban
+      WHERE ckey = ?
+      $where
+      ORDER BY bantime DESC");
     $db->bind(1,strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $ckey)));
     try {
       $db->execute();
