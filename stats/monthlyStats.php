@@ -51,7 +51,7 @@ if ($year && $month):?>
     <h1>Stats by month</h1>
   </div>
 
-  <table class="table table-bordered table-condensed">
+  <table class="table sticky  table-bordered table-condensed">
     <thead>
       <tr>
         <th>Date</th>

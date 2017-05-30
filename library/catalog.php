@@ -84,7 +84,7 @@ if (isset($_GET['query'])){
 
 <p class="lead">Welcome to the library. Blank books aren't being shown. I want to die.</p>
 
-<table class="table table-bordered table-condensed sort">
+<table class="table sticky  table-bordered table-condensed sort">
   <thead>
     <tr>
       <th>NTBN</th>

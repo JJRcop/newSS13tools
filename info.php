@@ -5,7 +5,7 @@
 <h1>Information and status</h1>
 </div>
 
-<table class="table table-condensed table-bordered">
+<table class="table sticky  table-condensed table-bordered">
   <thead>
     <tr>
       <th>Module</th>

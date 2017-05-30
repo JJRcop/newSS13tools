@@ -142,6 +142,14 @@
     return $res->getBody()->getContents();
   }
 
+  public function getRemoteConf(){
+    if($this->downloadAdminsTxt() && 
+    $this->downloadAdminRanks()){
+      return true;
+    }
+    return false;
+  }
+
   public function downloadAdminsTxt(){
     if(is_array(TXT_RANK_VERIFY)){
       $url = pick(TXT_RANK_VERIFY);
@@ -167,16 +175,73 @@
     return true;
   }
 
-  public function getAdminRanks(){
+    public function downloadAdminRanks(){
     if(is_array(TXT_RANK_VERIFY)){
       $url = pick(TXT_RANK_VERIFY);
     } else {
       $url = TXT_RANK_VERIFY;
     }
     $url = str_replace('admins.txt', 'admin_ranks.txt', $url);
-    $ranks = $this->getRemoteFile($url);
-    
-    return $ranks;
+    $raw = $this->getRemoteFile($url);
+
+    $raw = explode("\r\n",$raw);
+    $raw = array_filter($raw);
+
+    $defs = array();
+    $tmp = array();
+    foreach ($raw as $r){
+      if('#' == $r{0} && '+' == $r{2}){
+        $r = str_replace('# +', '', $r);
+        if('@' == $r{0}) continue;
+        $r = explode('=',$r);
+        $defs[rtrim(trim($r[0]))] = rtrim(trim($r[1]));
+      } else if ('#' == $r{0}) {
+        continue;
+      } else {
+        $r = str_replace("\t", ' ', $r);
+        $r = str_replace(' ', '', $r);
+        $r = explode('=',$r);
+        if(!isset($r[1])) continue;
+        $tmp[$r[0]] = $r[1];
+      }
+    }
+    $ranks = $tmp;
+
+    foreach ($ranks as &$r){
+      if(!isset($r[1])) continue;
+      $r = explode('+', $r);
+      $r = array_filter($r);
+    }
+
+    $keys = array_keys($ranks);
+    $i = 0;
+    // var_dump($keys);
+    foreach($ranks as &$r){
+      foreach($r as $p){
+        if('@' == $p){
+          $ranks[$keys[$i]] = array_merge($ranks[$keys[$i]], $ranks[$keys[$i-1]]);
+          $ranks[$keys[$i]] = array_unique($ranks[$keys[$i]]);
+          continue;
+        }
+      }
+      $i++;
+    }
+
+    $titles = array_keys($ranks);
+    $pos = array_keys($defs);
+
+    $data = array();
+    $data['ranks'] = $ranks;
+    $data['defs'] = $defs;
+
+    $rankfile = fopen(ROOTPATH.'/tmp/adminranks.json', 'w+');
+    fwrite($rankfile,json_encode($data));
+    fclose($rankfile);
+    return true;
+  }
+
+  public function getAdminRanks(){
+    return json_decode(file_get_contents(ROOTPATH.'/tmp/adminranks.json'),TRUE);
   }
 
   public function isCLI(){

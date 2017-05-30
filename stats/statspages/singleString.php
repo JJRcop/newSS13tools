@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-md-6">
-  <table class="table table-condensed table-bordered">
+  <table class="table sticky  table-condensed table-bordered">
     <thead>
       <tr>
         <th>Key</th>

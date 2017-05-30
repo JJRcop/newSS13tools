@@ -6,15 +6,14 @@
 
 <?php $activeBans = $app->getActiveBanCount();?>
 <div class="page-header">
+  <p class="pull-right">
+  Active bans: 
+  <?php foreach($activeBans as $bans): $class='label-danger';?>
+    <?php if(strpos($bans->type, 'PERMA')!==FALSE) $class = 'perma';?>
+    <span class="label <?php echo $class;?>"><?php echo $bans->type;?>: <?php echo $bans->bans;?></span> 
+  <?php endforeach;?>
+  </p>
   <h1>tgdb
-    <p class="pull-right">
-    <small>Active bans: 
-    <?php foreach($activeBans as $bans): $class='label-danger';?>
-      <?php if(strpos($bans->type, 'PERMA')!==FALSE) $class = 'perma';?>
-      <span class="label <?php echo $class;?>"><?php echo $bans->type;?>: <?php echo $bans->bans;?></span> 
-    <?php endforeach;?>
-    </small>
-    </p>
   </h1>
 </div>
 
@@ -43,6 +42,9 @@
   <div class="col-md-6">
   <h3>See also:</h3>
   <ul class="list-group">
+    <li class="list-group-item">
+      <a href="live.php">Deaths <span class="label label-danger">Live!</span></a>
+    </li>
     <li class="list-group-item">
       <a href="ahelpStats.php">Ahelp stats</a>
     </li>

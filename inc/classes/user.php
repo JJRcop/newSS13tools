@@ -390,7 +390,11 @@
 
   public function verifyAdminRank($ckey){
     $ranks = json_decode(file_get_contents(ROOTPATH.'/tmp/admins.json'));
-    return $ranks->{$ckey};
+    if(property_exists($ranks, $ckey)){
+      return $ranks->{$ckey};
+    } else {
+      return false;
+    }
   }
 
   public function getActiveHours($ckey=null) {

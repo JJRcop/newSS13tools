@@ -21,7 +21,7 @@ if ($json){
 
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-bordered table-condensed">
+    <table class="table sticky  table-bordered table-condensed">
       <thead>
         <tr>
           <th>Name</th>

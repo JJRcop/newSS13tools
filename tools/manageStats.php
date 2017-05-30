@@ -29,7 +29,7 @@
 
     $gen = array_diff($dates, $avail);?>
 
-    <table class="table table-bordered table-condensed">
+    <table class="table sticky  table-bordered table-condensed">
       <thead>
         <tr>
           <th>Date</th>

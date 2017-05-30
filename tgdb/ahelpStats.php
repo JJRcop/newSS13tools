@@ -12,7 +12,7 @@ foreach ($ahelps as &$a){
 $dates = array_unique($dates);
 $ahelps = $tmp;
 ?>
-<table class="table table-bordered table-condensed">
+<table class="table sticky  table-bordered table-condensed">
   <thead>
     <tr><th></th>
       <?php foreach ($dates as $d):?>

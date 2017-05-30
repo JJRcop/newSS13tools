@@ -10,8 +10,8 @@ if(!$app->isCLI() && $user->level < 1){
 PHP_Timer::start();
 $stat = new stat();
 
-$month = null;
-$year = null;
+$month = date('m');
+$year = date('Y');
 $regen = false;
 
 if (isset($_GET['month'])){

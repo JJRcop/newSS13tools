@@ -7,7 +7,7 @@ $bans = $ban->adminBanCounts(); ?>
 <div class="page-header">
 <h1>Number of bans, by type, by admin</h1>
 </div>
-<table class="table table-bordered table-condensed sort">
+<table class="table sticky  table-bordered table-condensed sort">
   <thead>
     <tr>
       <th>Count</th>

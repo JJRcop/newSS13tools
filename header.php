@@ -1,6 +1,7 @@
 <?php require_once('config.php');
 PHP_Timer::start();
 if(!isset($skip)) $skip = false;
+if(!isset($wide)) $wide = false;
 $app = new app();
 $user = new user();
 $death = new death();
@@ -25,7 +26,11 @@ $death = new death();
 
 </head>
 <body>
+<?php if(!$wide):?>
 <div class="container">
+<?php else:?>
+<div class="container-fluid">
+<?php endif;?>
 <?php require_once('nav.php');
 if (defined('NOTICE')){
   echo NOTICE;

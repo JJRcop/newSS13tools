@@ -74,7 +74,7 @@ if (isset($_GET['page'])){
   </nav>
 <?php endif;?>
 
-<table class="table table-bordered table-condensed">
+<table class="table sticky  table-bordered table-condensed">
   <thead>
     <tr>
       <th>Round ID</th>

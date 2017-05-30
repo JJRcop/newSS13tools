@@ -5,6 +5,6 @@ $app = new app();
 if(!$app->isCLI()){
   die("This script can only be executed on the command line.");
 }
-if($app->downloadAdminsTxt()){
+if($app->getRemoteConf()){
   echo date('[r]')." Generated in ".PHP_Timer::resourceUsage()."\n\r";
 }

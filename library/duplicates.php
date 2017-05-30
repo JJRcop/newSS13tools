@@ -6,7 +6,7 @@ $books = new library();
 <div class="page-header">
   <h1>Duplicate book listing</h1>
 </div>
-<table class="table table-bordered table-condensed sort">
+<table class="table sticky  table-bordered table-condensed sort">
   <thead>
     <tr>
       <th>Count</th>

@@ -73,7 +73,7 @@ $round = new round($round,array('data'));
   </tr>
   </table>
   
-  <table class="table table-bordered table-condensed">
+  <table class="table sticky  table-bordered table-condensed">
 
   <?php if(isset($round->data->testmerged_prs)):?>
     <tr><th colspan="2">Testmerged PRs</th>

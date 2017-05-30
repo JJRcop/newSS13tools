@@ -1,4 +1,4 @@
-<div class="panel panel-<?php echo $ban->class;?>">
+<div class="panel panel-<?php echo $ban->class;?>" id="ban-<?php echo $ban->id;?>">
   <div class="panel-heading">
     <h3 class="panel-title">
       <i class="fa fa-<?php echo $ban->icon;?>"

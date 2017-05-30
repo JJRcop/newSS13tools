@@ -30,7 +30,7 @@
 <script>
 $('document').ready(function(){
   $('.sort').tablesorter();
-  $('.table').stickyTableHeaders({fixedOffset: $('.navbar-fixed-top')});
+  $('.table.sticky').stickyTableHeaders({fixedOffset: $('.navbar-fixed-top')});
   $('[data-toggle="tooltip"]').tooltip()
 });
   setInterval(function() {

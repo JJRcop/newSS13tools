@@ -7,7 +7,7 @@
 
 <p class="lead">This page shows admin connection logs for the last thirty days.</p>
 
-<table class="table table-condensed table-bordered sort">
+<table class="table sticky  table-condensed table-bordered sort">
   <thead>
     <tr>
       <th>ckey</th>

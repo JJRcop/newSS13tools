@@ -49,7 +49,7 @@ foreach ($connections as $c){
     <div class="page-header">
       <h2>Bagil</h2>
     </div>
-    <table class="table table-bordered table-condensed">
+    <table class="table sticky  table-bordered table-condensed">
       <thead>
         <tr>
           <th>ckey</th>
@@ -76,7 +76,7 @@ foreach ($connections as $c){
     <div class="page-header">
       <h2>Sybil</h2>
     </div>
-    <table class="table table-bordered table-condensed">
+    <table class="table sticky  table-bordered table-condensed">
       <thead>
         <tr>
           <th>ckey</th>
@@ -101,7 +101,7 @@ foreach ($connections as $c){
   </div>
 </div>
 <?php else:?>
-  <table class="table table-bordered table-condensed">
+  <table class="table sticky  table-bordered table-condensed">
     <thead>
       <tr>
         <th>ckey</th>

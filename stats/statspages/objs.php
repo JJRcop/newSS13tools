@@ -18,7 +18,7 @@
   </div>
 <?php endif;?>
 
-<table class="table table-bordered table-condensed">
+<table class="table sticky  table-bordered table-condensed">
   <?php $tF = 0; $tS = 0; foreach ($stat->details as $objective => $count): ?>
     <tr>
       <th>

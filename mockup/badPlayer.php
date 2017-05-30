@@ -119,7 +119,7 @@
     <div class="panel-body">
      <p>Detonated several max-cap bombs around the station and logged before they could be questioned. Appeal if you want to explain yourself and come back.</p>
     </div>
-    <table class="table table-condensed table-bordered">
+    <table class="table sticky  table-condensed table-bordered">
       <tr>
         <th>Banned from</th>
         <td>Server</td>
@@ -154,7 +154,7 @@
     <div class="panel-body">
      <p>Banned - The round after they were warned for non-antag BOH singing, they detonated the borgs and were unable to provide any justificaiton as to why.</p>
     </div>
-    <table class="table table-condensed table-bordered">
+    <table class="table sticky  table-condensed table-bordered">
       <tr>
         <th>Banned from</th>
         <td>Server</td>
@@ -189,7 +189,7 @@
     <div class="panel-body">
      <p>Banned - IC in OOC</p>
     </div>
-    <table class="table table-condensed table-bordered">
+    <table class="table sticky  table-condensed table-bordered">
       <tr>
         <th>Banned from</th>
         <td>Server</td>
@@ -224,7 +224,7 @@
     <div class="panel-body">
      <p>Just to be safe</p>
     </div>
-    <table class="table table-condensed table-bordered">
+    <table class="table sticky  table-condensed table-bordered">
       <tr>
         <th>Banned from</th>
         <td>Security Officer, Detective, Warden, Head of Security</td>

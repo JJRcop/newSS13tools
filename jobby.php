@@ -9,17 +9,18 @@ if(!$app->isCLI()){
   die();
 }
 $jobby = new Jobby\Jobby();
-$jobby->add('AcquireAdminsTxt', array(
-    'command' => "php ".ROOTPATH."/auto/downloadAdminsTxt.php",
-    'schedule' => '*/10 * * * *', //Every 10 minutes
-    'output' => ROOTPATH."/logs/admintxt.log",
-    'enabled' => TRUE,
-));
 
 $jobby->add('CleanUp', array(
     'command' => "php ".ROOTPATH."/auto/cleanUp.php",
     'schedule' => '0 0 * * 0', //Weekly
     'output' => ROOTPATH."/logs/cleanUp.log",
+    'enabled' => TRUE,
+));
+
+$jobby->add('RemoteConf', array(
+    'command' => "php ".ROOTPATH."/auto/downloadAdminsTxt.php",
+    'schedule' => '*/10 * * * *', //Every 10 minutes
+    'output' => ROOTPATH."/logs/admintxt.log",
     'enabled' => TRUE,
 ));
 
@@ -34,6 +35,13 @@ $jobby->add('Poly', array(
     'command' => "php ".ROOTPATH."/auto/poly.php",
     'schedule' => '0 0 * * *', //Weekly
     'output' => ROOTPATH."/logs/poly.log",
+    'enabled' => TRUE,
+));
+
+$jobby->add('Monthly Stats', array(
+    'command' => "php ".ROOTPATH."/auto/generateMonthlyStats.php",
+    'schedule' => '1 0 1 * *', //One minute after midnight every month
+    'output' => ROOTPATH."/logs/monthly_stats.log",
     'enabled' => TRUE,
 ));
 

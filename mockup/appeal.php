@@ -43,7 +43,7 @@
   <div class="panel-body">
    <p>As the captain, issued an order that all non-human crewmembers should be executed. Resulted in over a dozen deaths and numerous ahelps. When questioned, they replied that they were new and didn't understand the rules. Please take a break from head of staff roles and appeal when you understand why this was a bad thing to do.</p>
   </div>
-  <table class="table table-condensed table-bordered">
+  <table class="table sticky  table-condensed table-bordered">
   <tr>
     <th>ckey</th>
     <td>Damn-Dirty-Apes</td>

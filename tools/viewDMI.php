@@ -15,7 +15,7 @@
     }
     echo "<p><strong>Rendering icons from:</strong> $DMI</p>"; ?>
     <p>If this looks right, you can <a href="splitDMIIntoPNGs.php?icon=<?php echo $_GET['dmi'];?>" class="btn btn-success btn-xs" id="split">Split this DMI into PNGs</a> <span class='label label-success' id='result'></span></p>
-    <table class="table table-condensed table-bordered">
+    <table class="table sticky  table-condensed table-bordered">
       <thead>
         <tr>
           <th>Name</th>

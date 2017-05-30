@@ -506,6 +506,7 @@ class stat {
       case 'ahelp_close':
       case 'ahelp_icissue':
       case 'ahelp_reject':
+      case 'ahelp_reopen':
       case 'ahelp_resolve':
       case 'ahelp_unresolved':
       case 'alert_comms_blue':
