@@ -31,8 +31,18 @@ $pos = array_keys($defs);
   <?php foreach ($ranks as $t => $r):?>
     <tr><th><code><?php echo $t;?></code></th>
       <?php foreach ($pos as $p):?>
+        <?php if('EVERYTHING' == $p){
+          continue;
+        }?>
         <?php $class = null; $line = null;?>
         <?php foreach ($r as $rank):?>
+          <?php if('EVERYTHING' == $rank){
+            $class = "success";
+            $line = "<i class='fa fa-check-circle text-success' ";
+            $line.= "aria-hidden='true' title='$t has $p' ";
+            $line.= "data-toggle='tooltip'></i>";
+            continue;
+          }?>
           <?php if(strpos($p, $rank) !== FALSE):?>
             <?php $class = "success";?>
             <?php $line = "<i class='fa fa-check-circle text-success' ";
