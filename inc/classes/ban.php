@@ -142,8 +142,9 @@ class ban {
     }
 
     if(isset($ban->round_id)){
-      $ban->round_id_href = APP_URL."/rounds/viewRound.php?round=$ban->round_id";
-      $ban->round_id_link = " (Round <a href='$ban->round_id_href'>#$ban->round_id</a>)";
+      $ban->round_id_href = APP_URL."round.php?round=$ban->round_id";
+      $ban->round_id_link = " (Round <a href='$ban->round_id_href'>";
+      $ban->round_id_link.= "#$ban->round_id</a>)";
     }
 
     switch ($ban->bantype){
