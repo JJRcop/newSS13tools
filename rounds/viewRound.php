@@ -171,7 +171,7 @@ $total = $dead + $survivors; ?>
 
 <hr>
 
-<?php if (2 <= $user->level):?>
+<?php if ($user->legit):?>
 <?php include(ROOTPATH."/rounds/comments.php");?>
 <?php endif;?>
 

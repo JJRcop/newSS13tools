@@ -127,6 +127,10 @@ tr.perma,
   border: 1px solid #FBE3FC;
 }
 
+.panel.panel-primary .panel-heading .panel-title a {
+  color: white;
+}
+
 .navbar-nav>li>a>span {
   font-size: 100% !important;
 }

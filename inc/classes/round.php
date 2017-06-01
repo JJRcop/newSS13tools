@@ -214,11 +214,11 @@
     $db->query("
       SELECT tbl_round.*,
       TIMEDIFF(tbl_round.end_datetime, tbl_round.start_datetime) AS duration,
-      MAX(next.round_id) AS `next`,
-      MIN(prev.round_id) AS `prev`
+      next.round_id AS next,
+      prev.round_id AS prev
       FROM tbl_round
-      LEFT JOIN tbl_feedback AS `next` ON next.id = tbl_round.id + 1
-      LEFT JOIN tbl_feedback AS `prev` ON prev.id = tbl_round.id - 1
+      LEFT JOIN tbl_feedback AS next ON next.id = tbl_round.id + 1
+      LEFT JOIN tbl_feedback AS prev ON prev.id = tbl_round.id - 1
       WHERE tbl_round.id = ?");
     $db->bind(1, $id);
     try {
@@ -416,7 +416,7 @@
     $log = str_replace(')', '/', $log);
     $log = str_replace('(', '', $log);
     $db = new database(TRUE);
-    $db->query("INSERT INTO round_logs (round, `start`, `end`, server, station_name) VALUES(?,?,?,?,?)");
+    $db->query("INSERT INTO round_logs (round, start, end, server, station_name) VALUES(?,?,?,?,?)");
     $db->bind(1,$round->round_id);
     $db->bind(2,$round->start);
     $db->bind(3,$round->end);
@@ -449,7 +449,7 @@
       return FALSE;
     }
     $db->query("SELECT count(DISTINCT round_id) AS rounds,
-      concat(MONTH(tbl_feedback.time),'-',YEAR(tbl_feedback.time)) AS `date`,
+      concat(MONTH(tbl_feedback.time),'-',YEAR(tbl_feedback.time)) AS date,
       MIN(round_id) AS firstround,
       MAX(round_id) AS lastround
       FROM tbl_feedback
@@ -486,13 +486,13 @@
   }
 
   public function getRoundComments($round){
-    $where = "WHERE flagged = 'A'";
+    $where = "flagged = 'A'";
     $user = new user();
     if(2 <= $user->level) {
       $where.= " OR flagged = 'P' OR flagged = 'R'";
     }
     $db = new database(TRUE);
-    $db->query("SELECT * FROM round_comments $where AND round = ?");
+    $db->query("SELECT * FROM round_comments WHERE round = ? AND ($where) ");
     $db->bind(1, $round);
     try {
       $db->execute();
@@ -542,7 +542,7 @@
     }
     $db = new database(TRUE);
     $db->query("INSERT INTO round_comments
-      (round, `text`, texthash, author, `timestamp`)
+      (round, text, texthash, author, timestamp)
       VALUES (?, ?, sha1(?), ?, NOW())");
     $db->bind(1, $round);
     $db->bind(2, $text);
@@ -558,6 +558,7 @@
 
   public function flipCommentFlag($id, $flag) {
     $user = new user();
+    $db = new database(TRUE); //Alt DB
     if(!$user->legit){
       return returnError("You must be a known user in order to flag comments");
     }
@@ -578,21 +579,33 @@
 
       case 'R':
         $flagText = 'Comment reported';
+        $db->query("UPDATE round_comments
+          SET
+          round_comments.reporter = ?,
+          round_comments.reported_time = NOW()
+          WHERE round_comments.id = ?");
+        $db->bind(1, $user->ckey);
+        $db->bind(2, $id);
+        try {
+          $db->execute();
+        } catch (Exception $e) {
+          return returnError("Database error: ".$e->getMessage());
+        }
       break;
 
       default: 
         return returnError("This is not a valid comment flag");
       break;
     }
-    $db = new database(TRUE);
-    $db->query("UPDATE round_comments SET
-      flagged = ?,
-      flag_change = NOW(),
-      flag_changer = ?
-      WHERE id = ?");
+    $db->query("UPDATE round_comments
+      SET
+      round_comments.flagged = ?,
+      round_comments.flag_changer = ?,
+      round_comments.flag_change = NOW()
+      WHERE round_comments.id = ?");
     $db->bind(1, $flag);
-    $db->bind(2, $id);
-    $db->bind(3, $user->ckey);
+    $db->bind(2, $user->ckey);
+    $db->bind(3, $id);
     try {
       $db->execute();
     } catch (Exception $e) {
