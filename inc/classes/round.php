@@ -506,6 +506,22 @@
     return $comments;
   }
 
+  public function getAllRoundComments(){
+    $db = new database(TRUE);
+    $db->query("SELECT * FROM round_comments ORDER BY `timestamp` DESC");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $comments = $db->resultset();
+    foreach ($comments as &$comment){
+      $comment = $this->parseComment($comment);
+    }
+    return $comments;
+  }
+
+
   public function parseComment(&$comment){
     $user = new user();
 
@@ -530,24 +546,42 @@
           $comment->class = "success";
         }
       break;
+
+      case 'H':
+        $comment->flag = "Hidden";
+        $comment->class = "default";
+      break;
     }
+
+    //Round link
+    $comment->round_href = APP_URL."round.php?round=$comment->round";
+    $comment->round_link = "<a href='$comment->round_href'>#$comment->round</a>";
+
+    //Author link
+    $comment->author_href = APP_URL."tgdb/viewPlayer.php?ckey=$comment->author";
+    $comment->author_link = "<a href='$comment->author_href'>$comment->author</a>";
 
     return $comment;
   }
 
   public function addComment($round, $text) {
+    $flag = 'P';
     $user = new user();
     if(!$user->legit){
       die("You must be a known user in order to submit comments");
     }
+    if (2 <= $user->level){
+      $flag = 'A'; //Admin comments auto-approve!
+    }
     $db = new database(TRUE);
     $db->query("INSERT INTO round_comments
-      (round, text, texthash, author, timestamp)
-      VALUES (?, ?, sha1(?), ?, NOW())");
+      (round, `text`, texthash, author, `timestamp`, flagged)
+      VALUES (?, ?, sha1(?), ?, NOW(), ?)");
     $db->bind(1, $round);
     $db->bind(2, $text);
     $db->bind(3, $text);
     $db->bind(4, $user->ckey);
+    $db->bind(5, $flag);
     try {
       $db->execute();
     } catch (Exception $e) {

@@ -9,12 +9,21 @@
       <h1>Changelog</h1>
     </div>
     <ul class="list-group">
-    <li class="list-group-item">
-      <h4 class="list-group-heading">31-05-2017</h4>
-      <ul class="list-unstyled fa-ul">
-        <li><i class="fa fa-li fa-li fa-check text-info"></i> Yet another stats refactor is underway!</li>
-      </ul>
-    </li>
+      <li class="list-group-item">
+        <h4 class="list-group-heading">01-06-2017</h4>
+        <ul class="list-unstyled fa-ul">
+          <li><i class="fa fa-li fa-li fa-plus text-success"></i> Users who have authenticated with the forums can now read and comment on individual rounds! Admins and above will have to approve comments before they become public.</li>
+          <li><i class="fa fa-li fa-li fa-plus text-success"></i> Admins also have a tool to view and moderate all round comments, if they feel like it.</li>
+          <li><i class="fa fa-li fa-li fa-check text-info"></i> Reading library books should be a more pleasant experience now</li>
+          <li><i class="fa fa-li fa-li fa-check text-info"></i> There was a bug preventing Safari and iOS users from authenticating with the app. This has since been fixed.</li>
+        </ul>
+      </li>
+      <li class="list-group-item">
+        <h4 class="list-group-heading">31-05-2017</h4>
+        <ul class="list-unstyled fa-ul">
+          <li><i class="fa fa-li fa-li fa-check text-info"></i> Yet another stats refactor is underway!</li>
+        </ul>
+      </li>
       <li class="list-group-item">
         <h4 class="list-group-heading">30-05-2017</h4>
         <p>Oh man I need to get better about this...</p>

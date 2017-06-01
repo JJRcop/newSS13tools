@@ -18,6 +18,7 @@
         <li><a href="<?php echo APP_URL;?>tgdb/conn.php"><i class="fa fa-plug"></i> Connection DB</a></li>
         <li><a href="<?php echo APP_URL;?>tgdb/players.php"><i class="fa fa-group"></i> Player DB</a></li>
         <li><a href="<?php echo APP_URL;?>tgdb/memo.php"><i class="fa fa-envelope"></i> Memo DB</a></li>
+        <li><a href="<?php echo APP_URL;?>tgdb/comments.php"><i class="fa fa-bullhorn"></i> Comments DB</a></li>
       </ul>
       <form class="navbar-form navbar-right" role="search" style="margin-right: 0;">
         <div class="form-group">

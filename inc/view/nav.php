@@ -69,7 +69,12 @@
             </li>
             <li>
               <a href="<?php echo APP_URL;?>tgstation/html/changelog.html">
-                In-game changelog
+                In-game Changelog
+              </a>
+            </li>
+            <li>
+              <a href="<?php echo APP_URL;?>polls.php">
+                In-game Polls
               </a>
             </li>
           </ul>

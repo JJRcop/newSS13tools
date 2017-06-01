@@ -47,7 +47,11 @@ if (isset($_GET['hideComment'])){
     <div class="panel-heading">
       <h3 class="panel-title">
       <p class="pull-right"><a href="#<?php echo $comment->id;?>">#<?php echo $comment->id;?></a></p>
+      <?php if(2 <= $user->level):?>
+        <?php echo $comment->author_link;?>
+      <?php else: ?>
       <?php echo $comment->author;?>
+      <?php endif;?>
         <small>commented at <?php echo $comment->timestamp;?></small>
       </h3>
     </div>
@@ -63,6 +67,7 @@ if (isset($_GET['hideComment'])){
 
     <?php elseif ('A' == $comment->flagged):?>
       <small><a href="?reportComment&id=<?php echo $comment->id;?>&round=<?php echo $round->id;?>" class="btn btn-danger btn-xs">Report Comment</a></small>
+
     <?php endif;?>
 
     </div>

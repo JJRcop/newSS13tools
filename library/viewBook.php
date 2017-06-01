@@ -41,24 +41,29 @@ if($flag) echo $book->flagBook($book->id);
   <?php endif;?>
   </ul>
 </nav>
-
-<div class="panel panel-<?php echo $book->class;?>">
-  <div class="panel-heading">
-    <p class="pull-right"><?php echo $book->label;?></p>
-    <h3 class="panel-title"><?php echo $book->title;?> <small>by <?php echo $book->author;?></small></h3>
+<div class="row">
+  <div class="col-md-3">
   </div>
-  <div class="panel-body">
-    <?php echo $book->content;?>
-    </font></i></i> <!-- to catch any unclosed font tags -->
-  </div>
-  <div class="panel-footer">
-  <?php if (2 <= $user->level):?>
-    <p class="pull-right">
-      (Actually published by <a href="<?php echo APP_URL;?>/tgdb/viewPlayer.php?ckey=<?php echo $book->ckey;?>">
-      <?php echo $book->ckey;?></a>)
-    </p>
-    <?php endif;?>
-    Published <?php echo $book->datetime;?>
+  <div class="col-md-6">
+    <div class="panel panel-<?php echo $book->class;?>">
+      <div class="panel-heading">
+        <p class="pull-right"><?php echo $book->label;?></p>
+        <h3 class="panel-title"><?php echo $book->title;?> <small>by <?php echo $book->author;?></small></h3>
+      </div>
+      <div class="panel-body">
+        <?php echo $book->content;?>
+        </font></i></i> <!-- to catch any unclosed font tags -->
+      </div>
+      <div class="panel-footer">
+      <?php if (2 <= $user->level):?>
+        <p class="pull-right">
+          (Actually published by <a href="<?php echo APP_URL;?>/tgdb/viewPlayer.php?ckey=<?php echo $book->ckey;?>">
+          <?php echo $book->ckey;?></a>)
+        </p>
+        <?php endif;?>
+        Published <?php echo $book->datetime;?>
+      </div>
+    </div>
   </div>
 </div>
 

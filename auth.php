@@ -94,7 +94,8 @@ switch ($step){
     } catch (Exception $e){
       die($e->getMessage());
     }
-
+    var_dump($_SESSION);
+    var_dump($body);
     //Decode the resoponse
     // consoleLog($_SESSION);
     // consoleLog($body);
@@ -103,10 +104,11 @@ switch ($step){
       die("Error with OAuth request: $body->error");
     } else {
       foreach($body as $k => $v){
-        setcookie($k,$v,time()+1296000,DIRECTORY,DOMAIN,USE_SSL); // 15 day expiry
+        setcookie($k,$v,COOKIE_LIFTIME,"/",DOMAIN,USE_SSL); // 15 day expiry
       }
+      var_dump($_COOKIE);
       $user = new user();
-      if($user->level){
+      if(1 <= $user->level){
         if($user->ip != $_SERVER['REMOTE_ADDR']) {
           $user->flagAuth();
         }

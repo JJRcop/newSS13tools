@@ -2,10 +2,10 @@
 $json = false;
 if (isset($_GET['json'])) $json = filter_input(INPUT_GET, 'json', FILTER_VALIDATE_BOOLEAN);
 if (!isset($_GET['round'])) die("No round ID specified!");
-$round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
+$id = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 $viewStat = filter_input(INPUT_GET, 'stat', FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH);
 
-$round = new round($round,FALSE);
+$round = new round($id,FALSE);
 $stat = $round->getRoundStat($round->id,$viewStat);
 ?>
 
