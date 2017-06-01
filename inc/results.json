@@ -1,0 +1,249 @@
+{
+  "data":
+  [
+    {
+      "result": "loss - staff win",
+      "game_mode": "AI malfunction"
+    },
+    {
+      "result": "loss - evacuation - disk secured",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "loss - wizard killed",
+      "game_mode": "wizard"
+    },
+    {
+      "result": "loss - rev heads killed",
+      "game_mode": "revolution"
+    },
+    {
+      "result": "halfwin - syndicate nuke - did not evacuate in time",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "loss - evacuation - disk not secured",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "end - evacuation",
+      "game_mode": "meteor"
+    },
+    {
+      "result": "win - cult win",
+      "game_mode": "cult"
+    },
+    {
+      "result": "win - heads killed",
+      "game_mode": "revolution"
+    },
+    {
+      "result": "loss - staff stopped the cult",
+      "game_mode": "cult"
+    },
+    {
+      "result": "win - AI win - no explosion",
+      "game_mode": "AI malfunction"
+    },
+    {
+      "result": "win - syndicate nuke",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "win - blob eliminated",
+      "game_mode": "blob"
+    },
+    {
+      "result": "win - AI win - nuke",
+      "game_mode": "AI malfunction"
+    },
+    {
+      "result": "loss - blob took over",
+      "game_mode": "blob"
+    },
+    {
+      "result": "halfwin - nuke",
+      "game_mode": "blob"
+    },
+    {
+      "result": "loss - evacuation - disk secured - syndi team dead",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "halfwin - AI killed, staff lost control",
+      "game_mode": "AI malfunction"
+    },
+    {
+      "result": "halfwin - detonation averted",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "halfwin - everyone killed by nuke",
+      "game_mode": "AI malfunction"
+    },
+    {
+      "result": "halfwin - evacuated",
+      "game_mode": "AI malfunction"
+    },
+    {
+      "result": "win - monkey win",
+      "game_mode": "monkey"
+    },
+    {
+      "result": "loss - blob eliminated",
+      "game_mode": "blob"
+    },
+    {
+      "result": "win - blob took over",
+      "game_mode": "blob"
+    },
+    {
+      "result": "win - AI win - no explosion",
+      "game_mode": "traitor"
+    },
+    {
+      "result": "loss - wizard killed",
+      "game_mode": "ragin' mages"
+    },
+    {
+      "result": "win - syndicate nuke",
+      "game_mode": "wizard"
+    },
+    {
+      "result": "loss - staff stopped the monkeys",
+      "game_mode": "monkey"
+    },
+    {
+      "result": "halfwin - interrupted",
+      "game_mode": "AI malfunction"
+    },
+    {
+      "result": "loss - malf ai left zlevel",
+      "game_mode": "AI malfunction"
+    },
+    {
+      "result": "halfwin - interrupted",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "halfwin - evacuation - disk not secured",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "loss - gangs failed takeover",
+      "game_mode": "gang war"
+    },
+    {
+      "result": "win - gang domination complete",
+      "game_mode": "gang war"
+    },
+    {
+      "result": "win - gang domination complete",
+      "game_mode": "traitor+changeling"
+    },
+    {
+      "result": "loss - gangs failed takeover",
+      "game_mode": "traitor"
+    },
+    {
+      "result": "loss - servants did not summon ratvar",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "win - servants summoned ratvar",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "end - evacuation",
+      "game_mode": "rod madness"
+    },
+    {
+      "result": "halfwin - round ended before the gateway finished",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "loss - servants failed their objective (gateway)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "win - servants completed their objective (silicons)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "loss - servants failed their objective (escape)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "win - servants completed their objective (gateway)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "loss - servants failed their objective (silicons)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "loss - gangs failed takeover",
+      "game_mode": "traitor+changeling"
+    },
+    {
+      "result": "loss - gangs failed takeover",
+      "game_mode": "wizard"
+    },
+    {
+      "result": "win - servants completed their objective (escape)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "loss - gangs failed takeover",
+      "game_mode": "cult"
+    },
+    {
+      "result": "win - gang domination complete",
+      "game_mode": "nuclear emergency"
+    },
+    {
+      "result": "loss - gangs failed takeover",
+      "game_mode": "extended"
+    },
+    {
+      "result": "win - gang domination complete",
+      "game_mode": "extended"
+    },
+    {
+      "result": "halfwin - servants constructed the gateway but their objective was not completed (proselytize the station)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "win - servants completed their objective (proselytize the station)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "loss - servants failed their objective (summon ratvar)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "win - servants completed their objective (summon ratvar)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "loss - servants failed their objective (proselytize the station)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "halfwin - servants constructed the gateway but their objective was not completed (summon ratvar)",
+      "game_mode": "clockwork cult"
+    },
+    {
+      "result": "win - gang domination complete",
+      "game_mode": "secret extended"
+    },
+    {
+      "result": "loss - gangs failed takeover",
+      "game_mode": "double agents"
+    },
+    {
+      "result": "loss - gangs failed takeover",
+      "game_mode": "clockwork cult"
+    }
+  ]
+}

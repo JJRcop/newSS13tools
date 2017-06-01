@@ -65,7 +65,7 @@
       <th>Duration</th>
       <td><?php echo $ban->duration;?></td>
       <th>Ban was issued on</th>
-      <td><?php echo $ban->serverip;?></td>
+      <td><?php echo "$ban->serverip $ban->round_id_link";?></td>
     </tr>
     </table>
   <?php endif;?>

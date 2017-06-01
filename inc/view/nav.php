@@ -81,7 +81,7 @@
           </a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="<?php echo APP_URL;?>rounds/listRounds.php">
+              <a href="<?php echo APP_URL;?>round.php">
                 Round List
               </a>
             </li>

@@ -36,6 +36,9 @@ class ban {
   public $icon = FALSE;
   public $scope = FALSE;
   public $minutes = FALSE;
+  public $round_id = null;
+  public $round_id_href = null;
+  public $round_id_link = null;
 
   public function __construct($id=null) {
     if ($id){
@@ -119,7 +122,7 @@ class ban {
 
   public function parseBan(&$ban) {
     $ban->rules = array();
-    $ban= $this->parseBanReason($ban);
+    $ban = $this->parseBanReason($ban);
     $round = new round();
     $ban->serverip = $round->mapServer(long2ip($ban->server_ip).":".$ban->server_port);
 
@@ -136,6 +139,11 @@ class ban {
 
     if (is_int($ban->ip)){
       $ban->ip = long2ip($ban->ip);
+    }
+
+    if(isset($ban->round_id)){
+      $ban->round_id_href = APP_URL."/rounds/viewRound.php?round=$ban->round_id";
+      $ban->round_id_link = " (Round <a href='$ban->round_id_link'>#$ban->round_id</a>)";
     }
 
     switch ($ban->bantype){

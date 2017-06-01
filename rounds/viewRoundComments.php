@@ -13,29 +13,6 @@ $round = new round($round,array('data'));
   </div>
 <?php die(); endif;?>
 
-<nav>
-  <ul class="pager">
-  <?php if ($round->prev): ?>
-    <li class="previous">
-        <a href="<?php echo APP_URL;?>viewRound.php?round=<?php echo $round->prev;?>">
-        <span aria-hidden="true">&larr;</span>
-        Previous round</a>
-    </li>
-  <?php endif;?>
-
-  <li><a href="<?php echo APP_URL;?>round.php">
-    <i class="fa fa-list"></i> Round listing</a>
-  </li>
-
-  <?php if ($round->next): ?>
-    <li class="next">
-      <a href="<?php echo APP_URL;?>viewRound.php?round=<?php echo $round->next;?>">Next round
-      <span aria-hidden="true">&rarr;</span></a>
-    </li>
-  <?php endif;?>
-  </ul>
-</nav>
-
 <div class="page-header">
   <h1>Round #<?php echo $round->id;?></h1>
 </div>
@@ -99,6 +76,10 @@ $round = new round($round,array('data'));
     </tr>
   <?php endif;?>
 </table>
+
+<?php if ($user->legit):?>
+<p class="text-muted"><i class="fa fa-bullhorn fa-2x"></i> Did you particularly enjoy this round? Hate it? Let's talk about it. <a href="<?php echo $round->href;?>&comment=true">Leave a comment</a>.</p>
+<?php endif;?>
 <hr>
 
 <?php
@@ -169,13 +150,6 @@ $total = $dead + $survivors; ?>
   <?php endif;?>
 </div>
 
-<hr>
-
-<?php if (2 <= $user->level):?>
-<?php include(ROOTPATH."/rounds/comments.php");?>
-<?php endif;?>
-
-<hr>
 <div id="rawdata">
   <h3>Raw data</h3>
   <ul class="list-unstyled">
@@ -191,25 +165,3 @@ $total = $dead + $survivors; ?>
     </ul>
 </div>
 
-<nav>
-  <ul class="pager">
-  <?php if ($round->prev): ?>
-    <li class="previous">
-        <a href="viewRound.php?round=<?php echo $round->prev;?>">
-        <span aria-hidden="true">&larr;</span>
-        Previous round</a>
-    </li>
-  <?php endif;?>
-
-  <li><a href="listRounds.php">
-    <i class="fa fa-list"></i> Round listing</a>
-  </li>
-
-  <?php if ($round->next): ?>
-    <li class="next">
-      <a href="viewRound.php?round=<?php echo $round->next;?>">Next round
-      <span aria-hidden="true">&rarr;</span></a>
-    </li>
-  <?php endif;?>
-  </ul>
-</nav>

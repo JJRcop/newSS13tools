@@ -202,5 +202,23 @@ function returnMessage($msg) {
 }
 
 function returnSuccess($msg) {
-return json_encode(array('message'=>$msg,'level'=>1));
+  return json_encode(array('message'=>$msg,'level'=>1));
+}
+
+function parseReturn($msg){
+  $msg = json_decode($msg);
+  switch ($msg->level){
+    case 0:
+      $class = "danger";
+    break;
+
+    case 1:
+      $class = "success";
+    break;
+
+    default:
+      $class = "info";
+    break;
+  }
+  echo "<div class='alert alert-$class'>$msg->message</div>";
 }

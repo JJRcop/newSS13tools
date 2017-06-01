@@ -1,5 +1,12 @@
 <?php require_once('../header.php'); ?>
-<?php require_once('../user_check.php'); ?>
+
+<?php if (!$user->legit): ?>
+
+  <div class="alert alert-danger">
+  You must be a known user to view this page.
+  </div>
+
+<?php die(); endif;?>
 
 <?php
 if (!isset($_GET['book'])) die("No book specified!");
@@ -45,7 +52,7 @@ if($flag) echo $book->flagBook($book->id);
     </font></i></i> <!-- to catch any unclosed font tags -->
   </div>
   <div class="panel-footer">
-  <?php if ($user->legit):?>
+  <?php if (2 <= $user->level):?>
     <p class="pull-right">
       (Actually published by <a href="<?php echo APP_URL;?>/tgdb/viewPlayer.php?ckey=<?php echo $book->ckey;?>">
       <?php echo $book->ckey;?></a>)

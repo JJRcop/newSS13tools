@@ -1,11 +1,19 @@
 <?php require_once('../header.php'); ?>
-<?php require_once('../user_check.php'); ?>
+
+<?php if (!$user->legit): ?>
+
+  <div class="alert alert-danger">
+  You must be a known user to view this page.
+  </div>
+
+<?php die(); endif;?>
+
 <?php
 $books = new library();
 $total = $books->countBooks();
 $pages = floor($total/30);
 if (isset($_GET['page'])){
-  $page = filter_input(INPUT_GET, 'page',FILTER_VALIDATE_INT,array(
+  $page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT,array(
     'min_range' => 1,
     'max_range' => $pages
   ));

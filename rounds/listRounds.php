@@ -1,8 +1,5 @@
-<?php require_once('../header.php'); ?>
-
 <?php
-$rounds = new round();
-$total = $rounds->countRounds();
+$total = $round->countRounds();
 $pages = floor($total/30);
 
 if (isset($_GET['page'])){
@@ -24,7 +21,7 @@ if (isset($_GET['page'])){
     <ul class="pagination">
       <?php if ($page > 1):?>
       <li>
-        <a href="listRounds.php?page=<?php echo $page-1;?>" aria-label="Previous">
+        <a href="<?php echo APP_URL;?>round.php?page=<?php echo $page-1;?>" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
@@ -38,7 +35,7 @@ if (isset($_GET['page'])){
           } else {
             echo "<li>";
           }
-          echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+          echo "<a href='".APP_URL."round.php?page=$i'>$i</a></li>";
         }
       } else if ($page <= 5) {
         for ($i = 1; $i <= 5; $i++){
@@ -47,7 +44,7 @@ if (isset($_GET['page'])){
           } else {
             echo "<li>";
           }
-          echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+          echo "<a href='".APP_URL."round.php?page=$i'>$i</a></li>";
         }
       } else {
         for ($i = ($pages-5); $i <= $pages; $i++){
@@ -56,7 +53,7 @@ if (isset($_GET['page'])){
           } else {
             echo "<li>";
           }
-          echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+          echo "<a href='".APP_URL."round.php?page=$i'>$i</a></li>";
         }
       }
 
@@ -64,7 +61,7 @@ if (isset($_GET['page'])){
       <li>
         <?php if ($page < $pages):?>
         <li>
-          <a href="listRounds.php?page=<?php echo $page+1;?>" aria-label="Next">
+          <a href="<?php echo APP_URL;?>round.php?page=<?php echo $page+1;?>" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
@@ -89,16 +86,16 @@ if (isset($_GET['page'])){
   </thead>
   <tbody>
     <?php 
-    $rounds = $rounds->listRounds($page);
+    $rounds = $round->listRounds($page);
     if (!$rounds) {
       echo "<tr><td colspan='5'>No rounds found</td></tr>";
     } else{
       foreach($rounds as $round): ?>
-        <tr>
+        <tr class="<?php echo $round->statusClass;?>">
           <td><?php echo $round->link;?></td>
           <td><?php echo $round->modeIcon.ucfirst($round->game_mode);?></td>
           <td><?php echo str_replace('_',' ',$round->map);?></td>
-          <td><?php echo $round->result;?></td>
+          <td><?php echo "$round->statusIcon $round->result";?></td>
           <td><?php echo $round->duration;?></td>
           <td><?php echo $round->start;?></td>
           <td><?php echo $round->end;?></td>
@@ -114,7 +111,7 @@ if (isset($_GET['page'])){
     <ul class="pagination">
       <?php if ($page > 1):?>
       <li>
-        <a href="listRounds.php?page=<?php echo $page-1;?>" aria-label="Previous">
+        <a href="<?php echo APP_URL;?>round.php?page=<?php echo $page-1;?>" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
@@ -128,7 +125,7 @@ if (isset($_GET['page'])){
           } else {
             echo "<li>";
           }
-          echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+          echo "<a href='".APP_URL."round.php?page=$i'>$i</a></li>";
         }
       } else if ($page <= 5) {
         for ($i = 1; $i <= 5; $i++){
@@ -137,7 +134,7 @@ if (isset($_GET['page'])){
           } else {
             echo "<li>";
           }
-          echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+          echo "<a href='".APP_URL."round.php?page=$i'>$i</a></li>";
         }
       } else {
         for ($i = ($pages-5); $i <= $pages; $i++){
@@ -146,7 +143,7 @@ if (isset($_GET['page'])){
           } else {
             echo "<li>";
           }
-          echo "<a href='listRounds.php?page=$i'>$i</a></li>";
+          echo "<a href='".APP_URL."round.php?page=$i'>$i</a></li>";
         }
       }
 
@@ -154,7 +151,7 @@ if (isset($_GET['page'])){
       <li>
         <?php if ($page < $pages):?>
         <li>
-          <a href="listRounds.php?page=<?php echo $page+1;?>" aria-label="Next">
+          <a href="<?php echo APP_URL;?>round.php?page=<?php echo $page+1;?>" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
@@ -164,11 +161,4 @@ if (isset($_GET['page'])){
   </nav>
 <?php endif;?>
 
-<script>
-$('.round').click(function(e){
-  round = $(this).attr('id');
-  window.location.href = "viewRound.php?round="+round;
-})
-</script>
 
-<?php require_once('../footer.php'); ?>

@@ -14,6 +14,8 @@
   public $hasObjectives = false;
   public $fromCache = false;
   public $data = false;
+  public $commit_href = null;
+  public $commit_link = "Not found";
 
   public function __construct($round=null,$data=false) {
     if($round){
@@ -35,7 +37,7 @@
 
             //Get and parse round stats(feedback)
             case 'data':
-              $data = $this->getRoundFeedback($round->round_id);
+              $data = $this->getRoundFeedback($round->id);
               $data = $this->parseRoundFeedback($data);
               $round->data = new StdClass();
               foreach ($data as $d){
@@ -57,49 +59,151 @@
   }
 
   public function parseRound(&$round){
-    if ($round->start) $round->start = date("Y-m-d H:i:s",strtotime($round->start));
-    $round->end = date("Y-m-d H:i:s",strtotime($round->end));
-    $round->server = $this->mapServer($round->server);
-    if ($round->start && $round->end && $round->server){
-      $round->logs = true; //Round has logs we can find
-      $round->logURL = REMOTE_LOG_SRC.strtolower($round->server)."/logs/";
-      $round->logURL.= date('Y/m-F/d-l',strtotime($round->end)).".txt";
-      $round->logCache = ROOTPATH."/tmp/".$round->round_id."-".$round->server."-logs.json";
-      //End state doesn't get called if the map changes or something, so we can
-      //set this manually if all the conditions are met
-      if (!$round->status) $round->status = 'proper completion';
-    } else {
-      if (!$round->status) $round->status = false;
-    }
-    if (!$round->result) {
-      $round->result = ucfirst($round->status);
-    }
-    $round->modeIcon = json_decode(file_get_contents(ROOTPATH."/inc/mode.json"),TRUE)[$round->game_mode];
-    $round->modeIcon = "<i class='fa fa-fw fa-$round->modeIcon'></i> ";
+    //Links
+    $round->href = APP_URL."round.php?round=$round->id";
+    $round->link = "<a href='$round->href'>#$round->id</a>";
 
-    $round->status = ucfirst($round->status);
-    $round->permalink = APP_URL."rounds/viewRound.php?round=$round->round_id";
-    $round->link = "<a href='$round->permalink'>#$round->round_id</a>";
+    //Mode
+    $round = $this->modeIcon($round);
+    $round->game_mode = ucfirst($round->game_mode);
+
+    //Map
+    $round->map = str_replace('_', ' ', $round->map_name);
+
+    //Shuttle
+    $round->shuttle = str_replace('_', ' ', $round->shuttle_name);
+
+    //Status 
+    $round = $this->mapStatus($round);
+
+    //Times
+    $round->start = date("Y-m-d H:i:s",strtotime($round->start_datetime));
+    $round->end = date("Y-m-d H:i:s",strtotime($round->end_datetime));
+
+    //Server
+    $round->server = $this->mapServer($round->server_port);
+
+    //Revision
+    if($round->commit_hash){
+      $round->commit_href = "https://github.com/".PROJECT_GITHUB."/commit/$round->commit_hash";
+      $round->commit_link = "<a href='$round->commit_href' target='_blank'>";
+      $round->commit_link.= strtoupper(substr($round->commit_hash, 0, 6))."</a>";
+    }
+
+    //Station name 
+    if(!$round->station_name){
+      $round->station_name = '<em>Not specified</em>';
+    }
+
+    $round->logs = "<em>Forthcoming</em>";
+
     return $round;
   }
 
-  public function mapStatus($status = null){
-    if(!$status) return false;
-    if(strpos($status, 'admin reboot - ')!==FALSE) return false;
-    switch ($status){
-      case 'proper completion':
-      default:
-        return TRUE;
+  public function modeIcon(&$round){
+    $round->modeIcon = "<i class='fa fa-fw fa-question-mark'></i> ";
+    @$round->modeIcon = json_decode(file_get_contents(ROOTPATH."/inc/mode.json"),TRUE)[$round->game_mode];
+    $round->modeIcon = "<i class='fa fa-fw fa-$round->modeIcon'></i> ";
+    return $round;
+  }
+
+  public function mapStatus(&$round){
+  if(null == $round->game_mode_result 
+    || 'undefined' == $round->game_mode_result){
+      $round->result = ucfirst($round->end_state);
+    } else {
+      $round->result = ucfirst($round->game_mode_result);
+    }
+
+    $round->end_state = ucfirst($round->end_state);
+
+    $round->statusIcon = null;
+    $round->statusClass = null;
+
+    if(strpos($round->result, 'Win - ') !== FALSE){
+      $round->statusIcon = "<i class='fa fa-fw fa-trophy'></i>";
+      $round->statusClass = "success";
+    }
+
+    if(strpos($round->result, 'Loss - ') !== FALSE){
+      $round->statusIcon = "<i class='fa fa-fw fa-times'></i>";
+      $round->statusClass = "danger";
+    }
+
+    if(strpos($round->result, 'Halfwin - ') !== FALSE){
+      $round->statusIcon = "<i class='fa fa-fw fa-minus'></i>";
+      $round->statusClass = "warning";
+    }
+
+    if('Proper completion' == $round->result){
+      $round->statusIcon = "<i class='fa fa-fw fa-check'></i>";
+      $round->statusClass = "info";
+    }
+
+    if('Nuke' == $round->result && 'Nuclear emergency' != $round->game_mode){
+      $round->statusIcon = "<i class='fa fa-fw fa-exclamation-triangle'></i>";
+      $round->statusClass = "inverse";
+    }
+
+    if(!$round->result){
+      $round->result = "[No round result found]";
+      $round->statusIcon = "<i class='fa fa-fw fa-question'></i>";
+      $round->statusClass = "";
+    }
+    if (!$round->game_mode && !$round->server_port){
+      $round->statusClass = "bad-round";
+    }
+    return $round;
+  }
+
+  public function mapServer($ip) {
+    if(':' == $ip{0} || (strpos($ip,':') !== FALSE)){
+      $ip = explode(':',$ip);
+      if (!isset($ip[1])) return 'Unknown';
+      $ip = $ip[1];
+    } else {
+      $ip = str_replace(':', '', $ip);
+    }
+
+    //Per MSO, we should be looking at the port #s.
+    switch ($ip){
+      case '2337':
+        return 'Basil';
       break;
 
-      case 'nuke':
-        return TRUE;
+      case '1337':
+        return 'Sybil';
       break;
 
-      case 'restart vote':
-        return FALSE;
+      default: 
+        return 'Unknown';
       break;
     }
+  }
+
+  public function listRounds($page=1, $count=30){
+    $page = ($page*$count) - $count;
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $database = $db->query("SELECT *,
+    TIMEDIFF(tbl_round.end_datetime, tbl_round.start_datetime) AS duration
+      FROM tbl_round
+      ORDER BY tbl_round.end_datetime DESC
+      LIMIT ?,?;");
+    $db->bind(1,$page);
+    $db->bind(2,$count);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $rounds = $db->resultset();
+    foreach ($rounds as $round){
+      $this->parseRound($round);
+    }
+    return $rounds;
   }
 
   public function getRound($id){
@@ -107,32 +211,15 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT tbl_feedback.round_id,
-      server.details AS `server`,
-      mode.details AS game_mode,
-      STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
-      STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y') AS `start`,
-      TIMEDIFF(STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration,
-      IF (proper.details IS NULL, error.details, proper.details) AS `status`,
+    $db->query("
+      SELECT tbl_round.*,
+      TIMEDIFF(tbl_round.end_datetime, tbl_round.start_datetime) AS duration,
       MAX(next.round_id) AS `next`,
-      MIN(prev.round_id) AS `prev`,
-      result.details AS result,
-      name.details AS name,
-      map.details AS `map`
-      FROM tbl_feedback
-      LEFT JOIN tbl_feedback AS `server` ON tbl_feedback.round_id = server.round_id AND server.var_name = 'server_ip'
-      LEFT JOIN tbl_feedback AS `mode` ON tbl_feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
-      LEFT JOIN tbl_feedback AS `end` ON tbl_feedback.round_id = end.round_id AND end.var_name = 'round_end'
-      LEFT JOIN tbl_feedback AS `start` ON tbl_feedback.round_id = start.round_id AND start.var_name = 'round_start'
-      LEFT JOIN tbl_feedback AS `error` ON tbl_feedback.round_id = error.round_id AND error.var_name = 'end_error'
-      LEFT JOIN tbl_feedback AS `proper` ON tbl_feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
-      LEFT JOIN tbl_feedback AS `result` ON tbl_feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
-      LEFT JOIN tbl_feedback AS `name` ON tbl_feedback.round_id = name.round_id AND name.var_name = 'station_renames'
-      LEFT JOIN tbl_feedback AS `next` ON next.round_id = tbl_feedback.round_id + 1
-      LEFT JOIN tbl_feedback AS `prev` ON prev.round_id = tbl_feedback.round_id - 1
-      LEFT JOIN tbl_feedback AS `map` ON tbl_feedback.round_id = map.round_id AND map.var_name = 'map_name'
-      WHERE tbl_feedback.var_name='round_end'
-      AND tbl_feedback.round_id = ?");
+      MIN(prev.round_id) AS `prev`
+      FROM tbl_round
+      LEFT JOIN tbl_feedback AS `next` ON next.id = tbl_round.id + 1
+      LEFT JOIN tbl_feedback AS `prev` ON prev.id = tbl_round.id - 1
+      WHERE tbl_round.id = ?");
     $db->bind(1, $id);
     try {
       $db->execute();
@@ -342,47 +429,6 @@
     }
   }
 
-  public function listRounds($page=1, $count=30){
-    $page = ($page*$count) - $count;
-    $db = new database();
-    if($db->abort){
-      return FALSE;
-    }
-    $database = $db->query("SELECT tbl_feedback.round_id,
-      server.details AS `server`,
-      mode.details AS game_mode,
-      STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y') AS `end`,
-      STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y') AS `start`,
-      TIMEDIFF(STR_TO_DATE(end.details,'%a %b %d %H:%i:%s %Y'),STR_TO_DATE(start.details,'%a %b %d %H:%i:%s %Y')) AS duration,
-      IF (proper.details IS NULL, error.details, proper.details) AS `status`,
-      result.details AS result,
-      map.details AS `map`
-      FROM tbl_feedback
-      LEFT JOIN tbl_feedback AS `server` ON tbl_feedback.round_id = server.round_id AND server.var_name = 'server_ip'
-      LEFT JOIN tbl_feedback AS `mode` ON tbl_feedback.round_id = mode.round_id AND mode.var_name = 'game_mode'
-      LEFT JOIN tbl_feedback AS `end` ON tbl_feedback.round_id = end.round_id AND end.var_name = 'round_end'
-      LEFT JOIN tbl_feedback AS `start` ON tbl_feedback.round_id = start.round_id AND start.var_name = 'round_start'
-      LEFT JOIN tbl_feedback AS `error` ON tbl_feedback.round_id = error.round_id AND error.var_name = 'end_error'
-      LEFT JOIN tbl_feedback AS `proper` ON tbl_feedback.round_id = proper.round_id AND proper.var_name = 'end_proper'
-      LEFT JOIN tbl_feedback AS `result` ON tbl_feedback.round_id = result.round_id AND result.var_name = 'round_end_result'
-      LEFT JOIN tbl_feedback AS `map` ON tbl_feedback.round_id = map.round_id AND map.var_name = 'map_name'
-      WHERE tbl_feedback.var_name='round_end'
-      ORDER BY tbl_feedback.time DESC
-      LIMIT ?,?;");
-    $db->bind(1,$page);
-    $db->bind(2,$count);
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    $rounds = $db->resultset();
-    foreach ($rounds as $round){
-      $this->parseRound($round);
-    }
-    return $rounds;
-  }
-
   public function countRounds() {
     $db = new database();
     if($db->abort){
@@ -411,31 +457,6 @@
       GROUP BY YEAR(tbl_feedback.time), MONTH(tbl_feedback.time) ASC;");
   }
 
-  public function mapServer($ip) {
-    if(':' == $ip{0} || (strpos($ip,':') !== FALSE)){
-      $ip = explode(':',$ip);
-      if (!isset($ip[1])) return 'Unknown';
-      $ip = $ip[1];
-    } else {
-      $ip = str_replace(':', '', $ip);
-    }
-
-    //Per MSO, we should be looking at the port #s.
-    switch ($ip){
-      case '2337':
-        return 'Basil';
-      break;
-
-      case '1337':
-        return 'Sybil';
-      break;
-
-      default: 
-        return 'Unknown';
-      break;
-    }
-  }
-
   public function parseRoundFeedback(&$feedback){
     $stat = new stat();
     foreach($feedback as &$data){
@@ -462,6 +483,122 @@
     $data = $db->single();
     $stat = $stat->parseFeedback($data);
     return $stat;
+  }
+
+  public function getRoundComments($round){
+    $where = "WHERE flagged = 'A'";
+    $user = new user();
+    if(2 <= $user->level) {
+      $where.= " OR flagged = 'P' OR flagged = 'R'";
+    }
+    $db = new database(TRUE);
+    $db->query("SELECT * FROM round_comments $where AND round = ?");
+    $db->bind(1, $round);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $comments = $db->resultset();
+    foreach ($comments as &$comment){
+      $comment = $this->parseComment($comment);
+    }
+    return $comments;
+  }
+
+  public function parseComment(&$comment){
+    $user = new user();
+
+    //Flag
+    switch ($comment->flagged){
+      default: //Pending
+        $comment->flag = "Pending";
+        $comment->class = "primary";
+      break;
+
+      case 'A':
+        $comment->flag = "Approved";
+        $comment->class = "success";
+      break;
+
+      case 'R':
+        if (2 <= $user->level){
+          $comment->flag = "Reported";
+          $comment->class = "danger";
+        } else {
+          $comment->flag = "Approved";
+          $comment->class = "success";
+        }
+      break;
+    }
+
+    return $comment;
+  }
+
+  public function addComment($round, $text) {
+    $user = new user();
+    if(!$user->legit){
+      die("You must be a known user in order to submit comments");
+    }
+    $db = new database(TRUE);
+    $db->query("INSERT INTO round_comments
+      (round, `text`, texthash, author, `timestamp`)
+      VALUES (?, ?, sha1(?), ?, NOW())");
+    $db->bind(1, $round);
+    $db->bind(2, $text);
+    $db->bind(3, $text);
+    $db->bind(4, $user->ckey);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return returnSuccess("Your comment has been submitted and is pending approval");
+  }
+
+  public function flipCommentFlag($id, $flag) {
+    $user = new user();
+    if(!$user->legit){
+      return returnError("You must be a known user in order to flag comments");
+    }
+    switch ($flag) {
+      case 'A':
+        if(2 < $user->level){
+          return returnError("You do not have permission to approve comments");
+        }
+        $flagText = 'Comment approved';
+      break;
+
+      case 'H':
+        if(2 < $user->level){
+          return returnError("You cannot perform this action");
+        }
+        $flagText = 'Comment hidden';
+      break;
+
+      case 'R':
+        $flagText = 'Comment reported';
+      break;
+
+      default: 
+        return returnError("This is not a valid comment flag");
+      break;
+    }
+    $db = new database(TRUE);
+    $db->query("UPDATE round_comments SET
+      flagged = ?,
+      flag_change = NOW(),
+      flag_changer = ?
+      WHERE id = ?");
+    $db->bind(1, $flag);
+    $db->bind(2, $id);
+    $db->bind(3, $user->ckey);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return returnSuccess("$flagText");
   }
 
 }

@@ -31,7 +31,7 @@ $death = new death();
 <?php else:?>
 <div class="container-fluid">
 <?php endif;?>
-<?php require_once('nav.php');
+<?php require_once(ROOTPATH.'/inc/view/nav.php');
 if (defined('NOTICE')){
   echo NOTICE;
 }

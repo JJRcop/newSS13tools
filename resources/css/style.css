@@ -54,6 +54,11 @@ tr.bad-round {
   font-size: 8px;
   background: #eeeeee;
 }
+
+tr.inverse {
+  color: white;
+  background: black;
+}
 .text-brute {color: orange;}
 .text-brain {color: green;}
 .text-fire  {color: red;}

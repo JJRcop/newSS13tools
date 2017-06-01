@@ -1,13 +1,7 @@
-<?php
+<?php $skip = true;
+$wide = true;
 require_once('header.php');?>
 
-<?php
-// $round = new newRound(69295,array('logs'));
-
-// var_dump($round);
-// 
-
-var_dump($_REQUEST);
-?>
+<?php var_dump($user);?>
 
 <?php require_once('footer.php');

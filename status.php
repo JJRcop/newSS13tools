@@ -9,6 +9,12 @@
       <h1>Changelog</h1>
     </div>
     <ul class="list-group">
+    <li class="list-group-item">
+      <h4 class="list-group-heading">31-05-2017</h4>
+      <ul class="list-unstyled fa-ul">
+        <li><i class="fa fa-li fa-li fa-check text-info"></i> Yet another stats refactor is underway!</li>
+      </ul>
+    </li>
       <li class="list-group-item">
         <h4 class="list-group-heading">30-05-2017</h4>
         <p>Oh man I need to get better about this...</p>

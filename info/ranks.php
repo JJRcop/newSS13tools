@@ -29,7 +29,7 @@ $pos = array_keys($defs);
   </thead>
   <tbody>
   <?php foreach ($ranks as $t => $r):?>
-    <tr><th><code><?php echo $t;?></code></th>
+    <tr <?php echo ('Fruit' == $t)?'style="background: orange;"':'';?>><th><code><?php echo $t;?></code></th>
       <?php foreach ($pos as $p):?>
         <?php if('EVERYTHING' == $p){
           continue;
