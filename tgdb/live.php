@@ -27,24 +27,18 @@ $round = new round();
 if($id):?>
 <?php foreach ($deaths as $d):?>
   <?php $d = $death->parseDeath($d);?>
-  <?php $d->server_port = $round->mapServer($d->server_port);?>
-  <tr data-id="<?php echo $d->id;?>" class='new <?php echo $d->server_port;?>'>
+  <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server_port;?>">
+    <td><?php echo $d->link;?></td>
     <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>
-    <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>    <td><?php echo "$d->pod <br><small>$d->mapname  ($d->coord)</small>";?></td>
+    <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>
+    <td><?php echo "$d->pod <br><small>$d->mapname  ($d->coord)</small>";?></td>
     <td>
-      <span title="Brute" class="label label-brute"><?php echo $d->bruteloss;?></span>
-      <span title="Brain" class="label label-brain"><?php echo $d->brainloss;?></span>
-      <span title="Fire" class="label label-fire"><?php echo $d->fireloss;?></span>
-      <span title="Oxygen" class="label label-oxy"><?php echo $d->oxyloss;?></span>
-      <span title="Toxin" class="label label-tox"><?php echo $d->toxloss;?></span>
-      <span title="Clone" class="label label-clone"><?php echo $d->cloneloss;?></span>
-      <span title="Stamina" class="label label-stamina"><?php echo $d->staminaloss;?></span><br>
+      <?php echo $d->labels;?><br>
       <?php if('' != $d->laname):?>
-        <?php echo "By $d->laname <small>($d->lakey)</small>";?>
+        <?php echo "By $d->laname <small>($d->lakey)</small>";?>        <?php if($d->suicide) echo " <small class='text-danger'>(Probable Suicide)</small>";?>
       <?php endif;?>
-      <?php if($death->suicide) echo " <small class='text-danger'>(Probable Suicide(</small>";?>
     </td>
-    <td><?php echo "$d->tod<br><small>$d->server_port</small>";?></td>
+    <td><?php echo "$d->tod";?></td>
   </tr>
 <?php endforeach; die(); endif;?>
 
@@ -89,6 +83,7 @@ if($id):?>
 <table id="deaths" class="table table-bordered table-condense">
   <thead>
     <tr>
+      <th>ID</th>
       <th>Name</th>
       <th>Job</th>
       <th>Location & Map</th>
@@ -107,24 +102,18 @@ if($id):?>
   <tbody>
     <?php foreach ($deaths as $d):?>
       <?php $d = $death->parseDeath($d);?>
-      <?php $d->server_port = $round->mapServer($d->server_port);?>
       <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server_port;?>">
+        <td><?php echo $d->link;?></td>
         <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>
         <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>
         <td><?php echo "$d->pod <br><small>$d->mapname  ($d->coord)</small>";?></td>
         <td>
-          <span title="Brute" class="label label-brute"><?php echo $d->bruteloss;?></span>
-          <span title="Brain" class="label label-brain"><?php echo $d->brainloss;?></span>
-          <span title="Fire" class="label label-fire"><?php echo $d->fireloss;?></span>
-          <span title="Oxygen" class="label label-oxy"><?php echo $d->oxyloss;?></span>
-          <span title="Toxin" class="label label-tox"><?php echo $d->toxloss;?></span>
-          <span title="Clone" class="label label-clone"><?php echo $d->cloneloss;?></span>
-          <span title="Stamina" class="label label-stamina"><?php echo $d->staminaloss;?></span><br>
+          <?php echo $d->labels;?><br>
           <?php if('' != $d->laname):?>
             <?php echo "By $d->laname <small>($d->lakey)</small>";?>        <?php if($d->suicide) echo " <small class='text-danger'>(Probable Suicide)</small>";?>
           <?php endif;?>
         </td>
-        <td><?php echo "$d->tod<br><small>$d->server_port</small>";?></td>
+        <td><?php echo "$d->tod";?></td>
       </tr>
     <?php endforeach;?>
   </tbody>

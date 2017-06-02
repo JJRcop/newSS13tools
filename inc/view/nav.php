@@ -90,10 +90,15 @@
                 Round List
               </a>
             </li>
-            <li><a href="<?php echo APP_URL;?>death/deaths.php">Deaths</a></li>
+            <li><a href="<?php echo APP_URL;?>death.php">Deaths</a></li>
             <li>
               <a href="<?php echo APP_URL;?>stats/monthlyStats.php">
                 Stats by month
+              </a>
+            </li>
+            <li>
+              <a href="<?php echo APP_URL;?>stats/globalModeStats.php">
+                Global Mode Stats
               </a>
             </li>
             <li class="divider"></li>

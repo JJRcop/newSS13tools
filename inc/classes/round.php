@@ -72,6 +72,9 @@
 
     //Shuttle
     $round->shuttle = str_replace('_', ' ', $round->shuttle_name);
+    if(!$round->shuttle){
+      $round->shuttle = "<em>Round ended without an evacuation</em>";
+    }
 
     //Status 
     $round = $this->mapStatus($round);
@@ -131,6 +134,11 @@
     }
 
     if(strpos($round->result, 'Halfwin - ') !== FALSE){
+      $round->statusIcon = "<i class='fa fa-fw fa-minus'></i>";
+      $round->statusClass = "warning";
+    }
+
+    if(strpos($round->result, 'End - ') !== FALSE){
       $round->statusIcon = "<i class='fa fa-fw fa-minus'></i>";
       $round->statusClass = "warning";
     }
@@ -271,6 +279,20 @@
     $data = $db->single();
     $stat = $stat->parseFeedback($data);
     return $stat;
+  }
+
+  public function countRounds() {
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT count(DISTINCT round_id) AS total FROM tbl_feedback;");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->single()->total;
   }
 
   public function getRoundLogs(&$round){

@@ -226,6 +226,13 @@ tr.perma,
 
 }
 
+.mapviewer {
+  background: black;
+  height: 128px;
+  width: 128px;
+  background-size: 256px 256px;
+}
+
 .say          {}
 .deadsay        {color: #5c00e6;}
 .radio          {color: #008000;}

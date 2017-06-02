@@ -54,7 +54,7 @@ if ($year && $month):?>
             <tr>
               <th>Game Mode</th>
               <th>Result</th>
-              <th>Rounds</th>
+              <th># of Rounds</th>
               <th>Avg. Duration</th>
             </tr>
           </thead>
@@ -63,6 +63,7 @@ if ($year && $month):?>
               <tr>
                 <td><?php echo $r->mode;?></td>
                 <td><?php echo $r->result;?></td>
+                <td><?php echo $r->rounds;?></td>
                 <td><?php echo $r->rounds;?></td>
                 <td><?php echo $r->avgduration;?></td>
               </tr>

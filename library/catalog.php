@@ -38,56 +38,7 @@ if (isset($_GET['query'])){
 </div>
 
 <?php if(!$query):?>
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-    <?php if ($page > 1):?>
-    <li>
-      <a href="catalog.php?page=<?php echo $page-1;?>" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    <?php endif;?>
-    <?php 
-      if ($page > 5 && $page < ($pages-5)){      
-        for ($i = ($page-5); $i <= ($page+5); $i++){
-          if ($page == $i){
-            echo "<li class='active'>";
-          } else {
-            echo "<li>";
-          }
-          echo "<a href='catalog.php?page=$i'>$i</a></li>";
-        }
-      } else if ($page <= 5) {
-        for ($i = 1; $i <= 5; $i++){
-          if ($page == $i){
-            echo "<li class='active'>";
-          } else {
-            echo "<li>";
-          }
-          echo "<a href='catalog.php?page=$i'>$i</a></li>";
-        }
-      } else {
-        for ($i = ($pages-5); $i <= $pages; $i++){
-          if ($page == $i){
-            echo "<li class='active'>";
-          } else {
-            echo "<li>";
-          }
-          echo "<a href='catalog.php?page=$i'>$i</a></li>";
-        }
-      }
-    ?>
-    <li>
-      <?php if ($page < $pages):?>
-      <li>
-        <a href="catalog.php?page=<?php echo $page+1;?>" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
-      </li>
-      <?php endif;?>
-    </li>
-  </ul>
-</nav>
+<?php $link = "library/catalog"; include(ROOTPATH."/inc/view/pagination.php");?>
 <?php endif;?>
 
 <p class="lead">Welcome to the library. Blank books aren't being shown. I want to die.</p>
