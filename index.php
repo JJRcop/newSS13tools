@@ -15,6 +15,9 @@ if(1 <= $interval) {
   <h1>SS13 Tools &amp; Stats</h1>
 </div>
 <?php if ($user->legit):?>
+  <div class="alert alert-success">
+    <strong>NEW!</strong> Comments can now be left on individual rounds!
+  </div>
   <?php $line = pick(json_decode(file_get_contents(ROOTPATH."/tmp/poly.json"),TRUE)['data']);?>
   <div id="poly" class="engradio">[Poly] &ldquo;<?php echo $line;?>&rdquo; <img src="icons/animal/parrot_sit-1.png" height="64" width="64"  alt="And now a word from Poly" /></div>
 <?php else:?>

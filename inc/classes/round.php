@@ -245,23 +245,35 @@
     return  $db->resultset();
   }
 
-  public function getFeedback(){
+  public function parseRoundFeedback(&$feedback){
+    $stat = new stat();
+    foreach($feedback as &$data){
+      $data = $stat->parseFeedback($data);
+    }
+    return $feedback;
+  }
+
+  public function getRoundStat($round, $stat){
     $db = new database();
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT var_name, var_value, details
-      FROM tbl_feedback WHERE round_id = ?");
+    $db->query("SELECT * FROM tbl_feedback
+      WHERE round_id = ? AND var_name = ?");
     $db->bind(1,$round);
+    $db->bind(2,$stat);
     try {
       $db->execute();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return  $db->resultset();
+    $stat = new stat();
+    $data = $db->single();
+    $stat = $stat->parseFeedback($data);
+    return $stat;
   }
 
-    public function getRoundLogs(&$round){
+  public function getRoundLogs(&$round){
     if(file_exists($round->logCache)){
       $round->logs = $this->getCachedLogs($round->logCache);
       $round->fromCache = TRUE;
@@ -377,7 +389,6 @@
     function diffSort($a, $b) {
       return ($a['diff'] < $b['diff']) ? -1 : 1;
     }
-
     $starts = array();
     $ends = array();
     $startTime = new DateTime($round->start);
@@ -409,80 +420,6 @@
     $logsavefile = fopen($round->logCache,"w+");
     fwrite($logsavefile,json_encode($round->logs,JSON_UNESCAPED_UNICODE));
     fclose($logsavefile);
-  }
-
-  public function attachStationNameToRoundID($log, $round){
-    $log = str_replace(' has renamed the station as ', '', $log);
-    $log = str_replace(')', '/', $log);
-    $log = str_replace('(', '', $log);
-    $db = new database(TRUE);
-    $db->query("INSERT INTO round_logs (round, start, end, server, station_name) VALUES(?,?,?,?,?)");
-    $db->bind(1,$round->round_id);
-    $db->bind(2,$round->start);
-    $db->bind(3,$round->end);
-    $db->bind(4,$round->server);
-    $db->bind(5,explode('/',$log)[2]);
-    try {
-      //$db->execute();
-    } catch (Exception $e) {
-      return "Database error: ".$e->getMessage();
-    }
-  }
-
-  public function countRounds() {
-    $db = new database();
-    if($db->abort){
-      return FALSE;
-    }
-    $db->query("SELECT count(DISTINCT round_id) AS total FROM tbl_feedback;");
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    return $db->single()->total;
-  }
-
-  public function getRoundsByMonth() {
-    $db = new database();
-    if($db->abort){
-      return FALSE;
-    }
-    $db->query("SELECT count(DISTINCT round_id) AS rounds,
-      concat(MONTH(tbl_feedback.time),'-',YEAR(tbl_feedback.time)) AS date,
-      MIN(round_id) AS firstround,
-      MAX(round_id) AS lastround
-      FROM tbl_feedback
-      WHERE tbl_feedback.time BETWEEN '2011-01-01' AND NOW()
-      GROUP BY YEAR(tbl_feedback.time), MONTH(tbl_feedback.time) ASC;");
-  }
-
-  public function parseRoundFeedback(&$feedback){
-    $stat = new stat();
-    foreach($feedback as &$data){
-      $data = $stat->parseFeedback($data);
-    }
-    return $feedback;
-  }
-
-  public function getRoundStat($round, $stat){
-    $db = new database();
-    if($db->abort){
-      return FALSE;
-    }
-    $db->query("SELECT * FROM tbl_feedback
-      WHERE round_id = ? AND var_name = ?");
-    $db->bind(1,$round);
-    $db->bind(2,$stat);
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    $stat = new stat();
-    $data = $db->single();
-    $stat = $stat->parseFeedback($data);
-    return $stat;
   }
 
   public function getRoundComments($round){

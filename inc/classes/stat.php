@@ -2,21 +2,6 @@
 
 class stat {
 
-  public function getStat($stat){
-    $db = new database(TRUE);
-    if($db->abort){
-      return FALSE;
-    }
-    $db->query("SELECT * FROM tbl_feedback WHERE var_name = ? WHERE `time` >= DATE(NOW()) - INTERVAL 30 DAY");
-    $db->bind(1,$stat);
-    try {
-      $db->execute();
-    } catch (Exception $e) {
-      return returnError("Database error: ".$e->getMessage());
-    }
-    return $db->resultSet();
-  }
-
   public function getAggregatedFeedback($stat){
     //This is a very expensive method to call. Please try to avoid it.
     $db = new database();
@@ -596,5 +581,36 @@ class stat {
       $stat->include = 'bigText';
     }
     return $stat;
+  }
+
+  public function getRoundStatsForMonth($year=null, $month=null){
+    if (!$month && !$year){
+      $date = new DateTime("Previous month");
+    } else {
+      $date = new DateTime("$year-$month-01 00:00:00");
+    }
+    $start = $date->format("Y-m-01 00:00:00");
+    $end = $date->format("Y-m-t 23:59:59");
+    $db = new database();
+    $db->query("SELECT count(id) AS rounds,
+      min(ss13round.start_datetime) AS earliest_start,
+      max(ss13round.end_datetime) AS latest_end,
+      min(ss13round.id) AS `first`,
+      max(ss13round.id) AS `last`,
+      floor(AVG(TIME_TO_SEC(TIMEDIFF(ss13round.end_datetime,ss13round.start_datetime)))) / 60 AS avgduration,
+      ss13round.game_mode AS `mode`,
+      ss13round.game_mode_result AS result
+      FROM ss13round
+      WHERE ss13round.end_datetime BETWEEN ? AND ?
+      AND ss13round.game_mode IS NOT NULL
+      GROUP BY ss13round.game_mode, ss13round.game_mode_result;");
+    $db->bind(1,$start);
+    $db->bind(2,$end);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultSet();
   }
 }

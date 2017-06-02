@@ -30,20 +30,47 @@ if ($year && $month):?>
 
     $date = new dateTime("$month/01/$year");
 
-    $stats = $stat->getMonthlyStat($date->format("Y"),$date->format("m"));?>
+    $stats = $stat->getMonthlyStat($date->format("Y"),$date->format("m"));
+    $rounds = $stat->getRoundStatsForMonth($date->format("Y"),$date->format("m"));
+    // var_dump($rounds);
+    ?>
 
     <div class="page-header">
       <h1>Stats for <?php echo $date->format("F Y");?></h1>
     </div>
-
-    <ul class="list-unstyled">
-    <?php foreach($stats as $s):?>
-      <?php $link = APP_URL."stats/monthlyStats.php?year=".$date->format('Y');
-      $link.= "&month=".$date->format('m')."&stat=$s->var_name";?>
-      <li><a href="<?php echo $link;?>"><code><?php echo $s->var_name;?></code></a></li>
-    <?php endforeach;?>
-    </ul>
-
+    <div class="row">
+      <div class="col-md-3">
+        <ul class="list-unstyled">
+        <?php foreach($stats as $s):?>
+          <?php $link = APP_URL."stats/monthlyStats.php?year=".$date->format('Y');
+          $link.= "&month=".$date->format('m')."&stat=$s->var_name";?>
+          <li><a href="<?php echo $link;?>"><code><?php echo $s->var_name;?></code></a></li>
+        <?php endforeach;?>
+        </ul>
+      </div>
+      <div class="col-md-9">
+        <table class="table sort table-bordered table-condensed">
+          <thead>
+            <tr>
+              <th>Game Mode</th>
+              <th>Result</th>
+              <th>Rounds</th>
+              <th>Avg. Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($rounds as $r):?>
+              <tr>
+                <td><?php echo $r->mode;?></td>
+                <td><?php echo $r->result;?></td>
+                <td><?php echo $r->rounds;?></td>
+                <td><?php echo $r->avgduration;?></td>
+              </tr>
+            <?php endforeach;?>
+          </tbody>
+        </table>
+      </div>
+    </div>
   <?php endif;?>
 <?php else: //Viewing a list of all months with stats ?>
   <?php $stats = $stat->getMonthsWithStats(); ?>

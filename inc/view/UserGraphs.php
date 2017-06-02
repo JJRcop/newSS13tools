@@ -25,7 +25,8 @@
               type: 'category',
               tick: {
                 culling: false,
-                rotate: 90
+                rotate: 90,
+                height: 128
               }
             }
           }
@@ -59,7 +60,8 @@
             type: 'category',
             tick: {
               culling: false,
-              rotate: 90
+              rotate: 90,
+              height: 128
             }
           }
         }
