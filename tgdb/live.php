@@ -102,7 +102,7 @@ if($id):?>
   <tbody>
     <?php foreach ($deaths as $d):?>
       <?php $d = $death->parseDeath($d);?>
-      <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server_port;?>">
+      <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server;?>">
         <td><?php echo $d->link;?></td>
         <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>
         <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>

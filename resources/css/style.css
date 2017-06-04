@@ -271,6 +271,10 @@ tr.perma,
 .tablesorter-headerDesc {
   background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); }
 
+.tgui * {
+  border-radius: 0 !important;
+}
+
 .tgui .well,
 .tgui .jumbotron,
 .tgui .list-group-item {
@@ -283,6 +287,11 @@ tr.perma,
 
 .tgui .page-header {
   border-bottom: 2px solid #40628a;
+}
+
+.tgui hr {
+  background: #40628a;
+  height: 2px;
 }
 
 .tgui .row > div, {
@@ -298,8 +307,10 @@ tr.perma,
 }
 
 .tgui tr.danger td,
-.tgui td.danger{
+.tgui td.danger,
+.tgui .panel.panel-danger {
   background-color: #b00e0e !important;
+  color: white !important;
 }
 
 .tgui tr.warning td,
