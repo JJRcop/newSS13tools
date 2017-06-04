@@ -12,14 +12,14 @@
         <i class="fa fa-navicon fa-lg" style="color: white;"></i>
       </button>
       <div id="deathChart"></div> 
-      <a class="navbar-brand" href="<?php echo APP_URL;?>index.php">
+      <a class="navbar-brand" href="<?php echo $app->APP_URL;?>index.php">
       SS13 Tools
       </a>
     </div>
     <?Php if(!$skip):?>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-      <li><a href="<?php echo APP_URL;?>status.php">Project Status</a></li>
+      <li><a href="<?php echo $app->APP_URL;?>status.php">Project Status</a></li>
         <?php if (1 <= $user->level): ?>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"
@@ -27,21 +27,21 @@
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="<?php echo APP_URL;?>info.php">System Info</a></li>
-            <li><a href="<?php echo APP_URL;?>tools/updateTG.php">Update local repository</a></li>
+            <li><a href="<?php echo $app->APP_URL;?>info.php">System Info</a></li>
+            <li><a href="<?php echo $app->APP_URL;?>tools/updateTG.php">Update local repository</a></li>
             <li>
-              <a href="<?php echo APP_URL;?>tools/manageStats.php">Manage Monthly Stats</a>
+              <a href="<?php echo $app->APP_URL;?>tools/manageStats.php">Manage Monthly Stats</a>
             </li>
             <li class="divider"></li>
             <li>
-              <a href="<?php echo APP_URL;?>tools/listDMIs.php">List DMIs</a>
+              <a href="<?php echo $app->APP_URL;?>tools/listDMIs.php">List DMIs</a>
             </li>
             <li>
-              <a href="<?php echo APP_URL;?>tools/generateallPNGs.php">
+              <a href="<?php echo $app->APP_URL;?>tools/generateallPNGs.php">
               Generate all mob PNGs</a>
             </li>
             <li>
-              <a href="<?php echo APP_URL;?>tools/DMIdiff.php">
+              <a href="<?php echo $app->APP_URL;?>tools/DMIdiff.php">
               DMI diff viewer</a>
             </li>
           </ul>
@@ -53,7 +53,7 @@
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="<?php echo APP_URL;?>generators/bio.php">Bio</a></li>
+            <li><a href="<?php echo $app->APP_URL;?>generators/bio.php">Bio</a></li>
           </ul>
         </li>
         <li class="dropdown">
@@ -63,17 +63,17 @@
           </a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="<?php echo APP_URL;?>info/ranks.php">
+              <a href="<?php echo $app->APP_URL;?>info/ranks.php">
                 Server Admin Ranks
               </a>
             </li>
             <li>
-              <a href="<?php echo APP_URL;?>tgstation/html/changelog.html">
+              <a href="<?php echo $app->APP_URL;?>tgstation/html/changelog.html">
                 In-game Changelog
               </a>
             </li>
             <li>
-              <a href="<?php echo APP_URL;?>polls.php">
+              <a href="<?php echo $app->APP_URL;?>polls.php">
                 In-game Polls
               </a>
             </li>
@@ -86,34 +86,34 @@
           </a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="<?php echo APP_URL;?>round.php">
+              <a href="<?php echo $app->APP_URL;?>round.php">
                 Round List
               </a>
             </li>
-            <li><a href="<?php echo APP_URL;?>death.php">Deaths</a></li>
+            <li><a href="<?php echo $app->APP_URL;?>death.php">Deaths</a></li>
             <li>
-              <a href="<?php echo APP_URL;?>stats/monthlyStats.php">
+              <a href="<?php echo $app->APP_URL;?>stats/monthlyStats.php">
                 Stats by month
               </a>
             </li>
             <li>
-              <a href="<?php echo APP_URL;?>stats/globalModeStats.php">
+              <a href="<?php echo $app->APP_URL;?>stats/globalModeStats.php">
                 Global Mode Stats
               </a>
             </li>
             <li class="divider"></li>
             <li>
-              <a href="<?php echo APP_URL;?>stats/hours.php">
+              <a href="<?php echo $app->APP_URL;?>stats/hours.php">
                 When do people play?
               </a>
             </li>
             <li>
-              <a href="<?php echo APP_URL;?>stats/adminConnections.php">
+              <a href="<?php echo $app->APP_URL;?>stats/adminConnections.php">
                 Do admins play?
               </a>
             </li>
             <li>
-              <a href="<?php echo APP_URL;?>stats/jobs.php">
+              <a href="<?php echo $app->APP_URL;?>stats/jobs.php">
                 What do people play?
               </a>
             </li>
@@ -127,32 +127,32 @@
           <ul class="dropdown-menu" role="menu">
           <?php if ($user->legit):?>
             <li>
-              <a href="<?php echo APP_URL;?>library/catalog.php">
+              <a href="<?php echo $app->APP_URL;?>library/catalog.php">
                 Catalog
               </a>
             </li>
             <li>
-              <a href="<?php echo APP_URL;?>library/duplicates.php">
+              <a href="<?php echo $app->APP_URL;?>library/duplicates.php">
                 Find Duplicate Books
               </a>
             </li>
             <?php endif;?>
-            <li><a href="<?php echo APP_URL;?>library/paper.php">Paper Renderer</a></li>
+            <li><a href="<?php echo $app->APP_URL;?>library/paper.php">Paper Renderer</a></li>
           </ul>
         </li>
         <?php if ($user->level):?>
         <li class='tgdb-link'>
-          <a href="<?php echo APP_URL;?>tgdb/index.php">TGDB</a>
+          <a href="<?php echo $app->APP_URL;?>tgdb/index.php">TGDB</a>
         </li>
         <?php endif;?>
       </ul>
       <?php if($user->legit):?>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="<?php echo APP_URL;?>me.php"><?php echo $user->label;?></a></li>
+          <li><a href="<?php echo $app->APP_URL;?>me.php"><?php echo $user->label;?></a></li>
         </ul>
       <?php else: ?>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="<?php echo APP_URL;?>auth.php">Authenticate</a></li>
+          <li><a href="<?php echo $app->APP_URL;?>auth.php">Authenticate</a></li>
         </ul>
       <?php endif;?>
     </div><!--/.nav-collapse -->

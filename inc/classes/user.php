@@ -18,6 +18,8 @@
 
   public $txtVerify = FALSE;
 
+  public $tgui = FALSE;
+
   public function __construct(){
     if(isset($_COOKIE['byond_ckey'])){
       $user = $this->getUser($_COOKIE['byond_ckey']);
@@ -30,6 +32,9 @@
       $user->byond = $_COOKIE['byond_key'];
       foreach ($user as $k => $v){
         $this->$k = $v;
+      }
+      if(isset($_COOKIE['tgui'])){
+        $this->tgui = $_COOKIE['tgui'];
       }
     }
     return false;

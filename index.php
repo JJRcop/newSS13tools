@@ -1,5 +1,6 @@
 <?php require_once('header.php'); ?>
 <?php
+
 $round = new round();
 $rounds = $round->listRounds(1,10);
 $now = new datetime();
@@ -18,6 +19,15 @@ if(1 <= $interval) {
   <div class="alert alert-success">
     <strong>NEW!</strong> Comments can now be left on individual rounds!
   </div>
+  <?php if($user->tgui):?>
+    <div class="alert alert-info">
+      <strong>EXPERIMENTAL!</strong> You are using an experimental UI theme. <a href='?tgui=false'>Disable!</a> <em>You may have to refresh in order to see changes</em>
+    </div>
+  <?php else:?>
+    <div class="alert alert-info">
+      <strong>EXPERIMENTAL!</strong> Use the in-game tgui theme? <a href='?tgui=true'>Sure!</a> <em>You may have to refresh in order to see changes</em>
+    </div>
+  <?php endif;?>
   <?php $line = pick(json_decode(file_get_contents(ROOTPATH."/tmp/poly.json"),TRUE)['data']);?>
   <div id="poly" class="engradio">[Poly] &ldquo;<?php echo $line;?>&rdquo; <img src="icons/animal/parrot_sit-1.png" height="64" width="64"  alt="And now a word from Poly" /></div>
 <?php else:?>

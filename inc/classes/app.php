@@ -1,7 +1,7 @@
 <?php class app {
 
   public $app_name = APP_NAME;
-  public $app_URL = APP_URL;
+  public $APP_URL = APP_URL;
 
   public $die = false;
 

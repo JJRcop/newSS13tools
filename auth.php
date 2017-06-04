@@ -1,6 +1,7 @@
 <?php
 
 require_once('config.php');
+$app = new app();
 error_reporting(-1);
 
 if(isset($_GET['reset'])){
@@ -30,7 +31,7 @@ switch ($step){
     $_SESSION['site_private_token'] = $privToken;
 
     //This is where people will come back to
-    $_SESSION['return_uri'] = APP_URL.'auth.php?step=3';
+    $_SESSION['return_uri'] = $app->APP_URL.'auth.php?step=3';
 
     //Build the request URL (Fuck you guzzle)
     $req = "$remote?site_private_token=".urlencode($privToken);
@@ -58,11 +59,11 @@ switch ($step){
     echo "margin: 100px auto; display: block; background: #eee;";
     echo "border: 1px solid #DDD; padding:20px;'>";
     echo "<h2>Authorize remote access</h2>";
-    echo "<code>".APP_URL."</code> would like to access your account at ";
+    echo "<code>$app->APP_URL</code> would like to access your account at ";
     echo "<code>".REMOTE_ROOT."</code> and retrieve your forum username ";
     echo "and Byond key, if set.<br><br>";
     echo "No other information, <strong>including your password</strong> ";
-    echo "will be shared with <code>".APP_URL."</code><br><br>";
+    echo "will be shared with <code>$app->APP_URL</code><br><br>";
     echo "<a href='auth.php?step=2' style='background: blue; color: white;";
     echo "padding: 10px;'>Proceed</a>&nbsp;";
     echo "<a href='index.php2' style='background: red; color: white;";
@@ -94,8 +95,6 @@ switch ($step){
     } catch (Exception $e){
       die($e->getMessage());
     }
-    var_dump($_SESSION);
-    var_dump($body);
     //Decode the resoponse
     // consoleLog($_SESSION);
     // consoleLog($body);
@@ -106,7 +105,6 @@ switch ($step){
       foreach($body as $k => $v){
         setcookie($k,$v,COOKIE_LIFTIME,"/",DOMAIN,USE_SSL); // 15 day expiry
       }
-      var_dump($_COOKIE);
       $user = new user();
       if(1 <= $user->level){
         if($user->ip != $_SERVER['REMOTE_ADDR']) {
@@ -118,9 +116,9 @@ switch ($step){
       echo "margin: 100px auto; display: block; background: #eee;";
       echo "border: 1px solid #DDD; padding:20px;'>";
       echo "<h2>Success!</h2>";
-      echo "<code>".APP_URL."</code> now recognizes you as $user->byond. ";
+      echo "<code>$app->APP_URL</code> now recognizes you as $user->byond. ";
       echo "<br><br><a style='background: blue; color: white;";
-      echo "padding: 10px;' href='".APP_URL."'>Continue</a>";
+      echo "padding: 10px;' href='$app->APP_URL'>Continue</a>";
     }
   break;
 }
