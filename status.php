@@ -10,6 +10,12 @@
     </div>
     <ul class="list-group">
       <li class="list-group-item">
+        <h4 class="list-group-heading">05-06-2017</h4>
+        <ul class="list-unstyled fa-ul">
+          <li><i class="fa fa-li fa-li fa-plus text-success"></i> Administrators have gained the ability to hide replies to text polls. Note that this only affects how polls appear here. The actual results of the poll are not changed.</li>
+        </ul>
+      </li>
+      <li class="list-group-item">
         <h4 class="list-group-heading">01-06-2017</h4>
         <ul class="list-unstyled fa-ul">
           <li><i class="fa fa-li fa-li fa-plus text-success"></i> Users who have authenticated with the forums can now read and comment on individual rounds! Admins and above will have to approve comments before they become public.</li>

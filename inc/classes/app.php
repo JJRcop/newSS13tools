@@ -265,7 +265,8 @@
     FROM tbl_feedback
     WHERE tbl_feedback.var_name LIKE '%ahelp%'
     AND tbl_feedback.time >= DATE(NOW()) - INTERVAL 7 DAY
-    GROUP BY tbl_feedback.var_name, DAY(tbl_feedback.time);");
+    GROUP BY tbl_feedback.var_name, DAY(tbl_feedback.time)
+    ORDER BY MONTH(tbl_feedback.time), DAY(tbl_feedback.time) ASC;");
     try {
       $db->execute();
     } catch (Exception $e) {

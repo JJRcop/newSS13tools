@@ -92,11 +92,13 @@
 
   public function getTextPollResults($id=null){
     $db = new database();
-    $db->query("SELECT tbl_poll_textreply.id,
-      tbl_poll_textreply.datetime, 
+    $db->query("SELECT
+      tbl_poll_textreply.id,
+      tbl_poll_textreply.datetime,
       tbl_poll_textreply.pollid,
       tbl_poll_textreply.replytext,
-      tbl_poll_textreply.adminrank
+      tbl_poll_textreply.adminrank,
+      0 as hidden
     FROM tbl_poll_textreply
     WHERE pollid = ?
     ORDER BY tbl_poll_textreply.datetime DESC ");
@@ -112,7 +114,7 @@
   public function getIRVPollResults($id=null){
     $db = new database();
     $db->query("SELECT tbl_poll_textreply.id,
-      tbl_poll_textreply.datetime, 
+      tbl_poll_textreply.datetime,
       tbl_poll_textreply.pollid,
       tbl_poll_textreply.replytext,
       tbl_poll_textreply.adminrank
@@ -155,6 +157,19 @@
       }
     }
 
+    //Hidden text replies
+    if($poll->polltype = 'TEXT'){
+      $hidden = $this->getHiddenReplies($poll->id);
+      foreach ($poll->results as &$r){
+        foreach ($hidden as $h){
+          if ($r->id == $h->replyid){
+            $r->hidden = true;
+            $r->hide = $h;
+          }
+        }
+      }
+    }
+
     return $poll;
   }
 
@@ -182,4 +197,35 @@
     }
   }
 
+  public function getHiddenReplies($poll){
+    $db = new database(true);
+    $db->query("SELECT * FROM hidden_poll_results WHERE pollid = ?");
+    $db->bind(1, $poll);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->resultset();
+  }
+
+  public function hidePollResult($poll, $reply){
+    $user = new user();
+    if(2 < $user->level){
+      return returnError("You must be an administrator to perform this action.");
+    }
+    $db = new database(true);
+    $db->query("INSERT INTO hidden_poll_results
+      (pollid, replyid, hiddenby, hidden, hide)
+      VALUES (?, ?, ?, NOW(), 1)");
+    $db->bind(1, $poll);
+    $db->bind(2, $reply);
+    $db->bind(3, $user->ckey);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return returnSuccess("Reply hidden");
+  }
 }

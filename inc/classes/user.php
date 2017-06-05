@@ -48,19 +48,14 @@
     if(is_int($user->ip)){
       $user->ip = long2ip($user->ip);
     }
-    if($user->rank != 'Player'){
-      if(defined('TXT_RANK_VERIFY')){
-        if(!file_exists(ROOTPATH.'/tmp/admins.json')){
-          $app = new app();
-          $app->downloadAdminsTxt();
-        }
-        $user->rank = $this->verifyAdminRank($user->ckey);
-        $user->txtVerify = TRUE;
-      }
+
+    if(defined('TXT_RANK_VERIFY')){
+      $user->rank = $this->verifyAdminRank($user->ckey);
+      $user->txtVerify = TRUE;
     }
 
     //Ok, time to get their and set up display variables
-    
+
     //Defaults
     $user->backColor = "#EEE";
     $user->foreColor = "#444";
@@ -104,8 +99,8 @@
         $user->level = 2;
       break;
 
-      case 'GameAdmin': 
-      case 'GameAdmIn': 
+      case 'GameAdmin':
+      case 'GameAdmIn':
       case 'Game Admin':
       case 'CoderMin':
       case 'GameAdmln':
@@ -136,7 +131,7 @@
         $user->level = 2;
       break;
 
-      case 'GameMaster': 
+      case 'GameMaster':
         $user->backColor = '#A00';
         $user->foreColor = "#FFF";
         $user->icon = "<i class='fa fa-star-o'></i>";
@@ -151,7 +146,7 @@
         $user->level = 3;
       break;
 
-      case 'Host': 
+      case 'Host':
         $user->backColor = '#A00';
         $user->foreColor = "#FFF";
         $user->icon = "<i class='fa fa-server'></i>";
@@ -394,6 +389,10 @@
   }
 
   public function verifyAdminRank($ckey){
+    if(!file_exists(ROOTPATH.'/tmp/admins.json')){
+      $app = new app();
+      $app->downloadAdminsTxt();
+    }
     $ranks = json_decode(file_get_contents(ROOTPATH.'/tmp/admins.json'));
     if(property_exists($ranks, $ckey)){
       return $ranks->{$ckey};
@@ -454,5 +453,5 @@
     }
     return $result;
   }
-  
+
 }

@@ -131,6 +131,11 @@ tr.perma,
   color: white;
 }
 
+.alert-classified {
+  background: black;
+  color: white;
+}
+
 .navbar-nav>li>a>span {
   font-size: 100% !important;
 }
@@ -141,7 +146,7 @@ tr.perma,
 .book:hover,
 .round:hover {
   cursor: pointer;
-  cursor: hand; 
+  cursor: hand;
   text-decoration: underline;
 }
 .library-adult {
@@ -179,7 +184,7 @@ tr.perma,
 }
 
 .table.ban {
-  table-layout:fixed; 
+  table-layout:fixed;
 }
 
 .table.ban tbody tr th {

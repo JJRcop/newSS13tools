@@ -1,16 +1,15 @@
 <?php require_once("../header.php");?>
-
 <?php require_once('tgdb_nav.php');?>
 
-<?php echo alert('## CLASSIFIED ## GA+//NA</strong> This page is classified. This page should not shared with non-admins.');?>
+<?php echo alert('## CLASSIFIED ## GA+//NA</strong> This page is classified. This page should not shared with non-admins.',3);?>
 
 <?php $activeBans = $app->getActiveBanCount();?>
 <div class="page-header">
   <p class="pull-right">
-  Active bans: 
+  Active bans:
   <?php foreach($activeBans as $bans): $class='label-danger';?>
     <?php if(strpos($bans->type, 'PERMA')!==FALSE) $class = 'perma';?>
-    <span class="label <?php echo $class;?>"><?php echo $bans->type;?>: <?php echo $bans->bans;?></span> 
+    <span class="label <?php echo $class;?>"><?php echo $bans->type;?>: <?php echo $bans->bans;?></span>
   <?php endforeach;?>
   </p>
   <h1>tgdb

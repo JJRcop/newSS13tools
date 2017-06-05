@@ -47,29 +47,6 @@ function icon($icon){
   return baseIcon($icon,'circle-thin');
 }
 
-function alert($msg, $level='info'){
-  switch($level){
-    default:
-    case 'info':
-    case 2:
-      $class = 'info';
-    break;
-
-    case 'success':
-    case 1:
-    case TRUE:
-      $class = 'success';
-    break;
-
-    case 'danger':
-    case 0:
-    case FALSE:
-      $class = 'danger';
-    break;
-  }
-  return "<div class='alert alert-$class'>$msg</div>";
-}
-
 /**
  * pick
  *
@@ -165,20 +142,35 @@ function returnSuccess($msg) {
   return json_encode(array('message'=>$msg,'level'=>1));
 }
 
+
 function parseReturn($msg){
   $msg = json_decode($msg);
-  switch ($msg->level){
-    case 0:
-      $class = "danger";
+  return alert($msg->message, $msg->level);
+}
+
+function alert($msg, $level=2){
+  switch($level){
+    case 'info':
+    case 2:
+      $class = 'info';
     break;
 
+    case 'success':
     case 1:
-      $class = "success";
+    // case TRUE:
+      $class = 'success';
     break;
 
-    default:
-      $class = "info";
+    case 'danger':
+    case 0:
+    // case FALSE:
+      $class = 'danger';
+    break;
+
+    case 'classified':
+    case 3:
+      $class = 'classified';
     break;
   }
-  echo alert($class,$msg->message);
+  return "<div class='alert alert-$class'>$msg</div>";
 }

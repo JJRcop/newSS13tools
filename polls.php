@@ -2,6 +2,11 @@
 <?php
 if (isset($_GET['poll'])) {
   $p = filter_input(INPUT_GET, 'poll', FILTER_SANITIZE_NUMBER_INT);
+  if(isset($_GET['hideReply'])){
+    $r = filter_input(INPUT_GET, 'hideReply', FILTER_SANITIZE_NUMBER_INT);
+    $poll = new poll();
+    echo parseReturn($poll->hidePollResult($p, $r));
+  }
   $poll = new poll($p);
 } else {
   $poll = new poll();
@@ -63,8 +68,23 @@ if (isset($_GET['poll'])) {
       <?php if('ABSTAIN' === $r->replytext) continue;?>
       <dt id="<?php echo $r->id;?>">
         <?php echo $r->datetime;?><br>
-        <a href="#<?php echo $r->id;?>">#<?php echo $r->id;?></a></dt>
-      <dd><blockquote><?php echo $r->replytext;?></blockquote></dd>
+        <a href="#<?php echo $r->id;?>">#<?php echo $r->id;?></a>
+        <?php if(2 <= $user->level && !$r->hidden):?>
+          <a href="?poll=<?php echo $poll->id;?>&hideReply=<?php echo $r->id;?>#<?php echo $r->id;?>">Hide</a>
+        <?php endif;?>
+      </dt>
+      <dd>
+        <blockquote>
+          <?php if(!$r->hidden):?>
+            <?php echo $r->replytext;?>
+          <?php else:?>
+            <p class="text-center text-muted">
+            &laquo; Reply hidden by <?php echo $r->hide->hiddenby;?> &raquo;
+            <br><a href="#<?php echo $r->id;?>" class="show" data-text="<?php echo $r->replytext;?>">Click to show</a>
+            </p>
+          <?php endif;?>
+        </blockquote>
+      </dd>
     <?php endforeach;?>
     </dl>
   <?php else:?>
@@ -150,4 +170,10 @@ if (isset($_GET['poll'])) {
   </tbody>
 </table>
 <?php endif;?>
+<script>
+$('.show').click(function(e){
+  e.preventDefault();
+  $(this).parent().parent().html($(this).attr('data-text'));
+});
+</script>
 <?php require_once('footer.php');?>
