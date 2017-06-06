@@ -158,7 +158,7 @@
     }
 
     //Hidden text replies
-    if($poll->polltype = 'TEXT'){
+    if($poll->polltype == 'TEXT'){
       $hidden = $this->getHiddenReplies($poll->id);
       foreach ($poll->results as &$r){
         foreach ($hidden as $h){
