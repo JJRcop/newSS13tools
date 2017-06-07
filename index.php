@@ -1,16 +1,6 @@
-<?php require_once('header.php'); ?>
-<?php
-
+<?php require_once('header.php');
 $round = new round();
 $rounds = $round->listRounds(1,10);
-$now = new datetime();
-$then = new datetime($rounds{0}->end);
-
-$interval = $then->diff($now);
-$interval = $interval->format('%a');
-if(1 <= $interval) {
-  echo alert("<strong>No recent rounds recorded!</strong> Database might be out of sync!",FALSE);
-}
 ?>
 <div class="page-header">
   <h1>SS13 Tools &amp; Stats</h1>
@@ -62,7 +52,7 @@ In not so many words, some of the data in this tool may be offensive. I do not c
 
 <div class="row">
   <div class="col-md-6">
-    <h2>Recent deaths <small><a href='death/deaths.php'>See more</a></small></h2>
+    <h2>Recent deaths <small><a href='death.php'>See more</a></small></h2>
     <ul class="list-unstyled">
       <?php 
       $deaths = $death->getDeaths(10,TRUE);

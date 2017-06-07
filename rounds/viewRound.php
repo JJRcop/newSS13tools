@@ -1,10 +1,8 @@
 <?php
-$json = false;
-if (isset($_GET['json'])) $json = filter_input(INPUT_GET, 'json', FILTER_VALIDATE_BOOLEAN);
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
-
 $round = new round($round,array('data','deaths'));
+
 ?>
 
 <?php if (!$round->id):?>
@@ -17,7 +15,7 @@ $round = new round($round,array('data','deaths'));
   <ul class="pager">
   <?php if ($round->prev): ?>
     <li class="previous">
-        <a href="<?php echo $app->APP_URL;?>viewRound.php?round=<?php echo $round->prev;?>">
+        <a href="<?php echo $app->APP_URL;?>round.php?round=<?php echo $round->prev;?>">
         <span aria-hidden="true">&larr;</span>
         Previous round</a>
     </li>
@@ -29,7 +27,7 @@ $round = new round($round,array('data','deaths'));
 
   <?php if ($round->next): ?>
     <li class="next">
-      <a href="<?php echo $app->APP_URL;?>viewRound.php?round=<?php echo $round->next;?>">Next round
+      <a href="<?php echo $app->APP_URL;?>round.php?round=<?php echo $round->next;?>">Next round
       <span aria-hidden="true">&rarr;</span></a>
     </li>
   <?php endif;?>
@@ -172,9 +170,10 @@ $total = $dead + $survivors; ?>
 
 <?php if($round->deaths):?>
   <div class="page-header">
-    <h2>Deaths from this round</h2>
+    <h2><a data-toggle="collapse" href="#deaths" aria-expanded="false"
+     aria-controls="deaths">Deaths from this round</a></h2>
   </div>
-  <table id="deaths" class="table sticky  table-bordered table-condense">
+  <table id="deaths" class="table table-bordered table-condensed collapse ">
     <thead>
       <tr>
         <th>ID</th>
@@ -239,7 +238,7 @@ $total = $dead + $survivors; ?>
   <ul class="pager">
   <?php if ($round->prev): ?>
     <li class="previous">
-        <a href="viewRound.php?round=<?php echo $round->prev;?>">
+        <a href="round.php?round=<?php echo $round->prev;?>">
         <span aria-hidden="true">&larr;</span>
         Previous round</a>
     </li>
@@ -251,7 +250,7 @@ $total = $dead + $survivors; ?>
 
   <?php if ($round->next): ?>
     <li class="next">
-      <a href="viewRound.php?round=<?php echo $round->next;?>">Next round
+      <a href="round.php?round=<?php echo $round->next;?>">Next round
       <span aria-hidden="true">&rarr;</span></a>
     </li>
   <?php endif;?>

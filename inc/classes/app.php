@@ -1,43 +1,106 @@
 <?php class app {
 
+  //Actual application stuff
+  public $application = APPLICATION;
+  public $version = VERSION;
+
+  //User defined application settings
   public $app_name = APP_NAME;
   public $APP_URL = APP_URL;
+  public $app_url = APP_URL; //Just in case
 
+  //User defined authentication method
   public $auth_method = FALSE;
 
-  public $die = false;
-
+  //Defaults
   public $doesLocalRepoExist;
   public $localRepoVersion;
   public $remoteRepo;
   public $reposSynced;
 
+  //Changelog and application information we don't always want or need
+  public $changelog = false;
+  public $info = false;
+
+  //Whether or not to kill the application due to an error
+  public $die = false;
+
+  //Known restricted directories
   private $restrictedDirs = array(
     'tgdb'  => 2, //Bans/notes/player/connection database
     'tools' => 1 //Icon tools
   );
 
+  //Log files we need to delete regularly
   private $cleanUpTargets = array(
     ROOTPATH.'/logs/admintxt.log',
     ROOTPATH.'/logs/repo.log',
     ROOTPATH.'/logs/poly.log'
   );
 
-  public function __construct($info=false) {
+  public function __construct($data=false) {
     if(defined('OAUTHREMOTE')){
       $this->auth_method = 'remote';
     } elseif (defined('TXT_RANK_VERIFY')){
       $this->auth_method = 'text';
     }
-    if ($info){
-      $this->doesLocalRepoExist = $this->doesLocalRepoExist();
-      $this->localRepoVersion = $this->getLocalRepoVersion();
-      $this->remoteRepo = $this->getRemoteRepoVersion();
-      $this->reposSynced = TRUE;
-      if ($this->localRepoVersion != $this->remoteRepo->object->sha){
-        $this->reposSynced = FALSE;
+    if(is_array($data)){
+      foreach ($data as $get){
+        switch ($get){
+
+          //Parse and set the changelog
+          case 'changelog':
+            $this->changelog = $this->parseChangeLog(CHANGELOG);
+          break;
+
+          //Parse and set information from the bower.json file
+          case 'info':
+            // require_once(ROOTPATH."/inc/constants.php");
+            $this->info = json_decode(file_get_contents(ROOTPATH."/bower.json"));
+          break;
+        }
       }
     }
+  }
+
+  public function parseChangeLog($changelog){
+    $tmp = array();
+    $Parsedown = new safeDown();
+    foreach ($changelog as $date => &$changes){
+      $changes = (object) $changes;
+      foreach ($changes as $change){
+        $log = new stdClass();
+        $log->type = key($change);
+        $log->text = $Parsedown->text($change[$log->type]);
+        if('blog' == $log->type) {
+          $tmp[$date]['blog'] = $Parsedown->text($log->text);
+          continue;
+        }
+        switch ($log->type){
+          case 'add':
+          default:
+            $log->icon = 'plus';
+            $log->class = 'text-success';
+          break;
+
+          case 'change':
+          case 'mod':
+            $log->icon = 'check';
+            $log->class = 'text-info';
+          break;
+
+          case 'del':
+          case 'remove':
+            $log->icon = 'minus';
+            $log->class = 'text-danger';
+          break;
+        }
+        $tmp[$date][] = $log;
+      }
+    }
+    $changelog = $tmp;
+    // var_dump($changelog);
+    return $changelog;
   }
 
   public function doesLocalRepoExist(){
@@ -123,15 +186,15 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("EXPLAIN SELECT count(id) AS deaths FROM tbl_death;");
+    $db->query("SELECT count(id) AS deaths FROM tbl_death;");
     try {
       $db->execute();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $result['deaths'] = $db->single()->rows;
+    $result['deaths'] = $db->single()->deaths;
 
-    $db->query("SELECT count(distinct round_id) AS rounds FROM tbl_feedback;");
+    $db->query("SELECT count(id) AS rounds FROM tbl_round;");
     try {
       $db->execute();
     } catch (Exception $e) {

@@ -1,36 +1,45 @@
 <?php require_once('header.php'); ?>
 
-<?php $app = new app(TRUE); ?>
+<?php $app = new app(array('changelog','info')); ?>
 <div class="row">
   <div class="col-md-3">
   </div>
   <div class="col-md-6">
     <div class="page-header">
-      <h1>Changelog</h1>
+      <h1>
+        <p class="text-center">
+          <?php echo $app->application;?> <?php echo $app->version;?><br>
+          <small>
+            <a href="<?php echo $app->info->homepage;?>" target="_blank">
+              <i class="fa fa-github"></i> GitHub
+            </a>
+          </small>
+        </p>
+      </h1>
+    </div>
+
+    <div class="page-header">
+      <h2>Changelog</h2>
     </div>
     <ul class="list-group">
-      <li class="list-group-item">
-        <h4 class="list-group-heading">06-06-2017</h4>
-        <ul class="list-unstyled fa-ul">
-          <li><i class="fa fa-li fa-li fa-plus text-success"></i> If any can be found, all the deaths that occurred during a given round will now be shown on the round listing!</li>
-          <li><i class="fa fa-li fa-li fa-check text-info"></i> The application's being updated to increase its portability. If you see any errors please report them using the link in the footer.</li>
-        </ul>
-      </li>
-      <li class="list-group-item">
-        <h4 class="list-group-heading">05-06-2017</h4>
-        <ul class="list-unstyled fa-ul">
-          <li><i class="fa fa-li fa-li fa-plus text-success"></i> Administrators have gained the ability to hide replies to text polls. Note that this only affects how polls appear here. The actual results of the poll are not changed.</li>
-        </ul>
-      </li>
-      <li class="list-group-item">
-        <h4 class="list-group-heading">01-06-2017</h4>
-        <ul class="list-unstyled fa-ul">
-          <li><i class="fa fa-li fa-li fa-plus text-success"></i> Users who have authenticated with the forums can now read and comment on individual rounds! Admins and above will have to approve comments before they become public.</li>
-          <li><i class="fa fa-li fa-li fa-plus text-success"></i> Admins also have a tool to view and moderate all round comments, if they feel like it.</li>
-          <li><i class="fa fa-li fa-li fa-check text-info"></i> Reading library books should be a more pleasant experience now</li>
-          <li><i class="fa fa-li fa-li fa-check text-info"></i> There was a bug preventing Safari and iOS users from authenticating with the app. This has since been fixed.</li>
-        </ul>
-      </li>
+        <?php foreach($app->changelog as $date => $changes):?>
+          <li class="list-group-item">
+            <h4 class="list-group-heading"><?php echo $date;?></h4>
+            <?php if(isset($date['blog'])):?>
+              <p><?php echo $blog;?></p>
+            <?php endif;?>
+              <ul class="list-unstyled fa-ul">
+                <?php foreach ($changes as $change):?>
+                  <?php if('object' != gettype($change)) continue;?>
+                  <li>
+                    <i class="fa fa-li fa-<?php echo $change->icon;?> 
+                    <?php echo $change->class;?>"></i>
+                    <?php echo $change->text;?>
+                  </li>
+                <?php endforeach;?>
+              </ul>
+          </li>
+        <?php endforeach;?>
       <li class="list-group-item">
         <h4 class="list-group-heading">31-05-2017</h4>
         <ul class="list-unstyled fa-ul">

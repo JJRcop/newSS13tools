@@ -207,7 +207,7 @@
     if($db->abort){
       return FALSE;
     }
-    $database = $db->query("SELECT *,
+    $database = $db->query("SELECT tbl_round.*,
     TIMEDIFF(tbl_round.end_datetime, tbl_round.start_datetime) AS duration
       FROM tbl_round
       ORDER BY tbl_round.end_datetime DESC
@@ -233,13 +233,13 @@
     }
     $db->query("
       SELECT tbl_round.*,
-      TIMEDIFF(tbl_round.end_datetime, tbl_round.start_datetime) AS duration,
-      next.round_id AS next,
-      prev.round_id AS prev
-      FROM tbl_round
-      LEFT JOIN tbl_feedback AS next ON next.id = tbl_round.id + 1
-      LEFT JOIN tbl_feedback AS prev ON prev.id = tbl_round.id - 1
-      WHERE tbl_round.id = ?");
+        TIMEDIFF(tbl_round.end_datetime, tbl_round.start_datetime) AS duration,
+        MAX(next.id) AS next,
+        MAX(prev.id) AS prev
+        FROM tbl_round
+        LEFT JOIN tbl_round AS next ON next.id = tbl_round.id + 1
+        LEFT JOIN tbl_round AS prev ON prev.id = tbl_round.id - 1 
+        WHERE tbl_round.id = ?");
     $db->bind(1, $id);
     try {
       $db->execute();
@@ -495,6 +495,7 @@
 
   public function parseComment(&$comment){
     $user = new user();
+    $Parsedown = new safeDown();
 
     //Flag
     switch ($comment->flagged){
@@ -527,6 +528,9 @@
     //Round link
     $comment->round_href = APP_URL."round.php?round=$comment->round";
     $comment->round_link = "<a href='$comment->round_href'>#$comment->round</a>";
+
+    //Text
+    $comment->text = $Parsedown->text($comment->text);
 
     //Author link
     $comment->author_href = APP_URL."tgdb/viewPlayer.php?ckey=$comment->author";
