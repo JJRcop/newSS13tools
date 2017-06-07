@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class death {
 
@@ -15,15 +15,15 @@ class death {
 
   public function getDeath($id){
     $user = new user();
-    $and = "AND tod <= DATE(NOW()) - INTERVAL 1 HOUR";
+    $and = "AND tbl_death.tod <= NOW() - INTERVAL 1 HOUR";
     if(2 <= $user->level){
       $and = null;
     }
     $db = new database();
     $db->query("SELECT * FROM tbl_death
-      WHERE id = ?
+      WHERE tbl_death.id = ?
       $and
-      ORDER BY tod DESC");
+      ORDER BY tbl_death.tod DESC");
     $db->bind(1,$id);
     try {
       $db->execute();
@@ -35,7 +35,7 @@ class death {
 
   public function countDeaths(){
     $db = new database();
-    $db->query("SELECT COUNT(id) AS count FROM ss13death;");
+    $db->query("SELECT COUNT(tbl_death.id) AS count FROM tbl_death;");
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -46,7 +46,7 @@ class death {
 
   public function getDeaths($count=30, $short=false, $page=1){
     //Hey! Listen! This query SHOULD only show deaths from rounds that were
-    //completed and had an entry added to `tbl_feedback`. This will prevent 
+    //completed and had an entry added to `tbl_feedback`. This will prevent
     //people from seeing deaths from rounds that are currenty ongoing.
     $page = ($page*$count) - $count;
     $db = new database();
@@ -54,8 +54,8 @@ class death {
       return FALSE;
     }
     $db->query("SELECT * FROM tbl_death
-      WHERE tod <= DATE(NOW()) - INTERVAL 1 HOUR
-      ORDER BY tod DESC
+      WHERE tbl_death.tod <= NOW() - INTERVAL 1 HOUR
+      ORDER BY tbl_death.tod DESC
       LIMIT ?,?");
     $db->bind(1,$page);
     $db->bind(2,$count);
@@ -82,6 +82,25 @@ class death {
       return returnError("Database error: ".$e->getMessage());
     }
     foreach ($deaths = $db->resultset() as &$death) {
+      $this->parseDeath($death);
+    }
+    return $deaths;
+  }
+
+  public function getDeathsForRound($round){
+    $db = new database();
+    $db->query("SELECT tbl_death.*
+      FROM tbl_round
+      LEFT JOIN tbl_death ON tbl_death.tod BETWEEN tbl_round.start_datetime AND tbl_round.end_datetime AND tbl_round.server_port = tbl_death.server_port
+      WHERE tbl_round.id = ?");
+    $db->bind(1, $round);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    foreach ($deaths = $db->resultset() as &$death) {
+      if(!$death->id) return false;
       $this->parseDeath($death);
     }
     return $deaths;
@@ -125,7 +144,7 @@ class death {
     $death->vitals['tox'] = $death->toxloss;
     $death->vitals['cln'] = $death->cloneloss;
     $death->vitals['stm'] = $death->staminaloss;
-    
+
     $death->labels = "<span title='Brute' class='label label-dam label-brute'>";
     $death->labels.= "$death->bruteloss</span> ";
     $death->labels.= "<span title='Brain' class='label label-dam label-brain'>";
@@ -196,9 +215,13 @@ class death {
     //Map
     $death->mapfile = APP_URL."tgstation/icons/minimaps/".$death->mapname."_1.png";
 
-    //Server 
-    $round = new round();
-    $death->server = $round->mapServer($death->server_port);
+    //Server
+    if($death->server_port){
+      $round = new round();
+      $death->server = $round->mapServer($death->server_port);
+    } else {
+      $round->server = 'Unknown';
+    }
 
     return $death;
   }
@@ -249,8 +272,8 @@ class death {
     }
     $db->query("SELECT *
       FROM tbl_death
-      WHERE tbl_death.tod < (SELECT MAX(tbl_feedback.time) 
-        FROM tbl_feedback 
+      WHERE tbl_death.tod < (SELECT MAX(tbl_feedback.time)
+        FROM tbl_feedback
         WHERE var_name = 'round_end' LIMIT 0,1)
       AND mapname = ?
       ORDER BY tbl_death.tod DESC

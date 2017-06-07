@@ -45,6 +45,11 @@
               }
             break;
 
+            case 'deaths':
+            case 'death':
+              $death = new death();
+              $round->deaths = $death->getDeathsForRound($round->id);
+            break;
           }
         }
       }
@@ -76,7 +81,8 @@
       $round->shuttle = "<em>Round ended without an evacuation</em>";
     }
 
-    //Status 
+    //Status
+    $round->rare = false;
     $round = $this->mapStatus($round);
 
     //Times
@@ -93,7 +99,7 @@
       $round->commit_link.= strtoupper(substr($round->commit_hash, 0, 6))."</a>";
     }
 
-    //Station name 
+    //Station name
     if(!$round->station_name){
       $round->station_name = '<em>Not specified</em>';
     }
@@ -111,7 +117,7 @@
   }
 
   public function mapStatus(&$round){
-  if(null == $round->game_mode_result 
+  if(null == $round->game_mode_result
     || 'undefined' == $round->game_mode_result){
       $round->result = ucfirst($round->end_state);
     } else {
@@ -148,9 +154,15 @@
       $round->statusClass = "info";
     }
 
+    if(strpos($round->result, 'Admin reboot - by') !== FALSE){
+      $round->statusIcon = "<i class='fa fa-fw fa-refresh'></i>";
+      $round->statusClass = "info";
+    }
+
     if('Nuke' == $round->result && 'Nuclear emergency' != $round->game_mode){
       $round->statusIcon = "<i class='fa fa-fw fa-exclamation-triangle'></i>";
       $round->statusClass = "inverse";
+      $round->rare = TRUE;
     }
 
     if(!$round->result){
@@ -183,7 +195,7 @@
         return 'Sybil';
       break;
 
-      default: 
+      default:
         return 'Unknown';
       break;
     }
@@ -286,7 +298,7 @@
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT count(DISTINCT round_id) AS total FROM tbl_feedback;");
+    $db->query("SELECT count(id) AS total FROM tbl_round;");
     try {
       $db->execute();
     } catch (Exception $e) {
@@ -320,7 +332,7 @@
 
   public function cleanUpLogs($logs){
     //This method is ONLY for cleaning out useless lines from the logs
-    
+
     //For the sake of transparency, this method is heavily documented
     //
     //-censored lines have no value in public logs, and are removed entirely
@@ -586,7 +598,7 @@
         }
       break;
 
-      default: 
+      default:
         return returnError("This is not a valid comment flag");
       break;
     }

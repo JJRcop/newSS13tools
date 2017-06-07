@@ -61,7 +61,7 @@ $pos = array_keys($defs);
   <h1>Explanation of permissions</h1>
 </div>
 <div class="alert alert-info">
-<i class="fa fa-info-circle"></i> For a listing of active admins, see <a href="<?php echo APP_URL;?>stats/adminConnections.php">admin connection activity</a>.
+<i class="fa fa-info-circle"></i> For a listing of active admins, see <a href="<?php echo $app->APP_URL;?>stats/adminConnections.php">admin connection activity</a>.
 </div>
 <table class="table table-bordered table-condensed">
   <thead>

@@ -156,7 +156,7 @@ $total = $dead + $survivors; ?>
     <?php foreach ($round->data as $d) :?>
       <li>
         <code>
-          <a href='<?php echo APP_URL;?>round.php?stat=<?php echo $d->var_name;?>&round=<?php echo $round->id;?>'>
+          <a href='<?php echo $app->APP_URL;?>round.php?stat=<?php echo $d->var_name;?>&round=<?php echo $round->id;?>'>
             <?php echo $d->var_name;?>
           </a>
         </code>

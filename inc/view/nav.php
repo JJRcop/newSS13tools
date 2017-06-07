@@ -13,10 +13,10 @@
       </button>
       <div id="deathChart"></div> 
       <a class="navbar-brand" href="<?php echo $app->APP_URL;?>index.php">
-      SS13 Tools
+      <?php echo APP_NAME;?>
       </a>
     </div>
-    <?Php if(!$skip):?>
+    <?php if(!$skip):?>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
       <li><a href="<?php echo $app->APP_URL;?>status.php">Project Status</a></li>

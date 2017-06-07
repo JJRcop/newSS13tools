@@ -56,12 +56,12 @@
 
   public function getPollResults($id=null){
     $db = new database();
-    $db->query("SELECT COUNT(ss13poll_vote.id) AS votes,
-      ss13poll_option.text AS `option`
-      FROM ss13poll_vote
-      LEFT JOIN ss13poll_option ON ss13poll_vote.optionid = ss13poll_option.id
-      WHERE ss13poll_vote.pollid = ?
-      GROUP BY ss13poll_vote.optionid
+    $db->query("SELECT COUNT(tbl_poll_vote.id) AS votes,
+      tbl_poll_option.text AS `option`
+      FROM tbl_poll_vote
+      LEFT JOIN tbl_poll_option ON tbl_poll_vote.optionid = tbl_poll_option.id
+      WHERE tbl_poll_vote.pollid = ?
+      GROUP BY tbl_poll_vote.optionid
       ORDER BY votes DESC;");
     $db->bind(1,$id);
     try {
@@ -74,12 +74,12 @@
 
   public function getRatingResults($id=null){
     $db = new database();
-    $db->query("SELECT COUNT(ss13poll_vote.id) AS votes,
-      ss13poll_vote.rating AS `option`
-      FROM ss13poll_vote
-      LEFT JOIN ss13poll_option ON ss13poll_vote.optionid = ss13poll_option.id
-      WHERE ss13poll_vote.pollid = ?
-      GROUP BY ss13poll_vote.rating
+    $db->query("SELECT COUNT(tbl_poll_vote.id) AS votes,
+      tbl_poll_vote.rating AS `option`
+      FROM tbl_poll_vote
+      LEFT JOIN tbl_poll_option ON tbl_poll_vote.optionid = tbl_poll_option.id
+      WHERE tbl_poll_vote.pollid = ?
+      GROUP BY tbl_poll_vote.rating
       ORDER BY votes DESC;");
     $db->bind(1,$id);
     try {

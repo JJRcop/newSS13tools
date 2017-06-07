@@ -57,7 +57,7 @@ if($flag) echo $book->flagBook($book->id);
       <div class="panel-footer">
       <?php if (2 <= $user->level):?>
         <p class="pull-right">
-          (Actually published by <a href="<?php echo APP_URL;?>/tgdb/viewPlayer.php?ckey=<?php echo $book->ckey;?>">
+          (Actually published by <a href="<?php echo $app->APP_URL;?>/tgdb/viewPlayer.php?ckey=<?php echo $book->ckey;?>">
           <?php echo $book->ckey;?></a>)
         </p>
         <?php endif;?>
@@ -66,5 +66,28 @@ if($flag) echo $book->flagBook($book->id);
     </div>
   </div>
 </div>
+<nav>
+  <ul class="pager">
+  <?php if ($book->prev): ?>
+    <?php if ('Adult' == $book->prevcat):?>
+      <li class="previous danger"><a href="viewBook.php?book=<?php echo $book->prev;?>"><span aria-hidden="true">&larr;</span> [Adult Content]</a></li>
+    <?php else:?>
+      <li class="previous"><a href="viewBook.php?book=<?php echo $book->prev;?>"><span aria-hidden="true">&larr;</span> <?php echo $book->prevtitle;?></a></li>
+    <?php endif;?>
+  <?php endif;?>
+  <li><a href="catalog.php">&uarr; Catalog</a></li>
+  <?php if ($user->legit):?>
+    <li><a href="viewBook.php?book=<?php echo $book->id;?>&flag=true"><span class="glyphicon glyphicon-flag"></span> Flag for deletion</a></li>
+  <?php endif;?>
+
+  <?php if ($book->next): ?>
+    <?php if ('Adult' == $book->nextcat):?>
+      <li class="next danger"><a href="viewBook.php?book=<?php echo $book->next;?>">[Adult Content] <span aria-hidden="true">&rarr;</span></a></li>
+    <?php else:?>
+      <li class="next"><a href="viewBook.php?book=<?php echo $book->next;?>"><?php echo $book->nexttitle;?> <span aria-hidden="true">&rarr;</span></a></li>
+    <?php endif;?>
+  <?php endif;?>
+  </ul>
+</nav>
 
 <?php require_once('../footer.php'); ?>

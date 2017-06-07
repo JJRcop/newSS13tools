@@ -24,7 +24,7 @@ class stat {
     $f = $db->single();
     return $this->parseFeedback($f,TRUE);
   }
-  
+
   public function aggreateStatForMonth($stat, $month, $year) {
     if ($month && $year) {
       $date = new DateTime("Midnight $month/01/$year");
@@ -101,12 +101,13 @@ class stat {
 
   public function getRoundsForMonth($start, $end){
     $db = new database();
-    $db->query("SELECT count(DISTINCT round_id) AS rounds,
-      concat(MONTH(tbl_feedback.time),'-',YEAR(tbl_feedback.time)) AS `date`,
-      MIN(round_id) AS firstround,
-      MAX(round_id) AS lastround
-      FROM tbl_feedback
-      WHERE tbl_feedback.time BETWEEN ? AND ?");
+    $db->query("SELECT count(id) AS rounds,
+      MIN(id) AS firstround,
+      MAX(id) AS lastround
+      FROM tbl_round
+      WHERE tbl_round.end_datetime BETWEEN ? AND ?
+      AND tbl_round.start_datetime IS NOT NULL
+      AND tbl_round.end_datetime IS NOT NULL");
     $db->bind(1,$start);
     $db->bind(2,$end);
     try {
@@ -159,14 +160,14 @@ class stat {
     $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
     $db->execute();
     $db->query("SELECT tbl_feedback.var_name,
-          count(distinct tbl_feedback.round_id) as rounds,
-          SUM(tbl_feedback.var_value) AS `var_value`,
-          IF (tbl_feedback.details = '', NULL, GROUP_CONCAT(tbl_feedback.details SEPARATOR '#-#')) AS details
-          FROM tbl_feedback
-          WHERE DATE(tbl_feedback.time) BETWEEN ? AND ?
-          AND tbl_feedback.var_name != ''
-          GROUP BY tbl_feedback.var_name
-          ORDER BY tbl_feedback.var_name ASC;");
+      count(distinct tbl_feedback.round_id) as rounds,
+      SUM(tbl_feedback.var_value) AS `var_value`,
+      IF (tbl_feedback.details = '', NULL, GROUP_CONCAT(tbl_feedback.details SEPARATOR '#-#')) AS details
+      FROM tbl_feedback
+      WHERE DATE(tbl_feedback.time) BETWEEN ? AND ?
+      AND tbl_feedback.var_name != ''
+      GROUP BY tbl_feedback.var_name
+      ORDER BY tbl_feedback.var_name ASC;");
     $db->bind(1,$start);
     $db->bind(2,$end);
     try {
@@ -593,17 +594,17 @@ class stat {
     $end = $date->format("Y-m-t 23:59:59");
     $db = new database();
     $db->query("SELECT count(id) AS rounds,
-      min(ss13round.start_datetime) AS earliest_start,
-      max(ss13round.end_datetime) AS latest_end,
-      min(ss13round.id) AS `first`,
-      max(ss13round.id) AS `last`,
-      floor(AVG(TIME_TO_SEC(TIMEDIFF(ss13round.end_datetime,ss13round.start_datetime)))) / 60 AS avgduration,
-      ss13round.game_mode AS `mode`,
-      ss13round.game_mode_result AS result
-      FROM ss13round
-      WHERE ss13round.end_datetime BETWEEN ? AND ?
-      AND ss13round.game_mode IS NOT NULL
-      GROUP BY ss13round.game_mode, ss13round.game_mode_result;");
+      min(tbl_round.start_datetime) AS earliest_start,
+      max(tbl_round.end_datetime) AS latest_end,
+      min(tbl_round.id) AS `first`,
+      max(tbl_round.id) AS `last`,
+      floor(AVG(TIME_TO_SEC(TIMEDIFF(tbl_round.end_datetime,tbl_round.start_datetime)))) / 60 AS avgduration,
+      tbl_round.game_mode AS `mode`,
+      tbl_round.game_mode_result AS result
+      FROM tbl_round
+      WHERE tbl_round.end_datetime BETWEEN ? AND ?
+      AND tbl_round.game_mode IS NOT NULL
+      GROUP BY tbl_round.game_mode, tbl_round.game_mode_result;");
     $db->bind(1,$start);
     $db->bind(2,$end);
     try {

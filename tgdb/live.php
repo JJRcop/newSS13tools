@@ -15,7 +15,7 @@ if(2 > $user->level) {
 }
 
 $db = new database();
-$db->query("SELECT * FROM ss13death
+$db->query("SELECT * FROM tbl_death
   $where
   ORDER BY tod
   DESC LIMIT 0,30");

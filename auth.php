@@ -8,8 +8,8 @@ if(isset($_GET['reset'])){
   die("Reset");
 }
 
-if(!defined('OAUTHREMOTE')){
-  die("No remote OAuth provider specified.");
+if('remote' != $app->auth_method){
+  die("No remote OAuth provider specified. Defaulting to gameserver database checking.");
 }
 
 $step = 1;
@@ -55,22 +55,24 @@ switch ($step){
     if ("OK" != $body->status){
       die("Error when constructing OAuth request: $body->error");
     }
-    echo "<font style='font-family: sans-serif; width: 75%;";
-    echo "margin: 100px auto; display: block; background: #eee;";
-    echo "border: 1px solid #DDD; padding:20px;'>";
-    echo "<h2>Authorize remote access</h2>";
-    echo "<code>$app->APP_URL</code> would like to access your account at ";
-    echo "<code>".REMOTE_ROOT."</code> and retrieve your forum username ";
-    echo "and Byond key, if set.<br><br>";
-    echo "No other information, <strong>including your password</strong> ";
-    echo "will be shared with <code>$app->APP_URL</code><br><br>";
-    echo "<a href='auth.php?step=2' style='background: blue; color: white;";
-    echo "padding: 10px;'>Proceed</a>&nbsp;";
-    echo "<a href='index.php2' style='background: red; color: white;";
-    echo "padding: 10px;'>Cancel</a><br><br>";
-    echo "<small style='text-align: right'>For more information, ";
-    echo "<a href='https://tgstation13.org/phpBB/viewtopic.php?f=45&t=9922'";
-    echo "target='_blank'>click here</a>.</font>";
+    require_once(ROOTPATH.'/inc/view/header-lite.php');?>
+    <div class="page-header">
+    <h2>Authorize remote access</h2>
+    </div>
+    <p><code><?php echo $app->app_name;?></code> would like to access the following account information from <code><?php echo REMOTE_ROOT;?></code>:
+    <ul>
+      <li>Your PhpBB Username</li>
+      <li>Your Byond key, if set</li>
+    </ul>
+    </p>
+
+    <p>No other information, <em>including your passwords</em> will be shared with <code><?php echo $app->app_name;?></code>.</p>
+
+    <p><small>When you click proceed, you will be directed to <code><?php echo REMOTE_ROOT;?></code> to complete the authentication process.</small></p>
+
+    <p><a class="btn btn-primary" href="auth.php?step=2">Proceed</a> <a class="btn btn-default" href="<?php echo $app->APP_URL;?>">Cancel</a></p>
+
+    <?php 
   break;
 
   case 2:
@@ -81,7 +83,7 @@ switch ($step){
     header("Location: $location");
 
   break;
-  
+
   //Step 2: User approved us!
   case 3:
     if (!isset($_SESSION['session_private_token'])) die("You're in the wrong place.");
@@ -111,15 +113,18 @@ switch ($step){
           $user->flagAuth();
         }
       }
+      require_once(ROOTPATH.'/inc/view/header-lite.php');?>
+      <div class="page-header">
+      <h2>Success!</h2>
+      </div>
+      <p><h1><?php echo $user->label;?></h1></p>
+      <p><code><?php echo $app->app_name;?></code> now recognizes you!</p>
 
-      echo "<font style='font-family: sans-serif; width: 75%;";
-      echo "margin: 100px auto; display: block; background: #eee;";
-      echo "border: 1px solid #DDD; padding:20px;'>";
-      echo "<h2>Success!</h2>";
-      echo "<code>$app->APP_URL</code> now recognizes you as $user->byond. ";
-      echo "<br><br><a style='background: blue; color: white;";
-      echo "padding: 10px;' href='$app->APP_URL'>Continue</a>";
+      <p><a class="btn btn-primary" href="<?php echo $app->APP_URL;?>">Continue</a>
+
+      <?php 
     }
   break;
 }
-?>
+
+require_once(ROOTPATH.'/footer.php');

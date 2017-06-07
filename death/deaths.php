@@ -24,7 +24,7 @@ Reported deaths here are one hour delayed.
   $death = new death();
   $deaths = $death->getDeaths(30,false,$page);
 ?>
-<table id="deaths" class="table sticky  table-bordered table-condense">
+<table id="deaths" class="table sticky table-bordered table-condense">
   <thead>
     <tr>
       <th>ID</th>
@@ -45,7 +45,6 @@ Reported deaths here are one hour delayed.
   </thead>
   <tbody>
     <?php foreach ($deaths as $d):?>
-      <?php $d = $death->parseDeath($d);?>
       <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server;?>">
         <td><?php echo $d->link;?></td>
         <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>

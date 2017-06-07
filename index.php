@@ -77,7 +77,7 @@ In not so many words, some of the data in this tool may be offensive. I do not c
     </ul>
   </div>
   <div class="col-md-6">
-  <h2>Recent rounds <small><a href="<?php echo APP_URL;?>round.php">See more</a></small></h2>
+  <h2>Recent rounds <small><a href="<?php echo $app->APP_URL;?>round.php">See more</a></small></h2>
   <ul class="list-unstyled">
   <?php
   if($rounds):

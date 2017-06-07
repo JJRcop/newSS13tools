@@ -46,9 +46,15 @@ class library {
   }
 
   public function parseBook(&$book){
+    $app = new app();
+    //Link
+    $book->href = $app->APP_URL."/library/viewBook.php?book=$book->id";
+    $book->link = "<a href='$book->href'><i class='fa fa-book'></i> $book->id</a>";
+
+    //Category
     switch ($book->category) {
       case 'Adult':
-        $book->class = 'danger';
+        $book->class = 'danger library-adult';
         $book->label = "ADULT";
       break;
 
@@ -121,7 +127,11 @@ class library {
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
+    $books = $db->resultset();
+    foreach ($books as $book){
+      $book = $this->parseBook($book);
+    }
+    return $books;
   }
 
   public function getDuplicates(){

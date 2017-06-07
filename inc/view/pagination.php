@@ -4,7 +4,7 @@
     <ul class="pagination">
       <?php if ($page > 1):?>
       <li>
-        <a href="<?php echo APP_URL;?>link.php?page=<?php echo $page-1;?>" aria-label="Previous">
+        <a href="<?php echo $app->APP_URL;?>link.php?page=<?php echo $page-1;?>" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
@@ -18,7 +18,7 @@
           } else {
             echo "<li>";
           }
-          echo "<a href='".APP_URL."link.php?page=$i'>$i</a></li>";
+          echo "<a href='$app->APP_URL/link.php?page=$i'>$i</a></li>";
         }
       } else if ($page <= 5) {
         for ($i = 1; $i <= 5; $i++){
@@ -27,7 +27,7 @@
           } else {
             echo "<li>";
           }
-          echo "<a href='".APP_URL."link.php?page=$i'>$i</a></li>";
+          echo "<a href='$app->APP_URL/link.php?page=$i'>$i</a></li>";
         }
       } else {
         for ($i = ($pages-5); $i <= $pages; $i++){
@@ -36,7 +36,7 @@
           } else {
             echo "<li>";
           }
-          echo "<a href='".APP_URL."link.php?page=$i'>$i</a></li>";
+          echo "<a href='$app->APP_URL/link.php?page=$i'>$i</a></li>";
         }
       }
 
@@ -44,7 +44,7 @@
       <li>
         <?php if ($page < $pages):?>
         <li>
-          <a href="<?php echo APP_URL;?>link.php?page=<?php echo $page+1;?>" aria-label="Next">
+          <a href="<?php echo $app->APP_URL;?>link.php?page=<?php echo $page+1;?>" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>

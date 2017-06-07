@@ -24,11 +24,11 @@ require_once('../header.php');?>
     }
     $jobs = $db->resultset();
 
-    $db->query("SELECT count(ss13death.id) AS deaths,
-    ss13death.job
-    FROM ss13death
-    WHERE ss13death.tod >= DATE(NOW() - INTERVAL 1 HOUR) - INTERVAL 60 DAY
-    GROUP BY ss13death.job
+    $db->query("SELECT count(tbl_death.id) AS deaths,
+    tbl_death.job
+    FROM tbl_death
+    WHERE tbl_death.tod >= DATE(NOW() - INTERVAL 1 HOUR) - INTERVAL 60 DAY
+    GROUP BY tbl_death.job
     ORDER BY deaths DESC;");
     try {
       $db->execute();

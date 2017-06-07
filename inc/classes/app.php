@@ -3,6 +3,8 @@
   public $app_name = APP_NAME;
   public $APP_URL = APP_URL;
 
+  public $auth_method = FALSE;
+
   public $die = false;
 
   public $doesLocalRepoExist;
@@ -22,6 +24,11 @@
   );
 
   public function __construct($info=false) {
+    if(defined('OAUTHREMOTE')){
+      $this->auth_method = 'remote';
+    } elseif (defined('TXT_RANK_VERIFY')){
+      $this->auth_method = 'text';
+    }
     if ($info){
       $this->doesLocalRepoExist = $this->doesLocalRepoExist();
       $this->localRepoVersion = $this->getLocalRepoVersion();
@@ -143,7 +150,7 @@
   }
 
   public function getRemoteConf(){
-    if($this->downloadAdminsTxt() && 
+    if($this->downloadAdminsTxt() &&
     $this->downloadAdminRanks()){
       return true;
     }

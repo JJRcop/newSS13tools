@@ -102,7 +102,7 @@
 
 <?php else: ?>
   <div class="page-header">
-    <h1><small>Hmm, I'm not sure who you are. Can you <a href="<?php echo APP_URL;?>auth.php">authenticate</a> for me?</small></h1>
+    <h1><small>Hmm, I'm not sure who you are. Can you <a href="<?php echo $app->APP_URL;?>auth.php">authenticate</a> for me?</small></h1>
   </div>
 <?php endif;?>
 

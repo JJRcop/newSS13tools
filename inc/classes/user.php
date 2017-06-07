@@ -21,7 +21,9 @@
   public $tgui = FALSE;
 
   public function __construct(){
-    if(isset($_COOKIE['byond_ckey'])){
+    $app = new app();
+    $user = false;
+    if('remote' == $app->auth_method && isset($_COOKIE['byond_ckey'])){
       $user = $this->getUser($_COOKIE['byond_ckey']);
       if(!$user) return false;
       $user = $this->parseUser($user);
@@ -30,17 +32,32 @@
       if('OK' == $_COOKIE['status']) $user->legit = TRUE;
       $user->ckey = $_COOKIE['byond_ckey'];
       $user->byond = $_COOKIE['byond_key'];
-      foreach ($user as $k => $v){
-        $this->$k = $v;
-      }
-      if(isset($_COOKIE['tgui'])){
-        $this->tgui = $_COOKIE['tgui'];
-      }
+      $user->auth = 'Remote';
+    } elseif ('text' == $app->auth_method){
+      $user = $this->getUserByIP();
+      $user = $this->parseUser($user);
+      $user->auth = 'Text';
+    } elseif (!$app->auth_method){
+      $user = $this->getUserByIP();
+      $user = $this->parseUser($user);
+      $user->auth = 'IP';
+    } else {
+      return false;
     }
-    return false;
+    if(isset($_COOKIE['tgui'])){
+      $this->tgui = $_COOKIE['tgui'];
+    }
+    if($user->ckey){
+      $user->legit = TRUE;
+    }
+    foreach ($user as $k => $v){
+      $this->$k = $v;
+    }
   }
 
   public function parseUser(&$user,$data=false){
+    $app = new app();
+
     //Stuff we can set from the DB
     $user->rank = $user->lastadminrank;
     $user->firstSeenTimeStamp = timeStamp($user->firstseen);
@@ -49,8 +66,9 @@
       $user->ip = long2ip($user->ip);
     }
 
-    if(defined('TXT_RANK_VERIFY')){
+    if('remote'== $app->auth_method || 'text' == $app->auth_method){
       $user->rank = $this->verifyAdminRank($user->ckey);
+      $user->permissions = $this->getAdminPermissions($user->rank);
       $user->txtVerify = TRUE;
     }
 
@@ -232,6 +250,28 @@
     return $db->single();
   }
 
+  public function getUserByIP(){
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SELECT tbl_player.*,
+      count(DISTINCT tbl_connection_log.id) AS connections,
+      IF(tbl_player.lastseen >= NOW() - INTERVAL 1 DAY, tbl_player.lastadminrank,'Player') as lastadminrank
+      FROM tbl_player
+      LEFT JOIN tbl_connection_log ON tbl_connection_log.ckey = tbl_player.ckey
+      WHERE tbl_player.ip = ?
+      -- AND tbl_player.lastseen >= NOW() - INTERVAL 1 DAY
+      LIMIT 1");
+    $db->bind(1,ip2long($_SERVER['REMOTE_ADDR']));
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return $db->single();
+  }
+
   public function getPlayerByCkey($ckey){
     $db = new database();
     if($db->abort){
@@ -396,6 +436,19 @@
     $ranks = json_decode(file_get_contents(ROOTPATH.'/tmp/admins.json'));
     if(property_exists($ranks, $ckey)){
       return $ranks->{$ckey};
+    } else {
+      return false;
+    }
+  }
+
+  public function getAdminPermissions($rank){
+    if(!file_exists(ROOTPATH.'/tmp/adminranks.json')){
+      $app = new app();
+      $app->downloadAdminRanks();
+    }
+    $ranks = json_decode(file_get_contents(ROOTPATH.'/tmp/adminranks.json', 'w+'))->ranks;
+    if(property_exists($ranks, $rank)){
+      return $ranks->{$rank};
     } else {
       return false;
     }

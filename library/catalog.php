@@ -1,11 +1,9 @@
 <?php require_once('../header.php'); ?>
 
 <?php if (!$user->legit): ?>
-
   <div class="alert alert-danger">
   You must be a known user to view this page.
   </div>
-
 <?php die(); endif;?>
 
 <?php
@@ -55,25 +53,27 @@ if (isset($_GET['query'])){
   <tbody>
     <?php
     $books = $books->getCatalog($page,30,$query);
-    foreach ($books as $book) {
-      if ($book->category == 'Adult') {
-        echo "<tr class='library-adult book' id='$book->id'>";
-      } else {
-        echo "<tr class='book' id='$book->id'>";
-      }
-      echo "<td>#$book->id</td>";
-      echo "<td>$book->author</td>";
-      echo "<td>$book->title</td>";
-      echo "<td>$book->category</td>";
-      echo "</tr></a>";
-    }
-    if (!$books){
-      echo "<tr><td colspan='4' style='text-align: center'>";
-      echo "&laquo; No results &raquo;</td></tr>";
-    }
-    ?>
+    if($books): foreach($books as $book):?>
+      <tr class='<?php echo $book->class;?>'>
+        <td><?php echo $book->link;?></td>
+        <td><?php echo $book->author;?></td>
+        <td><?php echo $book->title;?></td>
+        <td><?php echo $book->category;?></td>
+      </tr>
+    <?php endforeach; ?>
+    <?php else:?>
+      <tr>
+        <td colspan='4' style='text-align: center'>
+          &laquo; No results &raquo;
+        </td>
+      </tr>
+    <?php endif;?>
   </tbody>
 </table>
+
+<?php if(!$query):?>
+<?php $link = "library/catalog"; include(ROOTPATH."/inc/view/pagination.php");?>
+<?php endif;?>
 <script>
 $('.book').click(function(e){
   book = $(this).attr('id');

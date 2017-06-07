@@ -2,11 +2,9 @@
 mb_internal_encoding("UTF-8");
 
 ###### Application Settings ######
-define("DOMAIN",'domain.tld'); //Domain name where the app is running
+define("DOMAIN",'domain.tld'); //JUST the domain name where the app is running
 define("DIRECTORY",'<path to install>'); //Directory where the app is installed
 define("USE_SSL",FALSE); //Whether or not to use SSL
-(USE_SSL) ? define("SSL","s") : define("SSL",'');
-define('APP_URL',"http".SSL."://".DOMAIN."/".DIRECTORY);
 define('APP_NAME','SS13 Tools'); //Name of the application
 
 define('DATE_FORMAT','Y-m-d H:i:s'); //Date format
@@ -57,6 +55,8 @@ define('DEBUG', TRUE);
 ###### DEBUG FLAG ######
 
 ###### DO NOT EDIT BELOW THIS LINE ######
+(USE_SSL) ? define("SSL","s") : define("SSL",'');
+define('APP_URL',"http".SSL."://".DOMAIN."/".DIRECTORY); //Do not edit
 
 require_once('inc/functions.php');
 require_once('inc/autoload.php');

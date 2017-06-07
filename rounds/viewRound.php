@@ -4,7 +4,7 @@ if (isset($_GET['json'])) $json = filter_input(INPUT_GET, 'json', FILTER_VALIDAT
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 
-$round = new round($round,array('data'));
+$round = new round($round,array('data','deaths'));
 ?>
 
 <?php if (!$round->id):?>
@@ -17,19 +17,19 @@ $round = new round($round,array('data'));
   <ul class="pager">
   <?php if ($round->prev): ?>
     <li class="previous">
-        <a href="<?php echo APP_URL;?>viewRound.php?round=<?php echo $round->prev;?>">
+        <a href="<?php echo $app->APP_URL;?>viewRound.php?round=<?php echo $round->prev;?>">
         <span aria-hidden="true">&larr;</span>
         Previous round</a>
     </li>
   <?php endif;?>
 
-  <li><a href="<?php echo APP_URL;?>round.php">
+  <li><a href="<?php echo $app->APP_URL;?>round.php">
     <i class="fa fa-list"></i> Round listing</a>
   </li>
 
   <?php if ($round->next): ?>
     <li class="next">
-      <a href="<?php echo APP_URL;?>viewRound.php?round=<?php echo $round->next;?>">Next round
+      <a href="<?php echo $app->APP_URL;?>viewRound.php?round=<?php echo $round->next;?>">Next round
       <span aria-hidden="true">&rarr;</span></a>
     </li>
   <?php endif;?>
@@ -78,7 +78,7 @@ $round = new round($round,array('data'));
     <td><?php echo $round->station_name;?></td>
   </tr>
   </table>
-  
+
   <table class="table sticky  table-bordered table-condensed">
   <?php if(isset($round->data->testmerged_prs)):?>
     <tr><th colspan="2">Testmerged PRs</th>
@@ -134,8 +134,9 @@ $total = $dead + $survivors; ?>
 
 <hr>
 
-<?php if($round->game_mode != 'Nuclear emergency' && $round->status == 'Nuke'):?>
-  <div class="alert alert-warning"><?php echo iconStack('certificate','trophy','fa-inverse', TRUE);?> <strong>RARE ENDING</strong></div>
+<?php if($round->rare):?>
+  <div class="alert alert-warning"><?php echo iconStack('certificate','trophy','fa-inverse', TRUE);?>
+  <strong>RARE ENDING</strong></div>
 <?php endif;?>
 
 <?php if($round->status == 'Restart vote'):?>
@@ -143,7 +144,6 @@ $total = $dead + $survivors; ?>
 <?php endif;?>
 
 <div class="row">
-
   <?php if(isset($round->data->traitor_objective)):?>
     <div class="col-md-4"><?php
     $stat = $round->data->traitor_objective;
@@ -169,6 +169,50 @@ $total = $dead + $survivors; ?>
   <?php endif;?>
 </div>
 
+
+<?php if($round->deaths):?>
+  <div class="page-header">
+    <h2>Deaths from this round</h2>
+  </div>
+  <table id="deaths" class="table sticky  table-bordered table-condense">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Job</th>
+        <th>Location & Map</th>
+        <th>Damage & Attacker (if set)<br>
+          <span title="Brute" class="label label-dam label-brute">BRU</span>
+          <span title="Brain" class="label label-dam label-brain">BRA</span>
+          <span title="Fire" class="label label-dam label-fire">FIR</span>
+          <span title="Oxygen" class="label label-dam label-oxy">OXY</span>
+          <span title="Toxin" class="label label-dam label-tox">TOX</span>
+          <span title="Clone" class="label label-dam label-clone">CLN</span>
+          <span title="Stamina" class="label label-dam label-stamina">STM</span>
+        </th>
+        <th>Time & Server</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($round->deaths as $d):?>
+        <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server;?>">
+          <td><?php echo $d->link;?></td>
+          <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>
+          <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>
+          <td><?php echo "$d->pod <br><small>$d->mapname  ($d->coord)</small>";?></td>
+          <td>
+            <?php echo $d->labels;?><br>
+            <?php if('' != $d->laname):?>
+              <?php echo "By $d->laname <small>($d->lakey)</small>";?>        <?php if($d->suicide) echo " <small class='text-danger'>(Probable Suicide)</small>";?>
+            <?php endif;?>
+          </td>
+          <td><?php echo "$d->tod";?></td>
+        </tr>
+      <?php endforeach;?>
+    </tbody>
+  </table>
+<?php endif;?>
+
 <hr>
 
 <?php if ($user->legit):?>
@@ -182,7 +226,7 @@ $total = $dead + $survivors; ?>
     <?php foreach ($round->data as $d) :?>
       <li>
         <code>
-          <a href='<?php echo APP_URL;?>round.php?stat=<?php echo $d->var_name;?>&round=<?php echo $round->id;?>'>
+          <a href='<?php echo $app->APP_URL;?>round.php?stat=<?php echo $d->var_name;?>&round=<?php echo $round->id;?>'>
             <?php echo $d->var_name;?>
           </a>
         </code>

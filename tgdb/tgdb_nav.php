@@ -7,18 +7,18 @@
         <span class="sr-only">Toggle navigation</span>
         <i class="fa fa-navicon fa-2x" style="color: white;"></i>
       </button>
-      <a class="navbar-brand" href="<?php echo APP_URL;?>tgdb/index.php">
+      <a class="navbar-brand" href="<?php echo $app->APP_URL;?>tgdb/index.php">
         <i class="fa fa-database"></i> TGDB
       </a>
     </div>
     <div id="tgdbnav" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-        <li><a href="<?php echo APP_URL;?>tgdb/bans.php"><i class="fa fa-ban"></i> Ban DB</a></li>
-        <li><a href="<?php echo APP_URL;?>tgdb/messages.php"><i class="fa fa-sticky-note"></i> Notes &amp; Messages DB</a></li>
-        <li><a href="<?php echo APP_URL;?>tgdb/conn.php"><i class="fa fa-plug"></i> Connection DB</a></li>
-        <li><a href="<?php echo APP_URL;?>tgdb/players.php"><i class="fa fa-group"></i> Player DB</a></li>
-        <li><a href="<?php echo APP_URL;?>tgdb/memo.php"><i class="fa fa-envelope"></i> Memo DB</a></li>
-        <li><a href="<?php echo APP_URL;?>tgdb/comments.php"><i class="fa fa-bullhorn"></i> Comments DB</a></li>
+        <li><a href="<?php echo $app->APP_URL;?>tgdb/bans.php"><i class="fa fa-ban"></i> Ban DB</a></li>
+        <li><a href="<?php echo $app->APP_URL;?>tgdb/messages.php"><i class="fa fa-sticky-note"></i> Notes &amp; Messages DB</a></li>
+        <li><a href="<?php echo $app->APP_URL;?>tgdb/conn.php"><i class="fa fa-plug"></i> Connection DB</a></li>
+        <li><a href="<?php echo $app->APP_URL;?>tgdb/players.php"><i class="fa fa-group"></i> Player DB</a></li>
+        <li><a href="<?php echo $app->APP_URL;?>tgdb/memo.php"><i class="fa fa-envelope"></i> Memo DB</a></li>
+        <li><a href="<?php echo $app->APP_URL;?>tgdb/comments.php"><i class="fa fa-bullhorn"></i> Comments DB</a></li>
       </ul>
       <form class="navbar-form navbar-right" role="search" style="margin-right: 0;">
         <div class="form-group">

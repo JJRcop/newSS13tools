@@ -5,6 +5,7 @@
     "require": {
         "guzzlehttp/guzzle": "^6.2",
         "phpunit/php-timer": "^1.0",
-        "hellogerard/jobby": "^3.2"
+        "hellogerard/jobby": "^3.2",
+        "robthree/twofactorauth": "^1.6"
     }
 }

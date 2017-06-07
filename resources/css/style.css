@@ -149,13 +149,13 @@ tr.perma,
   cursor: hand;
   text-decoration: underline;
 }
-.library-adult {
-  background: grey;
-  color: grey;
+.library-adult td{
+  background: black !important;
+  color: black !important;
 }
-.library-adult:hover {
+.library-adult:hover td {
   background: transparent;
-  color: inherit;
+  color: white !important;
 }
 
 .navbar.tgdb-navbar {
@@ -295,11 +295,12 @@ tr.perma,
 }
 
 .tgui hr {
-  background: #40628a;
+  background: #40628a !important;
   height: 2px;
+  border: none;
 }
 
-.tgui .row > div, {
+.tgui .row {
   background-color: rgba(0,0,0,.33);
   padding: 10px;
   margin: 10px 0;
@@ -335,6 +336,16 @@ tr.perma,
 
 .tgui .table th {
   background-color: rgba(0,0,0,.33);
+}
+
+.tgui .table td .text-success {
+  color: white;
+}
+
+.tgui h1,
+.tgui h2,
+.tgui h3 {
+  display: block;
 }
 
 .tgui .table a {
