@@ -1,8 +1,12 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.0.0');
+define('VERSION','1.0.1');
 
 define('CHANGELOG',array(
+  '1.0.1 - 08-06-2017'=>array(
+    array('mod'=>"Removed a duplicate round count from monthly stats view"),
+    array('add'=>"Added a graph view to poll result pages"),
+  ),
   '07-06-2017'=>array(
     array('add'=>"NewSS13Tools is now using semantic versioning. Welcome to version 1.0.0!"),
     array('add'=>"Against my better judgement, I'm supporting markdown in user-input comments. This will appear chiefly here in the changelog. For the sake of my sanity, images are disabled"),

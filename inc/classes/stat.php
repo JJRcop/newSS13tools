@@ -599,7 +599,7 @@ class stat {
       min(tbl_round.id) AS `first`,
       max(tbl_round.id) AS `last`,
       floor(AVG(TIME_TO_SEC(TIMEDIFF(tbl_round.end_datetime,tbl_round.start_datetime)))) / 60 AS avgduration,
-      tbl_round.game_mode AS `mode`,
+      tbl_round.game_mode,
       tbl_round.game_mode_result AS result
       FROM tbl_round
       WHERE tbl_round.end_datetime BETWEEN ? AND ?
@@ -612,6 +612,11 @@ class stat {
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultSet();
+    $round = new round();
+    $rounds = $db->resultset();
+    // foreach ($rounds as &$r){
+    //   $r = $round->mapStatus($r);
+    // }
+    return $rounds;
   }
 }

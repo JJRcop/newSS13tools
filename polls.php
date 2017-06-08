@@ -129,16 +129,49 @@ if (isset($_GET['poll'])) {
     <div class="page-header">
       <h2>Results <small><?php echo $poll->totalVotes;?> votes cast</small></h2>
     </div>
-    <ul class="list-group">
-    <?php foreach($poll->results as $r):?>
-      <li class="list-group-item">
-        <span class="badge"><?php echo $r->percent;?>%</span>
-        <span class="badge"><?php echo $r->votes;?></span>
-        <strong><?php echo $r->option;?></strong>
-      </li>
-    <?php endforeach;?>
-    </ul>
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="list-group">
+        <?php foreach($poll->results as $r):?>
+          <li class="list-group-item">
+            <span class="badge"><?php echo $r->percent;?>%</span>
+            <span class="badge"><?php echo $r->votes;?></span>
+            <strong><?php echo $r->option;?></strong>
+          </li>
+        <?php endforeach;?>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <div id="c"></div>
+        <script>
+        var chart = c3.generate({
+            bindto: '#c',
+            data: {
+              json: <?php echo json_encode($poll->results); ?>,
+              keys: {
+                value: ['option', 'votes'],
+              },
+              x: 'option',
+              y: 'votes',
+              type: 'bar',
+            },
+            axis: {
+              x: {
+                type: 'category',
+                tick: {
+                  culling: false,
+                  rotate: 90,
+                  height: 128
+                }
+              }
+            }
+        });
+
+        </script>
+      </div>
+    </div>
   <?php endif;?>
+
 <?php else:?>
 
 <div class="page-header">

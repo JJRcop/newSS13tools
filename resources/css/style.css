@@ -259,7 +259,7 @@ tr.perma,
   display: inline-block !important;
 }
 
-.label-brute   {background:    pink; color: black;}
+.label-brute   {background: #fb264b; color: black;}
 .label-brain   {background: #5995ba; color: black;}
 .label-fire    {background: #e0a003; color: black;}
 .label-oxy     {background: #689bc3; color: white;}

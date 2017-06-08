@@ -3,6 +3,10 @@ Tools for working with the [tgstation/tgstation](https://github.com/tgstation/tg
 
 This is a refactor/rebuild of the original ss13 tools at [balohmatevz/SS13Tools](https://github.com/balohmatevz/SS13Tools)
 
+## Requiremens
+* PHP ≥ 5.6
+* MySQL ≥ 5.6
+
 ## Attributions
 * [running-coder/jquery-typeahead](https://github.com/running-coder/jquery-typeahead)
 * [bgrins/spectrum](https://github.com/bgrins/spectrum)

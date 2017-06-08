@@ -61,9 +61,8 @@ if ($year && $month):?>
           <tbody>
             <?php foreach ($rounds as $r):?>
               <tr>
-                <td><?php echo $r->mode;?></td>
+                <td><?php echo $r->game_mode;?></td>
                 <td><?php echo $r->result;?></td>
-                <td><?php echo $r->rounds;?></td>
                 <td><?php echo $r->rounds;?></td>
                 <td><?php echo $r->avgduration;?></td>
               </tr>

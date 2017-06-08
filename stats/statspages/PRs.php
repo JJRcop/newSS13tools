@@ -39,5 +39,4 @@ var chart = c3.generate({
       type: 'donut',
     },
 });
-
 </script>

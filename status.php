@@ -23,6 +23,7 @@
     </div>
     <ul class="list-group">
         <?php foreach($app->changelog as $date => $changes):?>
+          <a  id="<?php echo $date;?>"></a>
           <li class="list-group-item">
             <h4 class="list-group-heading"><?php echo $date;?></h4>
             <?php if(isset($date['blog'])):?>
