@@ -3,6 +3,8 @@ define('APPLICATION','NewSS13Tools');
 define('VERSION','1.0.1');
 
 define('CHANGELOG',array(
+  '1.1.0 - 09-06-2017'=>array(
+    array('add'=>"Commendations from a given round are now visible on individual round pages!"),
   '1.0.1 - 08-06-2017'=>array(
     array('mod'=>"Removed a duplicate round count from monthly stats view"),
     array('add'=>"Added a graph view to poll result pages"),

@@ -485,6 +485,26 @@ class stat {
         $stat->include = 'PRs';
       break;
 
+      case 'commendation':
+        $stat->details = str_replace("_", " ", $stat->details);
+        $stat->details = str_replace("} {", "},{", $stat->details);
+        $stat->details = json_decode("[$stat->details]");
+        
+        foreach ($stat->details as &$d){
+          switch ($d->medal){
+            default: 
+              $d->graphic = 'bronze';
+            break;
+
+            case 'The robust security award': 
+              $d->graphic = 'silver';
+            break;
+          }
+        }
+        $stat->include = "commendation";
+        // var_dump($stat);
+      break;
+
       //Value stats
       //Where the value just needs to be displayed
       //Or summed when aggregating
