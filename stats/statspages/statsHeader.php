@@ -12,4 +12,8 @@
   <?php endif;?>
 </div>
 
+<?php else:?>
+  <div class="page-header">
+    <h2><?php echo $stat->var_name;?></h2>
+  </div>
 <?php endif;?>

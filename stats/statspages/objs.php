@@ -12,12 +12,6 @@
   <?php endif;?>
 </div>
 
-<?php else:?>
-  <div class="page-header">
-    <h2><?php echo $stat->var_name;?></h2>
-  </div>
-<?php endif;?>
-
 <table class="table sticky  table-bordered table-condensed">
   <?php $tF = 0; $tS = 0; foreach ($stat->details as $objective => $count): ?>
     <tr>

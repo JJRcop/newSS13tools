@@ -1,8 +1,11 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.2.0');
+define('VERSION','1.2.1');
 
 define('CHANGELOG',array(
+  '1.2.1 - 09-06-2017'=>array(
+    array('mod'=>"Corrected a double header showing up for objectives"),
+  ), 
   '1.2.0 - 09-06-2017'=>array(
     array('mod'=>"Removed 'type to search' on tgdb. Sorry!"),
     array('add'=>"Admins can now leave comments on bans"),
