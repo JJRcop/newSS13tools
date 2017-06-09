@@ -4,6 +4,7 @@ define('VERSION','1.0.1');
 
 define('CHANGELOG',array(
   '1.1.0 - 09-06-2017'=>array(
+  '1.1.1 - 09-06-2017'=>array(
     array('add'=>"Commendations from a given round are now visible on individual round pages!"),
   ),
   '1.0.1 - 08-06-2017'=>array(
