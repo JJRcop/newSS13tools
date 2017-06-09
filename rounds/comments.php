@@ -74,9 +74,10 @@ if (isset($_GET['hideComment'])){
   </div>
 <?php endforeach;?>
 <hr>
-<form class="form" action="?round=<?php echo $round->id;?>&addComment=true" method="POST">
-  <div class="form-group">
-    <textarea class="form-control" name="comment" rows="10" placeholder="Comment" required=""></textarea>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit Comment</button>
-</form>
+<div class="page-header">
+  <h2>Leave a comment</h2>
+</div>
+<?php
+  $action = $round->href;
+  require_once(ROOTPATH."/inc/view/addComment.php");
+?>

@@ -21,80 +21,24 @@
         <li><a href="<?php echo $app->APP_URL;?>tgdb/comments.php"><i class="fa fa-bullhorn"></i> Comments DB</a></li>
       </ul>
       <form class="navbar-form navbar-right" role="search" style="margin-right: 0;">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="ckey quick search">
+        <div class="form-group typeahead__container">
+          <input type="text" class="form-control" id="search" name="ckey"
+          placeholder="ckey quick search">
         </div>
       </form>
     </div><!--/.nav-collapse -->
   </div>
 </nav>
 
-<p><i class="fa fa-lightbulb-o"></i> <strong>New!</strong> Start typing to begin searching for a ckey!</p>
-
 <script src='../resources/js/jquery.typeahead.min.js'></script>
 <link rel='stylesheet' href='../resources/css/jquery.typeahead.min.css' />
 
-<div id="playerSearch" style="display: none;">
-  <div class="container">
-<!--     <form class="form-horizontal">
-      <div class="form-group form-group-lg">
-        <div class="col-sm-12">
-          <input type="text" class="form-control input-xl" id="search"
-          name="search" placeholder="Ckey">
-        </div>
-        <label class="text-center text-muted col-sm-12">
-          &laquo; Press ESC to close &raquo;
-        </label>
-      </div>
-    </form> -->
-    <form class="form-horizontal">
-        <div class="typeahead__container form-horizontal">
-            <div class="typeahead__field form-group form-group-lg">
-                <div class="col-sm-12">
-                    <span class="typeahead__query">
-                        <input class="js-typeahead form-control input-xl"
-                               name="ckey"
-                               type="search"
-                               autocomplete="off"
-                               placeholder="ckey"
-                               id="search">
-                    </span>
-       <!--              <span class="typeahead__button">
-                        <button type="submit">
-                            <span class="typeahead__search-icon"></span>
-                        </button> -->
-                    </span>
-                </div>
-                <label class="text-center text-muted col-sm-12">
-                  &laquo; Press ESC to close &raquo;
-                </label>
-            </div>
-        </div>
-    </form>
-  </div>
-</div>
 <script>
-var searchContainer = $('#playerSearch');
-var searchStatus = false;
-
-window.onkeydown = function (e) {
-  if (!e) e = window.event;
-  if (!e.metaKey) {
-    if(e.keyCode >= 65 && event.keyCode <= 90 || e.keyCode >= 48 && event.keyCode <= 57) {
-      searchContainer.show();
-      searchContainer.find('input').focus();
-      searchStatus = true;
-    }
-  }
-  if (searchStatus && event.keyCode == 27){
-    searchContainer.hide();
-    searchStatus = false;
-  }
-}
 
 $("#search").submit(function(e){
   e.preventDefault();
 });
+
 $.typeahead({
   input: '#search',
   minLength: 2,

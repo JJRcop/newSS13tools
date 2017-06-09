@@ -78,7 +78,6 @@
         }
         switch ($log->type){
           case 'add':
-          default:
             $log->icon = 'plus';
             $log->class = 'text-success';
           break;
@@ -93,6 +92,11 @@
           case 'remove':
             $log->icon = 'minus';
             $log->class = 'text-danger';
+          break;
+
+          default:
+            $log->icon = $log->type;
+            $log->class = '';
           break;
         }
         $tmp[$date][] = $log;

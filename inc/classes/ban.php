@@ -121,32 +121,39 @@ class ban {
   }
 
   public function parseBan(&$ban) {
+    //Extract rules found in the ban
     $ban->rules = array();
     $ban = $this->parseBanReason($ban);
+
+    //Get server ban was applied on
     $round = new round();
     $ban->serverip = $round->mapServer(long2ip($ban->server_ip).":".$ban->server_port);
 
     //The ban status should be done on MySQL, this is a crutch and I don't like
     //it :(
-
+    //Defaults
     $ban->status = 'Active';
     $ban->statusClass = 'danger';
 
+    //Times to a clearer format
     $ban->bantimestamp = timeStamp($ban->bantime);
     $ban->expirationtimestamp = timeStamp($ban->expiration_time);
-
     $ban->duration = $ban->minutes;
 
+    //IP to clearer format
     if (is_int($ban->ip)){
       $ban->ip = long2ip($ban->ip);
     }
 
+    //Link to round 
+    $ban->round_id_link = null;
     if(isset($ban->round_id)){
       $ban->round_id_href = APP_URL."round.php?round=$ban->round_id";
       $ban->round_id_link = " (Round <a href='$ban->round_id_href'>";
       $ban->round_id_link.= "#$ban->round_id</a>)";
     }
 
+    //Set ban type and associated data
     switch ($ban->bantype){
       case 'TEMPBAN':
       default:
@@ -195,11 +202,13 @@ class ban {
       break;
     }
 
+    //Unbanned information
     if ($ban->unbanned){
       $ban->status = "Unbanned by $ban->unbanned_ckey ".timeStamp($ban->unbanned_datetime);
       $ban->statusClass = 'success';
     }
 
+    //Admins online
     $badmins = array();
     foreach (explode(', ', $ban->adminwho) as $admin){
       $badmin['ckey'] = $admin;
@@ -209,6 +218,7 @@ class ban {
     asort($badmins);
     $ban->adminwho = $badmins;
 
+    //Players online
     $players = array();
     foreach (explode(', ', $ban->who) as $ckey){
       $player['ckey'] = $ckey;
@@ -218,11 +228,13 @@ class ban {
     asort($players);
     $ban->who = $players;
 
+    //Any edits
     if ($ban->edits){
       $ban->edits = str_replace("<cite>", "<p><cite>", $ban->edits);
       $ban->edits = str_replace("</cite>", "</cite></p>", $ban->edits);
     }
 
+    //Quicklinks for IP associated with the ban
     $ban->ipql = "<div class='ql'>(";
     $ban->ipql.= "<a href='".APP_URL."tgdb/bans.php?ip=$ban->ip'>";
     $ban->ipql.= "<i class='fa fa-ban'></i></a>)";
@@ -232,6 +244,7 @@ class ban {
     $ban->ipql.= "<i class='fa fa-plug'></i></a>)";
     $ban->ipql.= "</div>";
 
+    //Quicklinks for CID associated with the ban
     $ban->cidql = "<div class='ql'>(";
     $ban->cidql.= "<a href='".APP_URL."tgdb/bans.php?cid=$ban->computerid'>";
     $ban->cidql.= "<i class='fa fa-ban'></i></a>)";
@@ -241,6 +254,7 @@ class ban {
     $ban->cidql.= "<i class='fa fa-plug'></i></a>)";
     $ban->cidql.= "</div>";
 
+    //Permalinks for the ban
     $ban->link = APP_URL."/tgdb/viewBan.php?ban=$ban->id";
     $ban->permalink = "<a href='$ban->link'>#$ban->id</a>";
 
@@ -334,6 +348,185 @@ class ban {
       $b = $ban->parseBan($b);
     }
     return $bans;
+  }
+
+  public function getBanComments($ban){
+    $where = "flagged = 'A'";
+    $user = new user();
+    if(2 <= $user->level) {
+      $where.= " OR flagged = 'P' OR flagged = 'R'";
+    }
+    $db = new database(TRUE);
+    $db->query("SELECT * FROM ban_comment WHERE ban = ? AND ($where) ");
+    $db->bind(1, $ban);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $comments = $db->resultset();
+    foreach ($comments as &$comment){
+      $comment = $this->parseComment($comment);
+    }
+    return $comments;
+  }
+
+  public function getAllBanComments(){
+    $db = new database(TRUE);
+    $db->query("SELECT * FROM ban_comment ORDER BY `timestamp` DESC");
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $comments = $db->resultset();
+    foreach ($comments as &$comment){
+      $comment = $this->parseComment($comment);
+    }
+    return $comments;
+  }
+
+
+  public function parseComment(&$comment){
+    $user = new user();
+    $Parsedown = new safeDown();
+
+    //Flag
+    switch ($comment->flagged){
+      default: //Pending
+        $comment->flag = "Pending";
+        $comment->class = "primary";
+      break;
+
+      case 'A':
+        $comment->flag = "Approved";
+        $comment->class = "success";
+      break;
+
+      case 'R':
+        if (2 <= $user->level){
+          $comment->flag = "Reported";
+          $comment->class = "danger";
+        } else {
+          $comment->flag = "Approved";
+          $comment->class = "success";
+        }
+      break;
+
+      case 'H':
+        $comment->flag = "Hidden";
+        $comment->class = "default";
+      break;
+    }
+
+    //Ban link
+    $comment->ban_href = APP_URL."/tgdb/viewBan.php?ban=$comment->ban";
+    $comment->ban_link = "<a href='$comment->ban_href'>#$comment->ban</a>";
+
+    //Report link
+    $comment->reportHref = $comment->ban_href."&reportComment&id=$comment->id";
+
+    //Approve link
+    $comment->approveHref = $comment->ban_href."&approveComment&id=$comment->id";
+
+    //Hide link
+    $comment->hideHref = $comment->ban_href."&hideComment&id=$comment->id";
+
+    //Text
+    $comment->text = $Parsedown->text($comment->text);
+
+    //Author link
+    $comment->author_href = APP_URL."tgdb/viewPlayer.php?ckey=$comment->author";
+    $comment->author_link = "<a href='$comment->author_href'>$comment->author</a>";
+
+    return $comment;
+  }
+
+  public function addComment($ban, $text) {
+    $flag = 'P';
+    $user = new user();
+    if(!$user->legit){
+      die("You must be a known user in order to submit comments");
+    }
+    if (2 <= $user->level){
+      $flag = 'A'; //Admin comments auto-approve!
+    }
+    $db = new database(TRUE);
+    $db->query("INSERT INTO ban_comment
+      (ban, `text`, texthash, author, `timestamp`, flagged)
+      VALUES (?, ?, sha1(?), ?, NOW(), ?)");
+    $db->bind(1, $ban);
+    $db->bind(2, $text);
+    $db->bind(3, $text);
+    $db->bind(4, $user->ckey);
+    $db->bind(5, $flag);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    if (2 <= $user->level){
+      return returnSuccess("Your comment has been submitted.");
+    }
+    return returnSuccess("Your comment has been submitted and is pending approval");
+  }
+
+  public function flipCommentFlag($id, $flag) {
+    $user = new user();
+    $db = new database(TRUE); //Alt DB
+    if(!$user->legit){
+      return returnError("You must be a known user in order to flag comments");
+    }
+    switch ($flag) {
+      case 'A':
+        if(2 < $user->level){
+          return returnError("You do not have permission to approve comments");
+        }
+        $flagText = 'Comment approved';
+      break;
+
+      case 'H':
+        if(2 < $user->level){
+          return returnError("You cannot perform this action");
+        }
+        $flagText = 'Comment hidden';
+      break;
+
+      case 'R':
+        $flagText = 'Comment reported';
+        $db->query("UPDATE ban_comment
+          SET
+          ban_comment.reporter = ?,
+          ban_comment.reported_time = NOW()
+          WHERE ban_comment.id = ?");
+        $db->bind(1, $user->ckey);
+        $db->bind(2, $id);
+        try {
+          $db->execute();
+        } catch (Exception $e) {
+          return returnError("Database error: ".$e->getMessage());
+        }
+      break;
+
+      default:
+        return returnError("This is not a valid comment flag");
+      break;
+    }
+    $db->query("UPDATE ban_comment
+      SET
+      ban_comment.flagged = ?,
+      ban_comment.flag_changer = ?,
+      ban_comment.flag_change = NOW()
+      WHERE ban_comment.id = ?");
+    $db->bind(1, $flag);
+    $db->bind(2, $user->ckey);
+    $db->bind(3, $id);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return returnSuccess("$flagText");
   }
 
 }

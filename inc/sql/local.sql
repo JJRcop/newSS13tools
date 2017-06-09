@@ -1,3 +1,20 @@
+-- Create syntax for TABLE 'ban_comment'
+CREATE TABLE `ban_comment` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `ban` int(11) DEFAULT NULL,
+  `text` longtext,
+  `texthash` varchar(64) DEFAULT NULL,
+  `author` varchar(32) DEFAULT NULL,
+  `timestamp` timestamp NULL DEFAULT NULL,
+  `flagged` enum('P','A','R','H') NOT NULL DEFAULT 'P',
+  `reporter` varchar(32) DEFAULT NULL,
+  `reported_time` timestamp NULL DEFAULT NULL,
+  `flag_change` timestamp NULL DEFAULT NULL,
+  `flag_changer` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `texthash` (`texthash`,`ban`,`author`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
 -- Create syntax for TABLE 'flagged_auth'
 CREATE TABLE `flagged_auth` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

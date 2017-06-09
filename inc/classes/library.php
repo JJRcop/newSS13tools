@@ -54,7 +54,7 @@ class library {
     //Category
     switch ($book->category) {
       case 'Adult':
-        $book->class = 'danger library-adult';
+        $book->class = 'danger library-adult hidden-row';
         $book->label = "ADULT";
       break;
 

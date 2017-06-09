@@ -62,7 +62,7 @@ if (isset($_GET['hideComment'])){
           <small><?php echo $comment->timestamp;?></small>
         </td>
         <td>
-          <?php echo $comment->text;?>
+          <?php echo $comment->rawtext;?>
         </td>
         <td>
           <?php if('P' == $comment->flagged && 2 <= $user->level):?>

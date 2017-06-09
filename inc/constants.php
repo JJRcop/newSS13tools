@@ -1,9 +1,14 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.0.1');
+define('VERSION','1.2.0');
 
 define('CHANGELOG',array(
-  '1.1.0 - 09-06-2017'=>array(
+  '1.2.0 - 09-06-2017'=>array(
+    array('mod'=>"Removed 'type to search' on tgdb. Sorry!"),
+    array('add'=>"Admins can now leave comments on bans"),
+    array('add'=>"Round comments and ban comments now have a Markdown preview"),
+    array('info-circle'=>"Be sure to see changes made to `/inc/sql/local.sql`! "),
+  ), 
   '1.1.1 - 09-06-2017'=>array(
     array('add'=>"Commendations from a given round are now visible on individual round pages!"),
   ),
@@ -39,7 +44,7 @@ define('CHANGELOG',array(
     array('add'=>"An admin ranks explanation is now available"),
     array('add'=>"Along with the changelog as it appears in-game!"),
     array('add'=>"The number of minutes people spend playing a given job was added to the database, so I'm taking advantage of that for the 'jobularity' page."),
-   array('mod'=>"The deaths page has been redesigned!"),
+    array('mod'=>"The deaths page has been redesigned!"),
     array('mod'=>"A major PR just went through that makes rounds easier to track. This will break the round listing until I update the app to account for it"),
     array('mod'=>"I'm making some changes to how tables handle sticking their headers to the top of the page. Please let me know if anything looks weird"),
     array('del'=>"Another refactor changed how logs work and thusly, public logs are no longer available. This may change at some point in the future")

@@ -521,7 +521,7 @@
 
       case 'H':
         $comment->flag = "Hidden";
-        $comment->class = "default";
+        $comment->class = "default row-hidden";
       break;
     }
 
@@ -530,6 +530,7 @@
     $comment->round_link = "<a href='$comment->round_href'>#$comment->round</a>";
 
     //Text
+    $comment->rawtext = $comment->text;
     $comment->text = $Parsedown->text($comment->text);
 
     //Author link

@@ -2,8 +2,12 @@
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 $round = new round($round,array('data','deaths'));
-
 ?>
+<script>    
+  if(typeof window.history.pushState == 'function') {
+    window.history.pushState({}, "Hide", "<?php echo $round->href;?>");
+  }
+</script>
 
 <?php if (!$round->id):?>
   <div class="alert alert-danger">
@@ -143,7 +147,10 @@ $total = $dead + $survivors; ?>
 
 <div class="row">
   <?php if(isset($round->data->traitor_objective)):?>
-    <div class="col-md-4"><?php
+    <div class="col-md-4">
+    <div class="page-header">
+      <h2>Traitor Objectives</h2>
+    </div><?php
     $stat = $round->data->traitor_objective;
     $smol = true;
     include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
@@ -151,7 +158,11 @@ $total = $dead + $survivors; ?>
   <?php endif;?>
 
   <?php if(isset($round->data->changeling_objective)):?>
-    <div class="col-md-4"><?php
+    <div class="col-md-4">
+    <div class="page-header">
+      <h2>Changeling Objectives</h2>
+    </div>
+    <?php
     $stat = $round->data->changeling_objective;
     $smol = true;
     include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
@@ -159,13 +170,25 @@ $total = $dead + $survivors; ?>
   <?php endif;?>
 
   <?php if(isset($round->data->wizard_objective)):?>
-    <div class="col-md-4"><?php
+    <div class="col-md-4">
+    <div class="page-header">
+      <h2>Wizard Objectives</h2>
+    </div><?php
     $stat = $round->data->wizard_objective;
     $smol = true;
     include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
     </div>
   <?php endif;?>
 </div>
+
+<?php if ($user->legit && isset($round->data->commendation)):?>
+  <div class="page-header">
+    <h2>Commendations</h2>
+  </div>
+  <?php $stat = $round->data->commendation;
+  $smol = true;?>
+  <?php include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
+<?php endif;?>
 
 
 <?php if($round->deaths):?>
@@ -219,6 +242,7 @@ $total = $dead + $survivors; ?>
 <?php endif;?>
 
 <hr>
+
 <div id="rawdata">
   <h3>Raw data</h3>
   <ul class="list-unstyled">

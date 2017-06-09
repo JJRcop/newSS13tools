@@ -4,16 +4,16 @@
 $round = new round();
 $db = new database();
 $db->query("SELECT count(id) AS rounds,
-min(ss13round.start_datetime) AS earliest_start,
-max(ss13round.end_datetime) AS latest_end,
-min(ss13round.id) AS `first`,
-max(ss13round.id) AS `last`,
-floor(AVG(TIME_TO_SEC(TIMEDIFF(ss13round.end_datetime,ss13round.start_datetime)))) / 60 AS avgduration,
-ss13round.game_mode,
-ss13round.game_mode_result
-FROM ss13round
-WHERE ss13round.game_mode IS NOT NULL
-GROUP BY ss13round.game_mode, ss13round.game_mode_result;");
+min(tbl_round.start_datetime) AS earliest_start,
+max(tbl_round.end_datetime) AS latest_end,
+min(tbl_round.id) AS `first`,
+max(tbl_round.id) AS `last`,
+floor(AVG(TIME_TO_SEC(TIMEDIFF(tbl_round.end_datetime,tbl_round.start_datetime)))) / 60 AS avgduration,
+tbl_round.game_mode,
+tbl_round.game_mode_result
+FROM tbl_round
+WHERE tbl_round.game_mode IS NOT NULL
+GROUP BY tbl_round.game_mode, tbl_round.game_mode_result;");
 $db->execute();?>
 
 <table class="table sort table-bordered table-condensed">
