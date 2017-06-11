@@ -11,6 +11,7 @@
     <p class="lead">From round <?php echo $round->link;?></p>
   <?php endif;?>
 </div>
+<?php endif;?>
 
 <table class="table sticky  table-bordered table-condensed">
   <?php $tF = 0; $tS = 0; foreach ($stat->details as $objective => $count): ?>
