@@ -262,7 +262,6 @@
       LEFT JOIN tbl_connection_log ON tbl_connection_log.ckey = tbl_player.ckey
       WHERE tbl_player.ip = ?
       -- AND tbl_player.lastseen >= NOW() - INTERVAL 1 DAY
-      LIMIT 1");
     $db->bind(1,ip2long($_SERVER['REMOTE_ADDR']));
     try {
       $db->execute();

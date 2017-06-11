@@ -479,14 +479,14 @@ class ban {
     }
     switch ($flag) {
       case 'A':
-        if(2 < $user->level){
+        if($user->level < 2){
           return returnError("You do not have permission to approve comments");
         }
         $flagText = 'Comment approved';
       break;
 
       case 'H':
-        if(2 < $user->level){
+        if($user->level < 2){
           return returnError("You cannot perform this action");
         }
         $flagText = 'Comment hidden';

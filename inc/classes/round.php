@@ -546,7 +546,7 @@
     if(!$user->legit){
       die("You must be a known user in order to submit comments");
     }
-    if (2 <= $user->level){
+    if (2 >= $user->level){
       $flag = 'A'; //Admin comments auto-approve!
     }
     $db = new database(TRUE);
@@ -574,14 +574,14 @@
     }
     switch ($flag) {
       case 'A':
-        if(2 < $user->level){
+        if($user->level < 2){
           return returnError("You do not have permission to approve comments");
         }
         $flagText = 'Comment approved';
       break;
 
       case 'H':
-        if(2 < $user->level){
+        if($user->level < 2){
           return returnError("You cannot perform this action");
         }
         $flagText = 'Comment hidden';

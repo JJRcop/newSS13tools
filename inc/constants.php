@@ -1,8 +1,11 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.2.2');
+define('VERSION','1.2.3');
 
 define('CHANGELOG',array(
+  '1.2.3 - 11-06-2017'=>array(
+    array('mod'=>"Corrected a bug with admins being unable to moderate round comments"),
+  ), 
   '1.2.2 - 09-06-2017'=>array(
     array('mod'=>"Fixed an error preventing objectives from being shown on round views."),
   ), 
