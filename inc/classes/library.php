@@ -38,11 +38,10 @@ class library {
       WHERE tbl_library.id= ?");
     $db->bind(1,$book);
     try {
-      $db->execute();
+      return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
   }
 
   public function parseBook(&$book){
@@ -98,11 +97,10 @@ class library {
       WHERE tbl_library.id=?");
     $db->bind(1,$book);
     try {
-      $db->execute();
+    return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
   }
 
   public function getCatalog($page=1, $count=30, $query=null){
@@ -123,15 +121,15 @@ class library {
     $db->bind(1,$page);
     $db->bind(2,$count);
     try {
-      $db->execute();
+      $books = $db->resultset();
+      foreach ($books as $book){
+        $book = $this->parseBook($book);
+      }
+      return $books;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $books = $db->resultset();
-    foreach ($books as $book){
-      $book = $this->parseBook($book);
-    }
-    return $books;
+
   }
 
   public function getDuplicates(){
@@ -145,11 +143,11 @@ class library {
       GROUP BY content
       ORDER BY count DESC;");
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
+
   }
 
   public function countBooks(){
@@ -161,11 +159,11 @@ class library {
       FROM tbl_library
       WHERE content != ''");
     try {
-      $db->execute();
+      return $db->single()->total;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single()->total;
+
   }
 
   public function flagBook($book){

@@ -1,13 +1,8 @@
 <?php
 if (!isset($_GET['round'])) die("No round ID specified!");
 $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
-$round = new round($round,array('data','deaths'));
+$round = new round($round,array('data','deaths','explosions','antags'));
 ?>
-<script>    
-  if(typeof window.history.pushState == 'function') {
-    window.history.pushState({}, "Hide", "<?php echo $round->href;?>");
-  }
-</script>
 
 <?php if (!$round->id):?>
   <div class="alert alert-danger">
@@ -65,7 +60,7 @@ $round = new round($round,array('data','deaths'));
     <th>Round Duration</th>
     <td><?php echo $round->duration;?></td>
     <th>Logs available</th>
-    <td><?php echo $round->logs;?></td>
+    <td><a href="<?php echo $round->href;?>&logs=true">View</a></td>
   </tr>
   <tr>
     <th>Map Name</th>
@@ -196,46 +191,103 @@ $total = $dead + $survivors; ?>
     <h2><a data-toggle="collapse" href="#deaths" aria-expanded="false"
      aria-controls="deaths">Deaths from this round</a></h2>
   </div>
-  <table id="deaths" class="table table-bordered table-condensed collapse ">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Job</th>
-        <th>Location & Map</th>
-        <th>Damage & Attacker (if set)<br>
-          <span title="Brute" class="label label-dam label-brute">BRU</span>
-          <span title="Brain" class="label label-dam label-brain">BRA</span>
-          <span title="Fire" class="label label-dam label-fire">FIR</span>
-          <span title="Oxygen" class="label label-dam label-oxy">OXY</span>
-          <span title="Toxin" class="label label-dam label-tox">TOX</span>
-          <span title="Clone" class="label label-dam label-clone">CLN</span>
-          <span title="Stamina" class="label label-dam label-stamina">STM</span>
-        </th>
-        <th>Time & Server</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($round->deaths as $d):?>
-        <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server;?>">
-          <td><?php echo $d->link;?></td>
-          <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>
-          <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>
-          <td><?php echo "$d->pod <br><small>$d->mapname  ($d->coord)</small>";?></td>
-          <td>
-            <?php echo $d->labels;?><br>
-            <?php if('' != $d->laname):?>
-              <?php echo "By $d->laname <small>($d->lakey)</small>";?>        <?php if($d->suicide) echo " <small class='text-danger'>(Probable Suicide)</small>";?>
-            <?php endif;?>
-          </td>
-          <td><?php echo "$d->tod";?></td>
+  <div id="deaths" class="collapse">
+    <table class="table table-bordered table-condensed">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Job</th>
+          <th>Location & Map</th>
+          <th>Damage & Attacker (if set)<br>
+            <span title="Brute" class="label label-dam label-brute">BRU</span>
+            <span title="Brain" class="label label-dam label-brain">BRA</span>
+            <span title="Fire" class="label label-dam label-fire">FIR</span>
+            <span title="Oxygen" class="label label-dam label-oxy">OXY</span>
+            <span title="Toxin" class="label label-dam label-tox">TOX</span>
+            <span title="Clone" class="label label-dam label-clone">CLN</span>
+            <span title="Stamina" class="label label-dam label-stamina">STM</span>
+          </th>
+          <th>Time & Server</th>
         </tr>
-      <?php endforeach;?>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <?php foreach ($round->deaths as $d):?>
+          <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server;?>">
+            <td><?php echo $d->link;?></td>
+            <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>
+            <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>
+            <td><?php echo "$d->pod <br><small>$d->mapname  ($d->coord)</small>";?></td>
+            <td>
+              <?php echo $d->labels;?><br>
+              <?php if('' != $d->laname):?>
+                <?php echo "By $d->laname <small>($d->lakey)</small>";?>        <?php if($d->suicide) echo " <small class='text-danger'>(Probable Suicide)</small>";?>
+              <?php endif;?>
+            </td>
+            <td><?php echo "$d->tod";?></td>
+          </tr>
+        <?php endforeach;?>
+      </tbody>
+    </table>
+    <hr>
+  </div>
 <?php endif;?>
 
-<hr>
+<?php if($round->explosions):?>
+  <div class="page-header">
+    <h2><a data-toggle="collapse" href="#explosions" aria-expanded="false"
+     aria-controls="explosions">Explosions from this round</a></h2>
+  </div>
+    <div id="explosions" class="collapse">
+      <table class="table table-bordered table-condensed sort">
+        <thead>
+          <tr>
+            <th>Devestation</th>
+            <th>Heavy</th>
+            <th>Light</th>
+            <th>Flash</th>
+            <th>Location</th>
+            <th>X</th>
+            <th>Y</th>
+            <th>Z</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($round->explosions as $e):?>
+            <tr>
+              <td><?php echo $e->devestation;?></td>
+              <td><?php echo $e->heavy;?></td>
+              <td><?php echo $e->light;?></td>
+              <td><?php echo $e->flash;?></td>
+              <td><?php echo $e->area;?></td>
+              <td><?php echo $e->x;?></td>
+              <td><?php echo $e->y;?></td>
+              <td><?php echo $e->z;?></td>
+              <td><?php echo $e->time;?></td>
+            </tr>
+          <?php endforeach;?>
+        </tbody>
+      </table>
+      <hr>
+    </div>
+<?php endif;?>
+
+<?php if($user->legit && $round->antags):?>
+  <div class="page-header">
+    <h2><a data-toggle="collapse" href="#antags" aria-expanded="false"
+     aria-controls="antags">Antagonists from this round</a></h2>
+  </div>
+    <div id="antags" class="collapse">
+    <?php foreach($round->antags as $a):?>
+      <dl class="dl-horizontal">
+        <dt><?php echo ucfirst($a->role);?></dt>
+        <dd><?php echo $a->antags;?></dd>
+      </dl>
+    <?php endforeach;?>
+      <hr>
+    </div>
+<?php endif;?>
 
 <?php if ($user->legit):?>
 <?php include(ROOTPATH."/rounds/comments.php");?>
@@ -245,7 +297,7 @@ $total = $dead + $survivors; ?>
 
 <div id="rawdata">
   <h3>Raw data</h3>
-  <ul class="list-unstyled">
+  <ul class="list-inline">
     <?php foreach ($round->data as $d) :?>
       <li>
         <code>

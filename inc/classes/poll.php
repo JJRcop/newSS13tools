@@ -43,15 +43,15 @@
       $db->bind(1,$id);
     }
     try {
-      $db->execute();
+      if($id){
+        return $db->single();
+      } else{
+        return $db->resultset();
+      }
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    if($id){
-      return $db->single();
-    } else{
-      return $db->resultset();
-    }
+
   }
 
   public function getPollResults($id=null){
@@ -65,11 +65,11 @@
       ORDER BY votes DESC;");
     $db->bind(1,$id);
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
+
   }
 
   public function getRatingResults($id=null){
@@ -83,11 +83,10 @@
       ORDER BY votes DESC;");
     $db->bind(1,$id);
     try {
-      $db->execute();
+    return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 
   public function getTextPollResults($id=null){
@@ -104,11 +103,10 @@
     ORDER BY tbl_poll_textreply.datetime DESC ");
     $db->bind(1,$id);
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 
   public function getIRVPollResults($id=null){
@@ -123,11 +121,11 @@
     ORDER BY tbl_poll_textreply.datetime DESC ");
     $db->bind(1,$id);
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
+
   }
 
   public function getPollOptions($id=null){
@@ -138,11 +136,11 @@
     ORDER BY tbl_poll_option.id");
     $db->bind(1,$id);
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
+
   }
 
   public function parsePoll(&$poll){

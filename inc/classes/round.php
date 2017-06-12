@@ -17,6 +17,8 @@
   public $commit_href = null;
   public $commit_link = "Not found";
 
+  public $explosions = false;
+
   public function __construct($round=null,$data=false) {
     if($round){
       $round = $this->getRound($round);
@@ -25,11 +27,11 @@
       if(is_array($data)){
         foreach ($data as $get){
           switch ($get){
-
             //Getting and parsing round logs
             case 'logs':
               if ($round->logs){
-                $round = $this->getRoundLogs($round);
+                $gameLogs = new GameLogs($round);
+                $round = $gameLogs->getGameLogs();
               } else {
                 $round->logs = false;
               }
@@ -45,10 +47,25 @@
               }
             break;
 
+            //Deaths that occurred during this round
             case 'deaths':
             case 'death':
               $death = new death();
               $round->deaths = $death->getDeathsForRound($round->id);
+            break;
+
+            //Explosions extracted from roung logs (only available after a
+            //rounds logs have been parsed)
+            case 'explosion':
+            case 'explosions':
+              $round->explosions = $this->getExplosions($round->id);
+            break;
+
+            //Antagonists extracted from roung logs (only available after a
+            //rounds logs have been parsed)
+            case 'antag':
+            case 'antags':
+              $round->antags = $this->getAntags($round->id);
             break;
           }
         }
@@ -104,7 +121,24 @@
       $round->station_name = '<em>Not specified</em>';
     }
 
-    $round->logs = "<em>Forthcoming</em>";
+    //Can we even get logs?
+    if(defined('REMOTE_LOG_SRC')){
+      $round->logs = TRUE;
+    } else {
+      $round->logs = FALSE;
+    }
+
+    //Log URL
+    $server = strtolower($round->server);
+    $date = new DateTime($round->start);
+    $year = $date->format('Y');
+    $month = $date->format('m');
+    $day = $date->format('d');
+    $round->logsURL = REMOTE_LOG_SRC."$server/data/logs/$year/$month/$day/";
+    $round->logsURL.= "round-$round->id";
+
+    //Log cache file
+    $round->logCache = TMPDIR."/$round->id-$round->server-logs.json";
 
     return $round;
   }
@@ -215,15 +249,15 @@
     $db->bind(1,$page);
     $db->bind(2,$count);
     try {
-      $db->execute();
+      $rounds = $db->resultset();
+      foreach ($rounds as $round){
+        $this->parseRound($round);
+      }
+      return $rounds;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $rounds = $db->resultset();
-    foreach ($rounds as $round){
-      $this->parseRound($round);
-    }
-    return $rounds;
+
   }
 
   public function getRound($id){
@@ -242,11 +276,11 @@
         WHERE tbl_round.id = ?");
     $db->bind(1, $id);
     try {
-      $db->execute();
+      return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
+
   }
 
   public function getRoundFeedback($round){
@@ -258,11 +292,11 @@
       FROM tbl_feedback WHERE round_id = ?");
     $db->bind(1,$round);
     try {
-      $db->execute();
+      return  $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return  $db->resultset();
+
   }
 
   public function parseRoundFeedback(&$feedback){
@@ -283,14 +317,14 @@
     $db->bind(1,$round);
     $db->bind(2,$stat);
     try {
-      $db->execute();
+      $stat = new stat();
+      $data = $db->single();
+      $stat = $stat->parseFeedback($data);
+      return $stat;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $stat = new stat();
-    $data = $db->single();
-    $stat = $stat->parseFeedback($data);
-    return $stat;
+
   }
 
   public function countRounds() {
@@ -300,160 +334,42 @@
     }
     $db->query("SELECT count(id) AS total FROM tbl_round;");
     try {
-      $db->execute();
+      return $db->single()->total;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single()->total;
+
   }
 
-  public function getRoundLogs(&$round){
-    if(file_exists($round->logCache)){
-      $round->logs = $this->getCachedLogs($round->logCache);
-      $round->fromCache = TRUE;
-    } else {
-      $round->logs = $this->getRemoteLogs($round->logURL);
-      $round = $this->extractRoundLogs($round);
-      $round->fromCache = FALSE;
-    }
-    return $round;
-  }
-
-  public function getCachedLogs($cache){
-    $logs = file_get_contents($cache);
-    return json_decode($logs);
-  }
-
-  public function getRemoteLogs($url){
-    $logs = $this->fetchRemoteLogs($url);
-    $logs = $this->cleanUpLogs($logs);
-    return $logs;
-  }
-
-  public function cleanUpLogs($logs){
-    //This method is ONLY for cleaning out useless lines from the logs
-
-    //For the sake of transparency, this method is heavily documented
-    //
-    //-censored lines have no value in public logs, and are removed entirely
-    $logs = str_replace("-censored(misc)-\r\n",'',$logs);
-    $logs = str_replace("-censored(sql logs)-\r\n",'',$logs);
-    $logs = str_replace("-censored(asay/apm/ahelp/notes/etc)-\r\n",'',$logs);
-    $logs = str_replace(" from -censored(ip/cid)- ",' ',$logs);
-    $logs = str_replace("-censored(private logtype)-\r\n", '', $logs);
-
-    //For some reason, some lines are a single - and a return. These lines are
-    //removed
-    $logs = str_replace("-\r\n", '', $logs);
-
-    //[hh:mm:ss]SAY: [mob name]/[ckey] : Something said
-    //This line removes the spaces:   ^ ^
-    $logs = str_replace(" : ",': ',$logs);
-
-    //HTML spans are superfluous and removed
-    $logs = str_replace("<span class='notice'>",'',$logs);
-    $logs = str_replace("<span class='boldannounce'>",'',$logs);
-    $logs = str_replace('</span>', '', $logs);
-
-    //*no key* are mob emotes from mobs that aren't player controlled
-    $logs = str_replace('*no key*/', '', $logs);
-
-    //Deadchat(dsay) lines are prefixed with ghost/, this changes that to GHOST
-    $logs = str_replace("SAY: Ghost/","GHOST: ", $logs);
-
-    //This line splits the line into three parts:
-    // Timestamp
-    // Type
-    // Content
-    //The #-# is a line that I can easily break on in another method
-    //
-    //TODO: Randomize the #-# to stop people from (un)intentionally breaking
-    //the parser
-    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE|GHOST)(:\s)/","$2#-#$4#-#", $logs);
-
-    //UTF8 encode (hey look who was ahead of the curve)
-    $logs = utf8_encode($logs);
-
-    //And split everything into a nice big array that we can iterate over
-    $logs = explode("\r\n",$logs);
-
-    //Remove empty lines
-    array_filter($logs);
-
-    //Remove the last line
-    array_pop($logs);
-
-    foreach ($logs as &$log){
-      $log = explode('#-#',$log);
+  public function getExplosions($round){
+    $db = new database(TRUE);
+    $db->query("SELECT * FROM explosion_log
+      WHERE round = ?
+      ORDER BY `time` DESC");
+    $db->bind(1,$round);
+    try {
+      return $db->resultset();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
     }
 
-    return $logs;
   }
 
-  public function fetchRemoteLogs($url){
-    $file = str_replace(REMOTE_LOG_SRC, '', $url);
-    $file = str_replace("/", '-', $file);
-    $curl = curl_init();
-    curl_setopt_array($curl, array(
-      CURLOPT_RETURNTRANSFER => TRUE,
-      CURLOPT_URL => $url,
-      CURLOPT_USERAGENT => "atlantaned.space log parser",
-      CURLOPT_SSL_VERIFYPEER => FALSE,
-      CURLOPT_SSL_VERIFYHOST => FALSE,
-      CURLOPT_FOLLOWLOCATION => TRUE,
-      CURLOPT_REFERER => "atlantaned.space",
-      CURLOPT_ENCODING => 'gzip',
-    ));
-    $logs = curl_exec($curl);
-    curl_close($curl);
-    return $logs;
-  }
-
-  public function extractRoundLogs($round){
-    $bounds = $this->getRoundBounds($round);
-    $start = $bounds['start']['pos'];
-    $end = $bounds['end']['pos'];
-    $end = $end-$start+1;
-    $round->logs = array_slice($round->logs, $start, $end);
-    $this->cacheParsedLogs($round);
-    return $round;
-  }
-
-  public function getRoundBounds($round){
-    function diffSort($a, $b) {
-      return ($a['diff'] < $b['diff']) ? -1 : 1;
+  public function getAntags($round){
+    $db = new database(TRUE);
+    $db->query("SELECT role,
+      group_concat(concat(`name`,'(',ckey,')') SEPARATOR ', ') AS antags
+      FROM antag_log
+      WHERE round = ?
+      GROUP BY role
+      ORDER BY `time` DESC;");
+    $db->bind(1,$round);
+    try {
+      return $db->resultset();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
     }
-    $starts = array();
-    $ends = array();
-    $startTime = new DateTime($round->start);
-    $endTime = new DateTime($round->end);
-    $i = -1;
-    foreach ($round->logs as $log){
-      $i++;
-      if ($log[1] === 'ADMIN' && $log[2] === 'Loading Banlist'){
-        $log['time'] = $startTime->format("Y-m-d ").$log[0];
-        $log['diff'] = abs(strtotime($log['time']) - strtotime($round->start));
-        $log['pos'] = $i;
-        $starts[] = $log;
-      }
-      if ($log[1] === 'GAME' && strpos($log[2],'Rebooting World.') !== FALSE){
-        $log['time'] = $endTime->format("Y-m-d ").$log[0];
-        $log['diff'] = abs(strtotime($log['time']) - strtotime($round->end));
-        $log['pos'] = $i;
-        $ends[] = $log;
-      }
-    }
-    usort($starts,'diffsort');
-    usort($ends,'diffsort');
-    $return['start'] = $starts[0];
-    $return['end'] = $ends[0];
-    return $return;
-  }
 
-  public function cacheParsedLogs($round){
-    $logsavefile = fopen($round->logCache,"w+");
-    fwrite($logsavefile,json_encode($round->logs,JSON_UNESCAPED_UNICODE));
-    fclose($logsavefile);
   }
 
   public function getRoundComments($round){
@@ -466,30 +382,30 @@
     $db->query("SELECT * FROM round_comments WHERE round = ? AND ($where) ");
     $db->bind(1, $round);
     try {
-      $db->execute();
+      $comments = $db->resultset();
+      foreach ($comments as &$comment){
+        $comment = $this->parseComment($comment);
+      }
+      return $comments;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $comments = $db->resultset();
-    foreach ($comments as &$comment){
-      $comment = $this->parseComment($comment);
-    }
-    return $comments;
+
   }
 
   public function getAllRoundComments(){
     $db = new database(TRUE);
     $db->query("SELECT * FROM round_comments ORDER BY `timestamp` DESC");
     try {
-      $db->execute();
+      $comments = $db->resultset();
+      foreach ($comments as &$comment){
+        $comment = $this->parseComment($comment);
+      }
+      return $comments;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $comments = $db->resultset();
-    foreach ($comments as &$comment){
-      $comment = $this->parseComment($comment);
-    }
-    return $comments;
+
   }
 
 

@@ -9,6 +9,7 @@ if (!$ban->id) die("Ban not found");
 if (isset($_GET['addComment']) && isset($_POST['comment'])) {
   $newComment = filter_input(INPUT_POST, 'comment', FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
   echo parseReturn($ban->addComment($ban->id, $newComment));
+  resetURL($ban->link);
 }
 
 if (isset($_GET['approveComment'])){
@@ -18,6 +19,7 @@ if (isset($_GET['approveComment'])){
   } else {
     echo parseReturn(returnError("Unable to approve comment"));
   }
+  resetURL($ban->link);
 }
 
 if (isset($_GET['reportComment'])){
@@ -27,6 +29,7 @@ if (isset($_GET['reportComment'])){
   } else {
     echo parseReturn(returnError("Unable to report comment"));
   }
+  resetURL($ban->link);
 }
 
 if (isset($_GET['hideComment'])){
@@ -36,13 +39,9 @@ if (isset($_GET['hideComment'])){
   } else {
     echo parseReturn(returnError("Unable to hide comment"));
   }
+  resetURL($ban->link);
 }
 ?>
-<script>    
-  if(typeof window.history.pushState == 'function') {
-    window.history.pushState({}, "Hide", "<?php echo $ban->link;?>");
-  }
-</script>
 
 <?php include('banData.php');?>
 

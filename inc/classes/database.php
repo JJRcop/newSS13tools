@@ -75,6 +75,8 @@ class database {
   }
 
   public function execute() {
+    // trigger_error(__FILE__);
+    // var_dump($this);
     return $this->stmt->execute();
   }
 

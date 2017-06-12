@@ -18,6 +18,10 @@ if(empty($_GET) || isset($_GET['page'])){
 } elseif (isset($_GET['round']) && isset($_GET['stat'])){
   $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
   include('rounds/viewRoundStat.php');
+} elseif (isset($_GET['round']) && isset($_GET['logs'])){
+  $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
+  $logs = filter_input(INPUT_GET, 'logs', FILTER_VALIDATE_BOOLEAN);
+  include('rounds/viewRoundLogs.php');
 } elseif (isset($_GET['round'])){
   include('rounds/viewRound.php');
 }

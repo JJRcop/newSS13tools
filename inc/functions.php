@@ -174,3 +174,11 @@ function alert($msg, $level=2){
   }
   return "<div class='alert alert-$class'>$msg</div>";
 }
+
+function resetURL($url){
+  echo "<script>";
+  echo "if(typeof window.history.pushState == 'function') {";
+  echo "  window.history.pushState({}, 'Hide', '$url');";
+  echo "}";
+  echo "</script>";
+}

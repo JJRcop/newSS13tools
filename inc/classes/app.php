@@ -177,11 +177,10 @@
     $db->query("SELECT * FROM tbl_messages WHERE `type` = 'memo'
       ORDER BY `timestamp` DESC");
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 
   public function getBigNumbers(){
@@ -192,20 +191,19 @@
     }
     $db->query("SELECT count(id) AS deaths FROM tbl_death;");
     try {
-      $db->execute();
+      $result['deaths'] = $db->single()->deaths;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $result['deaths'] = $db->single()->deaths;
 
     $db->query("SELECT count(id) AS rounds FROM tbl_round;");
     try {
-      $db->execute();
+      $result['rounds'] = $db->single()->rounds;
+      return $result;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $result['rounds'] = $db->single()->rounds;
-    return $result;
+
   }
 
   public function getRemoteFile($url){
@@ -342,11 +340,10 @@
     GROUP BY tbl_feedback.var_name, DAY(tbl_feedback.time)
     ORDER BY MONTH(tbl_feedback.time), DAY(tbl_feedback.time) ASC;");
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 
   public function getActiveBanCount(){
@@ -357,10 +354,9 @@
       WHERE tbl_ban.expiration_time > NOW() OR tbl_ban.unbanned IS NULL
       GROUP BY tbl_ban.bantype;");
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 }

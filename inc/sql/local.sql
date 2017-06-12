@@ -1,3 +1,32 @@
+-- Create syntax for TABLE 'antag_log'
+CREATE TABLE `antag_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `round` int(11) DEFAULT NULL,
+  `time` datetime DEFAULT NULL,
+  `role` varchar(32) DEFAULT NULL,
+  `ckey` varchar(32) DEFAULT NULL,
+  `name` varchar(32) DEFAULT NULL,
+  `added` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+-- Create syntax for TABLE 'explosion_log'
+CREATE TABLE `explosion_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `round` int(11) DEFAULT NULL,
+  `time` datetime DEFAULT NULL,
+  `devestation` int(3) DEFAULT NULL,
+  `heavy` int(3) DEFAULT NULL,
+  `light` int(3) DEFAULT NULL,
+  `flash` int(3) DEFAULT NULL,
+  `area` varchar(64) DEFAULT NULL,
+  `x` int(4) DEFAULT NULL,
+  `y` int(4) DEFAULT NULL,
+  `z` int(4) DEFAULT NULL,
+  `added` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
 -- Create syntax for TABLE 'ban_comment'
 CREATE TABLE `ban_comment` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

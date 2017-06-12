@@ -66,11 +66,10 @@ class ban {
       WHERE tbl_ban.id = ?");
     $db->bind(1, $id);
     try {
-      $db->execute();
+      return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
   }
 
   public function getBanList($page = 0, $count=100,$filterby=null,$filter=null) {
@@ -109,15 +108,14 @@ class ban {
       $db->bind(2, $count);
     }
     try {
-      $db->execute();
+      $bans = $db->resultSet();
+      foreach ($bans as &$ban){
+        $ban = $this->parseBan($ban);
+      }
+      return $bans;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $bans = $db->resultSet();
-    foreach ($bans as &$ban){
-      $ban = $this->parseBan($ban);
-    }
-    return $bans;
   }
 
   public function parseBan(&$ban) {
@@ -314,11 +312,10 @@ class ban {
       GROUP BY bantype, a_ckey
       ORDER BY bans DESC;");
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 
   public function getPlayerBans($ckey,$active=false){
@@ -338,16 +335,14 @@ class ban {
       ORDER BY bantime DESC");
     $db->bind(1,strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $ckey)));
     try {
-      $db->execute();
+      if(!$bans = $db->resultSet()) return false;
+      foreach ($bans as &$b){
+        $b = $this->parseBan($b);
+      }
+      return $bans;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $ban = new ban();
-    if(!$bans = $db->resultSet()) return false;
-    foreach ($bans as &$b){
-      $b = $ban->parseBan($b);
-    }
-    return $bans;
   }
 
   public function getBanComments($ban){
@@ -360,30 +355,28 @@ class ban {
     $db->query("SELECT * FROM ban_comment WHERE ban = ? AND ($where) ");
     $db->bind(1, $ban);
     try {
-      $db->execute();
+      $comments = $db->resultset();
+      foreach ($comments as &$comment){
+        $comment = $this->parseComment($comment);
+      }
+      return $comments;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $comments = $db->resultset();
-    foreach ($comments as &$comment){
-      $comment = $this->parseComment($comment);
-    }
-    return $comments;
   }
 
   public function getAllBanComments(){
     $db = new database(TRUE);
     $db->query("SELECT * FROM ban_comment ORDER BY `timestamp` DESC");
     try {
-      $db->execute();
+      $comments = $db->resultset();
+      foreach ($comments as &$comment){
+        $comment = $this->parseComment($comment);
+      }
+      return $comments;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $comments = $db->resultset();
-    foreach ($comments as &$comment){
-      $comment = $this->parseComment($comment);
-    }
-    return $comments;
   }
 
 

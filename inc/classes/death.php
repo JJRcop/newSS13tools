@@ -26,22 +26,20 @@ class death {
       ORDER BY tbl_death.tod DESC");
     $db->bind(1,$id);
     try {
-      $db->execute();
+      return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
   }
 
   public function countDeaths(){
     $db = new database();
     $db->query("SELECT COUNT(tbl_death.id) AS count FROM tbl_death;");
     try {
-      $db->execute();
+      return $db->single()->count;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single()->count;
   }
 
   public function getDeaths($count=30, $short=false, $page=1){
@@ -60,14 +58,13 @@ class death {
     $db->bind(1,$page);
     $db->bind(2,$count);
     try {
-      $db->execute();
+      foreach ($deaths = $db->resultset() as &$death) {
+        $this->parseDeath($death,$short);
+      }
+      return $deaths;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    foreach ($deaths = $db->resultset() as &$death) {
-      $this->parseDeath($death,$short);
-    }
-    return $deaths;
   }
 
   public function getDeathsInRange($start,$end) {
@@ -77,14 +74,14 @@ class death {
     }
     $db->query("SELECT * FROM tbl_death WHERE tod BETWEEN '$start' AND '$end'");
     try {
-      $db->execute();
+      foreach ($deaths = $db->resultset() as &$death) {
+        $this->parseDeath($death);
+      }
+      return $deaths;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    foreach ($deaths = $db->resultset() as &$death) {
-      $this->parseDeath($death);
-    }
-    return $deaths;
+
   }
 
   public function getDeathsForRound($round){
@@ -95,15 +92,14 @@ class death {
       WHERE tbl_round.id = ?");
     $db->bind(1, $round);
     try {
-      $db->execute();
+      foreach ($deaths = $db->resultset() as &$death) {
+        if(!$death->id) return false;
+        $this->parseDeath($death);
+      }
+      return $deaths;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    foreach ($deaths = $db->resultset() as &$death) {
-      if(!$death->id) return false;
-      $this->parseDeath($death);
-    }
-    return $deaths;
   }
 
   public function parseDeath(&$death,$short=false){
@@ -240,11 +236,10 @@ class death {
       LIMIT 0,?;");
     $db->bind(1,$count);
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 
   public function getDeathsFromMap($map='Box'){
@@ -280,11 +275,10 @@ class death {
       LIMIT 0, 1000;");
     $db->bind(1,$map);
     try {
-      $db->execute();
+      return $db->resultSet();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultSet();
   }
 
   public function countDeathsByDays($days=7){
@@ -300,11 +294,10 @@ class death {
       ORDER BY MONTH(tod), DAY(tod) ASC");
     $db->bind(1,$days);
     try {
-      $db->execute();
+      return $db->resultSet();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultSet();
   }
 
 }

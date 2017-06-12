@@ -25,14 +25,13 @@ class message {
     $db->bind(1, $page);
     $db->bind(2, $count);
     try {
-      $db->execute();
+      foreach ($messages = $db->resultSet() as &$message){
+        $message = $this->parseMessage($message);
+      }
+      return $messages;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    foreach ($messages = $db->resultSet() as &$message){
-      $message = $this->parseMessage($message);
-    }
-    return $messages;
   }
 
   public function getMessage($id) {
@@ -44,11 +43,10 @@ class message {
       WHERE tbl_messages.id = ?");
     $db->bind(1, $id);
     try {
-      $db->execute();
+      return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
   }
 
   public function getPlayerMessages($ckey) {
@@ -60,14 +58,13 @@ class message {
       WHERE tbl_messages.targetckey = ? ORDER BY `timestamp` DESC");
     $db->bind(1, $ckey);
     try {
-      $db->execute();
+      foreach ($messages = $db->resultSet() as &$message){
+        $message = $this->parseMessage($message);
+      }
+      return $messages;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    foreach ($messages = $db->resultSet() as &$message){
-      $message = $this->parseMessage($message);
-    }
-    return $messages;
   }
 
   public function parseMessage(&$message){
@@ -147,14 +144,14 @@ class message {
     $db->bind(1, $page);
     $db->bind(2, $count);
     try {
-      $db->execute();
+      foreach ($messages = $db->resultSet() as &$message){
+        $message = $this->parseMessage($message);
+      }
+      return $messages;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    foreach ($messages = $db->resultSet() as &$message){
-      $message = $this->parseMessage($message);
-    }
-    return $messages;
+
   }
 
 }

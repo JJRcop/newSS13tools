@@ -243,11 +243,10 @@
       WHERE tbl_player.ckey = ? LIMIT 1");
     $db->bind(1,$ckey);
     try {
-      $db->execute();
+      return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
   }
 
   public function getUserByIP(){
@@ -262,13 +261,15 @@
       LEFT JOIN tbl_connection_log ON tbl_connection_log.ckey = tbl_player.ckey
       WHERE tbl_player.ip = ?
       -- AND tbl_player.lastseen >= NOW() - INTERVAL 1 DAY
+      GROUP BY tbl_player.id
+      LIMIT 1");
     $db->bind(1,ip2long($_SERVER['REMOTE_ADDR']));
     try {
-      $db->execute();
+      return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
+
   }
 
   public function getPlayerByCkey($ckey){
@@ -286,17 +287,16 @@
       WHERE tbl_player.ckey = ?");
     $db->bind(1,strtolower(preg_replace('~[^a-zA-Z0-9]+~', '', $ckey)));
     try {
-      $db->execute();
+      $player = $db->single();
+      $ban = new ban();
+      $player->bans = $ban->getPlayerBans($player->ckey);
+      $message = new message();
+      $player->messages = $message->getPlayerMessages($player->ckey);
+      $player = $this->parseUser($player,TRUE);
+      return $player;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $player = $db->single();
-    $ban = new ban();
-    $player->bans = $ban->getPlayerBans($player->ckey);
-    $message = new message();
-    $player->messages = $message->getPlayerMessages($player->ckey);
-    $player = $this->parseUser($player,TRUE);
-    return $player;
   }
 
   public function getConnectionLog($filterby, $filter){
@@ -371,14 +371,14 @@
       $db->bind(1, $filter);
     }
     try {
-      $db->execute();
+      foreach ($players = $db->resultSet() as &$player){
+        $player = $this->parseUser($player);
+      }
+      return $players;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    foreach ($players = $db->resultSet() as &$player){
-      $player = $this->parseUser($player);
-    }
-    return $players;
+
   }
 
   public function flagAuth(){
@@ -414,17 +414,16 @@
       GROUP BY tbl_player.ckey
       ORDER BY connections DESC;");
     try {
-      $db->execute();
+      $result = $db->resultset();
+      $admins = array();
+      foreach ($result as &$r){
+        if('Player' == $r->lastadminrank) continue;
+        $admins[] = $this->parseUser($r);
+      }
+      return $admins;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $result = $db->resultset();
-    $admins = array();
-    foreach ($result as &$r){
-      if('Player' == $r->lastadminrank) continue;
-      $admins[] = $this->parseUser($r);
-    }
-    return $admins;
   }
 
   public function verifyAdminRank($ckey){
@@ -468,11 +467,10 @@
       $db->bind(1, $ckey);
     }
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 
   public function getActiveRoles($ckey){
@@ -480,11 +478,10 @@
     $db->query("SELECT job, minutes FROM tbl_role_time WHERE ckey = ?");
     $db->bind(1, $ckey);
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
   }
 
   public function getActiveAdminHours(){
@@ -494,16 +491,15 @@
         WHERE tbl_player.lastadminrank != 'Player'
         GROUP BY HOUR(tbl_connection_log.datetime);");
     try {
-      $db->execute();
+      return $db->resultset();
+      $result = array();
+      foreach ($db->resultset() as $r){
+        $result[$r->hour] = $r->connections;
+      }
+      return $result;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->resultset();
-    $result = array();
-    foreach ($db->resultset() as $r){
-      $result[$r->hour] = $r->connections;
-    }
-    return $result;
   }
 
 }

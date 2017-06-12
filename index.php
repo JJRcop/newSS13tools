@@ -1,7 +1,4 @@
-<?php require_once('header.php');
-$round = new round();
-$rounds = $round->listRounds(1,10);
-?>
+<?php require_once('header.php');?>
 <div class="page-header">
   <h1>SS13 Tools &amp; Stats</h1>
 </div>
@@ -28,6 +25,7 @@ In not so many words, some of the data in this tool may be offensive. I do not c
 </div>
 
 <?php endif;?>
+
 <?php $num = $app->getBigNumbers();?>
 <div class="row">
   <div class="col-md-6">
@@ -67,7 +65,12 @@ In not so many words, some of the data in this tool may be offensive. I do not c
     </ul>
   </div>
   <div class="col-md-6">
+
   <h2>Recent rounds <small><a href="<?php echo $app->APP_URL;?>round.php">See more</a></small></h2>
+  <?php
+    $round = new round();
+    $rounds = $round->listRounds(1,10);
+  ?>
   <ul class="list-unstyled">
   <?php
   if($rounds):

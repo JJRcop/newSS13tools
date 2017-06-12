@@ -90,17 +90,18 @@ tr.inverse {
 .GAME     { color: #00c000; font-weight: bold; }
 .PDA      { color: #800000; }
 .GHOST    { color: #5c00e6; }
+
 .log-wrap {
-  width: 100%;
-  overflow-x: auto;
+  overflow-x: scroll;
+  border: 1px solid grey;
 }
 .logs {
   font-family: Monospace;
-  width: auto;
-  border: 1px solid grey;
+  white-space: pre;
 }
 .logs td {
   vertical-align: top !important;
+  min-width: 100px;
 }
 .logs td:first-child {
   background: rgb(225,225,225);

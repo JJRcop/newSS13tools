@@ -17,12 +17,11 @@ class stat {
       FROM tbl_feedback WHERE var_name = ?");
     $db->bind(1,$stat);
     try {
-      $db->execute();
+      $f = $db->single();
+      return $this->parseFeedback($f,TRUE);
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $f = $db->single();
-    return $this->parseFeedback($f,TRUE);
   }
 
   public function aggreateStatForMonth($stat, $month, $year) {
@@ -48,8 +47,12 @@ class stat {
     $db->bind(1,$stat);
     $db->bind(2,$start);
     $db->bind(3,$end);
-    $f = $db->single();
-    return $this->parseFeedback($f,TRUE);
+    try {
+      $f = $db->single();
+      return $this->parseFeedback($f,TRUE);
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
   }
 
   public function getMonthsWithStats(){
@@ -59,11 +62,11 @@ class stat {
     }
     $db->query("SELECT * FROM tracked_months ORDER BY year DESC, month DESC");
     try {
-      $db->execute();
+      return $db->resultSet();
     } catch (Exception $e) {
       var_dump("Database error: ".$e->getMessage());
     }
-    return $db->resultSet();
+
   }
 
   public function getMonthlyStat($year, $month, $stat=false){
@@ -86,17 +89,17 @@ class stat {
     $db->bind(2,$year);
     if($stat) $db->bind(3, $stat);
     try {
-      $db->execute();
+      if($stat){
+        $result = $db->single();
+        $result->details = json_decode($result->details,TRUE);
+        return $this->parseFeedback($result,FALSE,TRUE);
+      } else {
+        return $db->resultset();
+      }
     } catch (Exception $e) {
-      var_dump("Database error: ".$e->getMessage());
+      return returnError("Database error: ".$e->getMessage());
     }
-    if($stat){
-      $result = $db->single();
-      $result->details = json_decode($result->details,TRUE);
-      return $this->parseFeedback($result,FALSE,TRUE);
-    } else {
-      return $db->resultset();
-    }
+    
   }
 
   public function getRoundsForMonth($start, $end){
@@ -111,11 +114,11 @@ class stat {
     $db->bind(1,$start);
     $db->bind(2,$end);
     try {
-      $db->execute();
+      return $db->single();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    return $db->single();
+
   }
 
   public function regenerateMonthlyStats($month, $year){
@@ -171,11 +174,11 @@ class stat {
     $db->bind(1,$start);
     $db->bind(2,$end);
     try {
-      $db->execute();
+      $results = $db->resultSet();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $results = $db->resultSet();
+    
     $db = new database(TRUE);
     if($db->abort){
       return FALSE;
@@ -628,15 +631,10 @@ class stat {
     $db->bind(1,$start);
     $db->bind(2,$end);
     try {
-      $db->execute();
+      return $db->resultset();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    $round = new round();
-    $rounds = $db->resultset();
-    // foreach ($rounds as &$r){
-    //   $r = $round->mapStatus($r);
-    // }
-    return $rounds;
+
   }
 }

@@ -1,8 +1,16 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.2.3');
+define('VERSION','1.3.0');
 
 define('CHANGELOG',array(
+  '1.3.0 - 12-06-2017'=>array(
+    array('add'=>"Public round logs are back! "),
+    array('add'=>"Explosions and antagonists are now being extracted from the public round logs and saved to a database table! Note that this information won't show on the round listing until the round's logs have been cached first."),
+    array('info-circle'=>"Be sure to see changes made to `/inc/sql/local.sql`! "),
+    array('add'=>"Coders and up can reset round logs and database information if something goes wrong."),
+    array('mod'=>"There was some annoying behavior with round and ban links not respecting browser history properly. This should now be fixed!"),
+    array('mod'=>"Optimized most database queries. I don't wanna talk about it."),
+  ), 
   '1.2.3 - 11-06-2017'=>array(
     array('mod'=>"Corrected a bug with admins being unable to moderate round comments"),
   ), 

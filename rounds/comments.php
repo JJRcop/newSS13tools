@@ -2,6 +2,7 @@
 if (isset($_GET['addComment']) && isset($_POST['comment'])) {
   $newComment = filter_input(INPUT_POST, 'comment', FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
   echo parseReturn($round->addComment($round->id, $newComment));
+  resetURL($round->href);
 }
 
 if (isset($_GET['approveComment'])){
@@ -11,6 +12,7 @@ if (isset($_GET['approveComment'])){
   } else {
     echo parseReturn(returnError("Unable to approve comment"));
   }
+  resetURL($round->href);
 }
 
 if (isset($_GET['reportComment'])){
@@ -20,6 +22,7 @@ if (isset($_GET['reportComment'])){
   } else {
     echo parseReturn(returnError("Unable to report comment"));
   }
+  resetURL($round->href);
 }
 
 if (isset($_GET['hideComment'])){
@@ -29,6 +32,7 @@ if (isset($_GET['hideComment'])){
   } else {
     echo parseReturn(returnError("Unable to hide comment"));
   }
+  resetURL($round->href);
 }
 
 ?>
