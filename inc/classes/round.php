@@ -343,9 +343,9 @@
 
   public function getExplosions($round){
     $db = new database(TRUE);
-    $db->query("SELECT * FROM explosion_log
-      WHERE round = ?
-      ORDER BY `time` DESC");
+    $db->query("SELECT explosion_log.* FROM explosion_log
+      WHERE explosion_log.round = ?
+      ORDER BY explosion_log.time DESC");
     $db->bind(1,$round);
     try {
       return $db->resultset();
@@ -357,12 +357,12 @@
 
   public function getAntags($round){
     $db = new database(TRUE);
-    $db->query("SELECT role,
-      group_concat(concat(`name`,'(',ckey,')') SEPARATOR ', ') AS antags
+    $db->query("SELECT antag_log.role,
+      group_concat(concat(antag_log.name,'(',antag_log.ckey,')') SEPARATOR ', ') AS antags
       FROM antag_log
-      WHERE round = ?
-      GROUP BY role
-      ORDER BY `time` DESC;");
+      WHERE antag_log.round = ?
+      GROUP BY antag_log.role
+      ORDER BY antag_log.time DESC;");
     $db->bind(1,$round);
     try {
       return $db->resultset();
