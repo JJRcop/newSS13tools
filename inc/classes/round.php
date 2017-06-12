@@ -361,8 +361,7 @@
       group_concat(concat(antag_log.name,'(',antag_log.ckey,')') SEPARATOR ', ') AS antags
       FROM antag_log
       WHERE antag_log.round = ?
-      GROUP BY antag_log.role
-      ORDER BY antag_log.time DESC;");
+      GROUP BY antag_log.role;");
     $db->bind(1,$round);
     try {
       return $db->resultset();
