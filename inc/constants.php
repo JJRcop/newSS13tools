@@ -1,8 +1,14 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.3.0');
+define('VERSION','1.3.2');
 
 define('CHANGELOG',array(
+  '1.3.2 - 12-06-2017'=>array(
+    array('mod'=>"Optimized log parsing"),
+  ),
+  '1.3.1 - 12-06-2017'=>array(
+    array('mod'=>"MySQL is dumb and I hate it but I fixed a big bug"),
+  ), 
   '1.3.0 - 12-06-2017'=>array(
     array('add'=>"Public round logs are back! "),
     array('add'=>"Explosions and antagonists are now being extracted from the public round logs and saved to a database table! Note that this information won't show on the round listing until the round's logs have been cached first."),

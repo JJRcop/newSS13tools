@@ -6,6 +6,10 @@ class GameLogs{
     $this->round = $round;
   }
 
+  public function __destruct(){
+    unset($this->round);
+  }
+
   public function fetchRemoteFile($url, $file=null){
     $get = $url."/".$file;
     $curl = curl_init();
@@ -120,9 +124,7 @@ class GameLogs{
     foreach ($logs as &$log){
       $log = explode('#-#',$log);
     }
-
     $this->extractDataFromLogs($logs);
-
     return $logs;
   }
 

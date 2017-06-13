@@ -20,11 +20,11 @@ class database {
   public function __construct($alt=false) {
 
     if ($alt){
-      $this->dbhost =   ALT_DB_HOST;
-      $this->dbname =   ALT_DB_NAME;
-      $this->dbuser =   ALT_DB_USER;
-      $this->dbpass =   ALT_DB_PASS;
-      $this->dbport =   ALT_DB_PORT;
+      $this->dbhost = ALT_DB_HOST;
+      $this->dbname = ALT_DB_NAME;
+      $this->dbuser = ALT_DB_USER;
+      $this->dbpass = ALT_DB_PASS;
+      $this->dbport = ALT_DB_PORT;
     }
 
     $dbs = $this->dbmethod.":host=".$this->dbhost.";port=".$this->dbport.";dbname=".$this->dbname.";charset=utf8mb4;collation=utf8mb4_unicode_ci;";
@@ -49,6 +49,10 @@ class database {
     }
 
   }
+
+  // public function __destruct(){
+  //   unset($this->dbh);
+  // }
 
   public function query($query) {
     $query = str_replace('tbl_', TBL_PREFIX, $query);

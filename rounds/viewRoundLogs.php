@@ -98,7 +98,7 @@ if($reset){
          // }
          $log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>#$i</a></td><td class='ts'>[".$ld[0]."]";
          $log.= "</td><td class='lt'>".$ld[1].": </td><td>";
-         $log.= $ld[2];
+         $log.= strip_tags($ld[2]);
          $log.="</td></tr>";
          echo $log;   
        }
