@@ -107,50 +107,6 @@
     return $changelog;
   }
 
-  public function doesLocalRepoExist(){
-    if(is_file(DMEFILE)) return true;
-    return false;
-  }
-
-  public function getLocalRepoVersion(){
-    if ($this->doesLocalRepoExist){
-      return rtrim(shell_exec("cd ".DMEDIR." && git rev-parse --verify HEAD 2> /dev/null"));
-    }
-  }
-
-  public function updateLocalRepo(){
-    if ($this->doesLocalRepoExist){
-      $this->cacheRemoteRepoVersion();
-      return rtrim(shell_exec("cd ".DMEDIR." && git fetch origin && git reset --hard origin/master"));
-    }
-  }
-
-  public function getRemoteRepoVersion(){
-    if(file_exists(ROOTPATH.'/tmp/githubversion.json')){
-      $json = file_get_contents(ROOTPATH.'/tmp/githubversion.json');
-      $data = json_decode($json);
-      if ($data->timestamp - time() > 600){
-        return $this->cacheRemoteRepoVersion();
-      } else {
-        return $data->data;
-      }
-    } else {
-      return $this->cacheRemoteRepoVersion();
-    }
-  }
-
-  public function cacheRemoteRepoVersion() {
-    $repo = "https://api.github.com/repos/".PROJECT_GITHUB."/git/refs/heads/master";
-    $client = new GuzzleHttp\Client();
-    $json['timestamp'] = time();
-    $res = $client->request('GET',$repo);
-    $json['data'] = json_decode($res->getBody()->getContents());
-    $jsonfile = fopen(ROOTPATH.'/tmp/githubversion.json', 'w+');
-    fwrite($jsonfile, json_encode($json));
-    fclose($jsonfile);
-    return $json['data'];
-  }
-
   public function restrictionCheck($user){
     //This checks against a list of directories and if the path contains one of
     //the entries, AND if the user doesn't have the proper authorization level,

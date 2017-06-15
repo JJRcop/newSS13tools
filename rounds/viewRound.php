@@ -235,7 +235,7 @@ $total = $dead + $survivors; ?>
 
 <?php if($round->explosions):?>
   <div class="page-header">
-    <h2><a data-toggle="collapse" href="#explosions" aria-expanded="false"
+    <h2><img src='<?php echo $app->APP_URL;?>icons/obj/assemblies/syndicate-bomb-active.png' /> <a data-toggle="collapse" href="#explosions" aria-expanded="false"
      aria-controls="explosions">Explosions from this round</a></h2>
   </div>
     <div id="explosions" class="collapse">

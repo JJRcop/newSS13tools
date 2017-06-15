@@ -1,38 +1,15 @@
 <?php require_once('../header.php'); ?>
 
 <?php 
-$icon = null;
-if (isset($_GET['icon'])){
-  $icon = filter_input(INPUT_GET, 'icon',
+$url = null;
+if (isset($_GET['url'])){
+  $url = filter_input(INPUT_GET, 'url',
     FILTER_SANITIZE_URL);
-  if (strpos($icon, "https://github.com") !== FALSE){
-    die();
-  }
 }
-
-if ($icon) {
-  if (strpos($icon,'dmi') !== FALSE){
-    //Get and cache the remote icon
-    try {
-      $tmpfile = fopen(ROOTPATH.'/tmp/tmp.dmi', 'w+');
-      $client = new GuzzleHttp\Client();
-      $res = $client->request('GET',$icon,['sink' => $tmpfile]);
-      $res->getBody();
-    } catch (Exception $e) {
-      var_dump($e->getMessage());
-      return false;
-    }
-    echo alert("Remote icon file successfully cached from <code>$icon</code>",1);
-    //Let's figure out what we need to diff it with
-    $icon = str_replace("https://github.com/", '', $icon);
-    $icon = explode('/',$icon);
-    $icon = array_chunk($icon, 4);
-    $icon = implode("/", $icon[1]);
-    $icon = "/".$icon;
-    $icon = DMEDIR.$icon;
-  } else {
-    $icon = false;
-  }
+if ($url) {
+  $ic = new icon();
+  $icons = $ic->DMIDiff($url);
+  // var_dump($diff);
 }
 
 function DMIDiff($new,$old){
@@ -46,14 +23,13 @@ function DMIDiff($new,$old){
     return -1; //Icon has been changed
   }
 }
-
 ?>
 
 <div class="page-header">
   <h1>DMI Diff</h1>
 </div>
 
-<?php if (!$icon):?>
+<?php if (!$url):?>
   <div class="alert alert-danger"><strong>Feed me a remote icon!</strong>
   Copy the link address from the "download" button on a DMI file from GitHub!
   </div>
@@ -82,13 +58,11 @@ function DMIDiff($new,$old){
     </div>
   </form>
   <?php
-  $png = new PNGMetadataExtractor();
-  $local = $png->loadImage($icon);
-  $remote = $png->loadImage(ROOTPATH."/".TMPDIR."/tmp.dmi");
+  $local = $icons->local;
+  $remote = $icons->remote;
   // array_multisort($local);
   // array_multisort($remote);
-  $max = max(count($remote),count($local));
-
+  $max = $icons->max;
   ?>
 
   <table class="table sticky  table-condensed table-bordered">

@@ -34,15 +34,7 @@
             </li>
             <li class="divider"></li>
             <li>
-              <a href="<?php echo $app->APP_URL;?>tools/listDMIs.php">List DMIs</a>
-            </li>
-            <li>
-              <a href="<?php echo $app->APP_URL;?>tools/generateallPNGs.php">
-              Generate all mob PNGs</a>
-            </li>
-            <li>
-              <a href="<?php echo $app->APP_URL;?>tools/DMIdiff.php">
-              DMI diff viewer</a>
+              <a href="<?php echo $app->APP_URL;?>tools/icons.php">Icons</a>
             </li>
           </ul>
         </li>

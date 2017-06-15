@@ -113,7 +113,7 @@
     if($round->commit_hash){
       $round->commit_href = "https://github.com/".PROJECT_GITHUB."/commit/$round->commit_hash";
       $round->commit_link = "<a href='$round->commit_href' target='_blank'>";
-      $round->commit_link.= strtoupper(substr($round->commit_hash, 0, 6))."</a>";
+      $round->commit_link.= strtoupper(substr($round->commit_hash, 0, 7))."</a>";
     }
 
     //Station name

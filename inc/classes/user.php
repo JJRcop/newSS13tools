@@ -2,8 +2,8 @@
 
   //BUT ALSO PLAYERS!!
 
-  public $ckey; //Ckey
-  public $byond; //Their byond key, unsanitized
+  public $ckey = null; //Ckey
+  public $byond = null; //Their byond key, unsanitized
 
   public $legit = false; //Whether or not the user is recognized as a player
   public $rank = 'Player'; //Their rank (defualts to player, unprivileged)
@@ -11,10 +11,10 @@
 
   public $foreColor = '#FFF'; //Foreground(text) color
   public $backColor = '#DDD'; //Background color
-  public $label;
+  public $label = null;
 
-  public $firstSeenTimeStamp;
-  public $lastSeenTimeStamp;
+  public $firstSeenTimeStamp = null;
+  public $lastSeenTimeStamp = null;
 
   public $txtVerify = FALSE;
 
@@ -40,22 +40,27 @@
     } elseif (!$app->auth_method){
       $user = $this->getUserByIP();
       $user = $this->parseUser($user);
-      $user->auth = 'IP';
+      if($user){
+        $user->auth = 'IP';
+      }
     } else {
       return false;
     }
     if(isset($_COOKIE['tgui'])){
       $this->tgui = $_COOKIE['tgui'];
     }
-    if($user->ckey){
+    if($user && $user->ckey){
       $user->legit = TRUE;
     }
-    foreach ($user as $k => $v){
-      $this->$k = $v;
+    if($user){
+      foreach ($user as $k => $v){
+        $this->$k = $v;
+      }
     }
   }
 
   public function parseUser(&$user,$data=false){
+    if(!$user) return false;
     $app = new app();
 
     //Stuff we can set from the DB
