@@ -325,7 +325,7 @@ class ban {
     }
     $where = null;
     if($active){
-      $where = "AND tbl_ban.expiration_time > NOW() OR tbl_ban.unbanned IS NULL";
+      $where = "AND (tbl_ban.expiration_time > NOW() OR tbl_ban.unbanned IS NULL)";
     }
     $db->query("SELECT *,
       TIMESTAMPDIFF(MINUTE, tbl_ban.bantime, tbl_ban.expiration_time) AS minutes
