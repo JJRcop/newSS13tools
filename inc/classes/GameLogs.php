@@ -141,11 +141,10 @@ class GameLogs{
     
     $this->extractDataFromLogs($logs);
 
-    if($ogs){
-      usort($logs, function($a, $b) {
-        return $a[0] <=> $b[0];
-      });
-    }
+    usort($logs, function($a, $b) {
+      return $a[0] <=> $b[0];
+    });
+
     return $logs;
   }
 
