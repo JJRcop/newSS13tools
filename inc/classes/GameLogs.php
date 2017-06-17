@@ -67,7 +67,8 @@ class GameLogs{
     return $files;
   }
 
-  public function parseGameLog($logs){
+  public function parseGameLog($logs,$attack){
+    $date = date('Y-m-d',strtotime($this->round->start_datetime));
     // var_dump($this->round->logsURL."/game.log.gz");
     //This method is ONLY for cleaning out useless lines from the logs
 
@@ -107,7 +108,7 @@ class GameLogs{
     //
     //TODO: Randomize the #-# to stop people from (un)intentionally breaking
     //the parser
-    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE|GHOST)(:\s)/","$2#-#$4#-#", $logs);
+    $logs = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(GAME|ACCESS|SAY|OOC|ADMIN|EMOTE|WHISPER|PDA|CHAT|LAW|PRAY|COMMENT|VOTE|GHOST)(:\s)/",$date." $2#-#$4#-#", $logs);
 
     //UTF8 encode (hey look who was ahead of the curve)
     $logs = utf8_encode($logs);
@@ -124,6 +125,20 @@ class GameLogs{
     foreach ($logs as &$log){
       $log = explode('#-#',$log);
     }
+
+    if(isset($attack)){
+      $attack = explode("---------------------\r\n",$attack);
+      $attack = $attack[1];
+      $attack = preg_replace("/(\[)(\d{2}:\d{2}:\d{2})(])(ATTACK)(:\s)/",$date." $2#-#$4#-#", $attack);
+      $attack = explode("\r\n",$attack);
+      array_filter($attack);
+      array_pop($attack);
+      foreach ($attack as &$a){
+        $a = explode('#-#',$a);
+        $logs[] = $a;
+      }
+    }
+
     $this->extractDataFromLogs($logs);
     return $logs;
   }
@@ -134,7 +149,8 @@ class GameLogs{
       $this->round->fromCache = TRUE;
     } else { //Load from remote
       $this->round->logs = $this->fetchRemoteFile($this->round->logsURL,"game.txt.gz");
-      $this->round->logs = $this->parseGameLog($this->round->logs);
+      $this->round->attack = $this->fetchRemoteFile($this->round->logsURL,"attack.txt.gz");
+      $this->round->logs = $this->parseGameLog($this->round->logs,$this->round->attack);
       $this->cacheParsedLogs($this->round->logs);
       $this->round->fromCache = FALSE;
     }

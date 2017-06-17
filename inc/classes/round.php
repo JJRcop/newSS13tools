@@ -3,15 +3,12 @@
   public $start = false;
   public $end = false;
   public $duration = false;
-  public $round_id = false;
+  public $id = null;
   public $game_mode = false;
   public $server = false;
   public $logs = false;
-  public $logURL = false;
-  public $status = false;
   public $next = false;
   public $prev = false;
-  public $hasObjectives = false;
   public $fromCache = false;
   public $data = false;
   public $commit_href = null;

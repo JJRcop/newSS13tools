@@ -1,8 +1,12 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.4.3');
+define('VERSION','1.5.0');
 
 define('CHANGELOG',array(
+  '1.5.0 - 15-06-2017'=>array(
+    array('mod'=>"Attack logs are now rendered inline with game logs!"),
+    array('info-circle'=>"It's not perfect but it works. Please see the disclaimer on the logs page"),
+  ),
   '1.4.2 - 15-06-2017'=>array(
     array('mod'=>"Better handling for missing configuration settings"),
     array('add'=>"More medals!"),

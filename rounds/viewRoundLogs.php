@@ -15,6 +15,12 @@ if($reset){
   $round = new round($round,array('logs'));
 }
 
+if($round->logs){
+  usort($round->logs, function($a, $b) {
+    return $a[0] <=> $b[0];
+  });
+}
+
 ?>
 
 <nav>
@@ -63,6 +69,10 @@ if($reset){
   Additional logs from this round are available <a href='<?php echo $round->logsURL;?>' target="_blank">here</a>.
 </p>
 
+<p class="lead text-danger">
+  Log time resolution is limited to seconds, and a lot can happen in one second. The logs are parsed on the backend in the correct order in which they are recevied. For display purposes though, they are re-sorted and displayed in order by seconds. This may put certain events out of order, but those incidences should be minimal.
+</p>
+
 <?php if(1 <= $user->level):?>
   <p class="lead">
     If these logs appear incorrect, or if you want to regenerate missing data, <a href="<?php echo $round->href;?>&logs=true&reset=true" class="btn btn-warning btn-xs"><i class="fa fa-refresh"></i> Reset them</a>.
@@ -96,7 +106,7 @@ if($reset){
          // if (strpos($ld[2],' has renamed the station as ') !== FALSE){
          //   $this->attachStationNameToRoundID($ld[2],$round);
          // }
-         $log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>#$i</a></td><td class='ts'>[".$ld[0]."]";
+         $log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>#$i</a></td><td class='ts'>[".date("H:i:s",strtotime($ld[0]))."]";
          $log.= "</td><td class='lt'>".$ld[1].": </td><td>";
          $log.= strip_tags($ld[2]);
          $log.="</td></tr>";
