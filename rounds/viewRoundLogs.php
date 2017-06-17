@@ -15,11 +15,6 @@ if($reset){
   $round = new round($round,array('logs'));
 }
 
-if($round->logs){
-  usort($round->logs, function($a, $b) {
-    return $a[0] <=> $b[0];
-  });
-}
 
 ?>
 
