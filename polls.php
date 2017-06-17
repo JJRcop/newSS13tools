@@ -1,5 +1,6 @@
 <?php require_once('header.php');?>
 <?php
+$parseDown = new safeDown();
 if (isset($_GET['poll'])) {
   $p = filter_input(INPUT_GET, 'poll', FILTER_SANITIZE_NUMBER_INT);
   if(isset($_GET['hideReply'])){
@@ -17,7 +18,7 @@ if (isset($_GET['poll'])) {
 <?php if(isset($_GET['poll'])):?>
   <div class="page-header">
     <h1><small>#<?php echo $poll->id;?></small>
-      <?php echo $poll->question;?>
+      <?php echo $parseDown->text($poll->question);?>
     </h1>
   </div>
   <div class="row">
@@ -192,7 +193,8 @@ if (isset($_GET['poll'])) {
       <tr class="<?php echo ($p->ended)?'warning':'success'?>">
         <td><a href="?poll=<?php echo $p->id;?>"><?php echo $p->id;?></td>
         <td><?php echo ($p->ended)?"<span class='label label-info'>Ended</span>":"";?>
-        <?php echo $p->question;?><br>
+          <?php echo $parseDown->text($p->question);?>
+          <br>
         <small>Opened <?php echo $p->starttime;?> | Closes <?php echo $p->endtime;?> | runs for <?php echo $p->duration;?>
         </small>
         </td>

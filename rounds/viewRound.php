@@ -326,7 +326,7 @@ $total = $dead + $survivors; ?>
     </li>
   <?php endif;?>
 
-  <li><a href="listRounds.php">
+  <li><a href="<?php echo $app->APP_URL;?>/round.php">
     <i class="fa fa-list"></i> Round listing</a>
   </li>
 
