@@ -10,7 +10,7 @@ if (isset($_GET['page'])){
 } else {
   $page = 1;
 }
-
+$rounds = $round->listRounds($page);
 ?>
 
 <div class="page-header">
@@ -32,7 +32,6 @@ if (isset($_GET['page'])){
   </thead>
   <tbody>
     <?php 
-    $rounds = $round->listRounds($page);
     if (!$rounds) {
       echo "<tr><td colspan='5'>No rounds found</td></tr>";
     } else{

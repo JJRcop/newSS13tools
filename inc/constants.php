@@ -1,8 +1,22 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.3.2');
+define('VERSION','1.4.3');
 
 define('CHANGELOG',array(
+  '1.4.2 - 15-06-2017'=>array(
+    array('mod'=>"Better handling for missing configuration settings"),
+    array('add'=>"More medals!"),
+  ),
+  '1.4.2 - 15-06-2017'=>array(
+    array('mod'=>"Updated `config-sample.php`. Please ensure that you're copying over changes correctly."),
+  ),
+  '1.4.1 - 14-06-2017'=>array(
+    array('mod'=>"Caught a few bugs in the user class and fixed em."),
+  ),
+  '1.4.0 - 14-06-2017'=>array(
+    array('mod'=>"Seriously refactored the codebase tools into a unique class"),
+    array('mod'=>"Ditto for icons and the generation thereof"),
+  ),
   '1.3.2 - 12-06-2017'=>array(
     array('mod'=>"Optimized log parsing"),
   ),

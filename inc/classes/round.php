@@ -29,7 +29,7 @@
           switch ($get){
             //Getting and parsing round logs
             case 'logs':
-              if ($round->logs){
+              if ($round->logs && defined('REMOTE_LOG_SRC')){
                 $gameLogs = new GameLogs($round);
                 $round = $gameLogs->getGameLogs();
               } else {
@@ -129,13 +129,16 @@
     }
 
     //Log URL
-    $server = strtolower($round->server);
-    $date = new DateTime($round->start);
-    $year = $date->format('Y');
-    $month = $date->format('m');
-    $day = $date->format('d');
-    $round->logsURL = REMOTE_LOG_SRC."$server/data/logs/$year/$month/$day/";
-    $round->logsURL.= "round-$round->id";
+    $round->logsURL = null;
+    if(defined('REMOTE_LOG_SRC')){
+      $server = strtolower($round->server);
+      $date = new DateTime($round->start);
+      $year = $date->format('Y');
+      $month = $date->format('m');
+      $day = $date->format('d');
+      $round->logsURL = REMOTE_LOG_SRC."$server/data/logs/$year/$month/$day/";
+      $round->logsURL.= "round-$round->id";
+    }
 
     //Log cache file
     $round->logCache = TMPDIR."/$round->id-$round->server-logs.json";
@@ -219,20 +222,22 @@
       $ip = str_replace(':', '', $ip);
     }
 
-    //Per MSO, we should be looking at the port #s.
-    switch ($ip){
-      case '2337':
-        return 'Basil';
-      break;
-
-      case '1337':
-        return 'Sybil';
-      break;
-
-      default:
-        return 'Unknown';
-      break;
+    $servers = array();
+    if(defined('GAME_SERVERS')){
+      foreach(GAME_SERVERS as $server){
+        $servers[$server['port']] = $server['name'];
+      }
+    } else {
+      return 'Unknown';
     }
+
+    //Per MSO, we should be looking at the port #s.
+    if(isset($servers[$ip])){
+      return $servers[$ip];
+    } else {
+      return "Unknown";
+    }
+
   }
 
   public function listRounds($page=1, $count=30){

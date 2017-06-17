@@ -10,11 +10,13 @@ class stat {
     }
     $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
     $db->execute();
-    $db->query("SELECT var_name,
+    $db->query("SELECT tbl_feedback.var_name,
       count(distinct tbl_feedback.round_id) as rounds,
       SUM(tbl_feedback.var_value) AS `var_value`,
       IF (tbl_feedback.details = '', NULL, GROUP_CONCAT(tbl_feedback.details SEPARATOR '#-#')) AS details
-      FROM tbl_feedback WHERE var_name = ?");
+      FROM tbl_feedback
+      WHERE var_name = ?
+      ORDER BY tbl_feedback.time desc");
     $db->bind(1,$stat);
     try {
       $f = $db->single();
@@ -489,11 +491,16 @@ class stat {
       break;
 
       case 'commendation':
-        $stat->details = str_replace("_", " ", $stat->details);
-        $stat->details = str_replace("} {", "},{", $stat->details);
-        $stat->details = json_decode("[$stat->details]");
-        
+        if($aggregate){
+          $stat->details = str_replace('#-#',',',$stat->details);
+        }
+        if(!$skip){
+          $stat->details = str_replace("_", " ", $stat->details);
+          $stat->details = str_replace("} {", "},{", $stat->details);
+          $stat->details = json_decode("[$stat->details]");
+        }
         foreach ($stat->details as &$d){
+          $d = (object) $d;
           switch ($d->medal){
             default: 
               $d->graphic = 'bronze';
@@ -501,6 +508,14 @@ class stat {
 
             case 'The robust security award': 
               $d->graphic = 'silver';
+            break;
+
+            case 'The medal of valor': 
+              $d->graphic = 'gold';
+            break;
+
+            case 'The nobel sciences award': 
+              $d->graphic = 'plasma';
             break;
           }
         }

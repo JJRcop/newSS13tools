@@ -60,7 +60,13 @@ $round = new round($round,array('data','deaths','explosions','antags'));
     <th>Round Duration</th>
     <td><?php echo $round->duration;?></td>
     <th>Logs available</th>
-    <td><a href="<?php echo $round->href;?>&logs=true">View</a></td>
+    <td>
+      <?php if($round->logs):?>
+        <a href="<?php echo $round->href;?>&logs=true">View</a>
+      <?php else:?>
+        <em>Not available</em>
+      <?php endif;?>
+    </td>
   </tr>
   <tr>
     <th>Map Name</th>
