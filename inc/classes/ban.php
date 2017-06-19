@@ -66,7 +66,10 @@ class ban {
       WHERE tbl_ban.id = ?");
     $db->bind(1, $id);
     try {
-      return $db->single();
+      $user = new user();
+      $ban = $db->single();
+      $ban->admin = $user->getPlayerByCkey($ban->a_ckey);
+      return $ban;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
@@ -94,11 +97,13 @@ class ban {
       }
       $where = "WHERE $where = ?";
     }
-    $db->query("SELECT *,
+    $db->query("SELECT tbl_ban.*,
+      tbl_player.*,
     TIMESTAMPDIFF(MINUTE, tbl_ban.bantime, tbl_ban.expiration_time) AS minutes
     FROM tbl_ban
+    LEFT JOIN tbl_player ON tbl_ban.ckey = tbl_player.ckey
     $where
-    ORDER BY id DESC LIMIT ?, ?");
+    ORDER BY tbl_ban.id DESC LIMIT ?, ?");
     if($where){
       $db->bind(2, $page);
       $db->bind(3, $count);
@@ -108,9 +113,12 @@ class ban {
       $db->bind(2, $count);
     }
     try {
+      $user = new user();
       $bans = $db->resultSet();
       foreach ($bans as &$ban){
+        // $ban = $user->parseUser($ban); //Avoiding more queries SHUTUP I KNOW
         $ban = $this->parseBan($ban);
+        $ban->admin = $user->getPlayerByCkey($ban->a_ckey);
       }
       return $bans;
     } catch (Exception $e) {

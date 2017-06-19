@@ -3,6 +3,9 @@ define('APPLICATION','NewSS13Tools');
 define('VERSION','1.5.1');
 
 define('CHANGELOG',array(
+  '1.5.2 - 17-06-2017'=>array(
+    array('mod'=>"tgdb now shows admin badges! Hooray!"),
+  ),
   '1.5.1 - 17-06-2017'=>array(
     array('mod'=>"Performance increases"),
   ),

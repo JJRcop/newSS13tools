@@ -105,8 +105,9 @@ switch ($step){
       die("Error with OAuth request: $body->error");
     } else {
       foreach($body as $k => $v){
-        setcookie($k,$v,COOKIE_LIFTIME,"/",DOMAIN,USE_SSL); // 15 day expiry
+        $_SESSION[$k] = $v;
       }
+      $_SESSION['expiry'] = COOKIE_LIFTIME;
       $user = new user();
       if(1 <= $user->level){
         if($user->ip != $_SERVER['REMOTE_ADDR']) {

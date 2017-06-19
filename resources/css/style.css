@@ -129,6 +129,11 @@ tr.inverse {
   text-align: right;
   padding-right: 5px;
 }
+
+.panel-heading .label {
+  font-size: 100%;
+}
+
 tr.perma,
 .perma,
 .panel-perma .panel-heading {

@@ -12,7 +12,7 @@ if (!$ckey){
   die(alert("Ckey not found.",FALSE));
 }
 
-$player = $user->getPlayerByCkey($ckey);
+$player = $user->getPlayerByCkey($ckey,TRUE);
 ?>
 
 <div class="page-header">

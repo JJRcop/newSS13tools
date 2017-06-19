@@ -6,8 +6,7 @@
       <a href='viewPlayer.php?ckey=<?php echo $ban->ckey;?>'>
         <?php echo $ban->ckey;?></a> 
       banned from <?php echo $ban->scope;?>, <?php echo $ban->bantimestamp;?> by
-      <a href="#">
-        <?php echo $ban->a_ckey;?></a>
+      <?php echo $ban->admin->label;?>
       <p class="pull-right"><a href="viewBan.php?ban=<?php echo $ban->id;?>">#<?php echo $ban->id;?></a></p>
     </h3>
   </div>

@@ -49,7 +49,7 @@ foreach ($connections as $c){
     <div class="page-header">
       <h2>Bagil</h2>
     </div>
-    <table class="table sticky  table-bordered table-condensed">
+    <table class="table sticky table-bordered table-condensed">
       <thead>
         <tr>
           <th>ckey</th>
@@ -61,12 +61,10 @@ foreach ($connections as $c){
       <?php foreach ($bagil as $c): ?>
         <tr>
           <td>
-            <a href='viewPlayer.php?ckey=<?php echo $c->ckey;?>'>
-              <?php echo $c->ckey;?>
-            </a>
+            <?php echo $c->label;?>
           </td>
-          <td><?php echo long2ip($c->ip);?></td>
-          <td><?php echo $c->computerid;?></td>
+          <td class="ipaddr"><?php echo $c->ip;?><?php echo $c->ipql;?></td>
+          <td class="cid"><?php echo $c->computerid;?><?php echo $c->cidql;?></td>
         </tr>
       <?php endforeach;?>
       </tbody>
@@ -88,12 +86,10 @@ foreach ($connections as $c){
       <?php foreach ($sybil as $c): ?>
         <tr>
           <td>
-            <a href='viewPlayer.php?ckey=<?php echo $c->ckey;?>'>
-              <?php echo $c->ckey;?>
-            </a>
+            <?php echo $c->label;?>
           </td>
-          <td><?php echo long2ip($c->ip);?></td>
-          <td><?php echo $c->computerid;?></td>
+          <td class="ipaddr"><?php echo $c->ip;?><?php echo $c->ipql;?></td>
+          <td class="cid"><?php echo $c->computerid;?><?php echo $c->cidql;?></td>
         </tr>
       <?php endforeach;?>
       </tbody>
