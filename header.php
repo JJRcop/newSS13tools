@@ -93,3 +93,17 @@ var chart = c3.generate({
 });
 </script>
 <?php endif; ?>
+
+<?php
+if($app->message){
+  if(is_array($app->message)){
+    foreach($app->message as $m){
+      $m = json_decode($m);
+      echo parseReturnMessage($m);
+    }
+  } elseif (is_string($app->message)) {
+    $app->message = json_decode($app->message);
+    echo parseReturnMessage($app->message);
+  } 
+}
+?>

@@ -102,12 +102,14 @@ switch ($step){
     // consoleLog($body);
     $body = json_decode($body);
     if ("OK" != $body->status){
+      $app->logEvent("ATF","Failed to authenticate with remote: $body->error");
       die("Error with OAuth request: $body->error");
     } else {
       foreach($body as $k => $v){
         $_SESSION[$k] = $v;
       }
-      $_SESSION['expiry'] = COOKIE_LIFTIME;
+      $_SESSION['expiry'] = SESSION_EXPIRY; //Fifteen minutes
+      $app->logEvent("AUT","Authenticated via remote");
       $user = new user();
       if(1 <= $user->level){
         if($user->ip != $_SERVER['REMOTE_ADDR']) {

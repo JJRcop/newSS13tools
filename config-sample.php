@@ -79,6 +79,7 @@ define('2FA',FALSE);
 
 ###### Cookie settings ######
 define('COOKIE_LIFTIME',time()+1296000); //15 days
+define('SESSION_EXPIRY',time()+900); //15 minutes
 
 ###### DEBUG FLAG ######
 define('DEBUG', FALSE);

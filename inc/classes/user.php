@@ -25,8 +25,8 @@
     $user = false;
     if('remote' == $app->auth_method && isset($_SESSION['byond_ckey'])){
       if(isset($_SESSION['expiry']) && $_SESSION['expiry'] < time()){
-        $_SESSION = array();
-        return false;
+        $app->setMessage($this->reAuth());
+        return;
       }
       $user = $this->getUser($_SESSION['byond_ckey']);
       if(!$user) return false;
@@ -60,6 +60,37 @@
       foreach ($user as $k => $v){
         $this->$k = $v;
       }
+    }
+  }
+
+  public function reAuth() {
+    $app = new app();
+    if (!isset($_SESSION['session_private_token'])) {
+      return false;
+    }
+    $req = OAUTHREMOTEINFO."?site_private_token=".urlencode($_SESSION['site_private_token']);
+    $req.= "&session_private_token=".urlencode($_SESSION['session_private_token']);
+    $client = new GuzzleHttp\Client();
+    $res = $client->request('GET', $req);
+    try{
+      $body = $res->getBody()->getContents();
+    } catch (Exception $e){
+      die($e->getMessage());
+    }
+    //Decode the resoponse
+    // consoleLog($_SESSION);
+    // consoleLog($body);
+    $body = json_decode($body);
+    if ("OK" != $body->status){
+      $app->logEvent("REF","Failed to reauthenticate: $body->error",'REAUTHFAIL');
+      $_SESSION = array();
+      return returnError("Error with OAuth request: $body->error");
+    } else {
+      foreach($body as $k => $v){
+        $_SESSION[$k] = $v;
+      }
+      $_SESSION['expiry'] = SESSION_EXPIRY; //15 minutes
+      $app->logEvent("REA","Reauthenticated with remote successfully");
     }
   }
 

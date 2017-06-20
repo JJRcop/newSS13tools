@@ -38,6 +38,8 @@
     ROOTPATH.'/logs/poly.log'
   );
 
+  public $message = null;
+
   public function __construct($data=false) {
     if(defined('OAUTHREMOTE')){
       $this->auth_method = 'remote';
@@ -61,6 +63,15 @@
         }
       }
     }
+  }
+
+  public function setMessage($message){
+    $this->message = $message;
+  }
+
+  public function hasMessage(){
+    if($this->message) return true;
+    return false;
   }
 
   public function parseChangeLog($changelog){
@@ -314,5 +325,27 @@
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
+  }
+
+  public function logEvent($code='GEN', $message=null, $skip=false){
+    $user = null;
+    if(!$skip){
+      $user = new user();
+      $user = $user->ckey;
+    }
+    $db = new database(TRUE);
+    $db->query("INSERT INTO audit
+      (who, code, message, `from`, `timestamp`)
+      VALUES (?, ?, ?, ?, NOW())");
+    $db->bind(1, $user);
+    $db->bind(2, $code);
+    $db->bind(3, $message);
+    $db->bind(4, ip2long($_SERVER['REMOTE_ADDR']));
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    return true;
   }
 }
