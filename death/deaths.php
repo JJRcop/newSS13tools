@@ -49,7 +49,7 @@ Reported deaths here are one hour delayed.
         <td><?php echo $d->link;?></td>
         <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>
         <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>
-        <td><?php echo "$d->pod <br><small>$d->mapname  ($d->coord)</small>";?></td>
+        <td><?php echo "$d->pod <br><small>$d->mapname ($d->x, $d->y, $d->z)</small>";?></td>
         <td>
           <?php echo $d->labels;?><br>
           <?php if('' != $d->laname):?>

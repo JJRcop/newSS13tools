@@ -119,11 +119,34 @@ class GameLogs{
     //Remove empty lines
     array_filter($logs);
 
-    //Remove the last line
-    array_pop($logs);
+    //Further explode the log line 
+    $explosions = array();
+    $antags = array();
+    $antagLines = array();
+    $i = 0;
 
     foreach ($logs as &$log){
       $log = explode('#-#',$log);
+      if (isset($log[1]) && 'GAME' == $log[1]
+        && strpos($log[2], 'Explosion with size (') !== FALSE){
+        $explosions[] = (object) $this->parseExplosion($log);
+      }
+      if(isset($log[2]) && 'Antagonists at round end were...' == $log[2]){
+        $antagLine = $i;
+      }
+      $i++;
+    }
+
+    foreach ($logs as $l => $log){
+      if($l < $antagLine + 1) continue;
+      if('GAME' != $log[1]){
+        break;
+      }
+      $antagLines[] = $log;
+    }
+    foreach ($antagLines as $log){
+      if('Blackbox sealed.' == $log[2]) continue;
+      $antags[] = (object) $this->parseAntags($log);
     }
 
     if(isset($attack)){
@@ -139,7 +162,7 @@ class GameLogs{
       }
     }
     
-    $this->extractDataFromLogs($logs);
+    $this->extractDataFromLogs($explosions, $antags);
 
     usort($logs, function($a, $b) {
       return $a[0] <=> $b[0];
@@ -173,36 +196,11 @@ class GameLogs{
     fclose($logsavefile);
   }
 
-  public function extractDataFromLogs($logs){
-    $explosions = array();
-    $antags = array();
-    $antagLines = array();
-    $i = 0;
-    foreach ($logs as $l => $log){
-      // $log = explode('#-#',$log);
-      if ('GAME' == $log[1]
-        && strpos($log[2], 'Explosion with size (') !== FALSE){
-        $explosions[] = (object) $this->parseExplosion($log);
-      }
-      if('Antagonists at round end were...' == $log[2]){
-        $antagLine = $i;
-      }
-      $i++;
-    }
-    foreach ($logs as $l => $log){
-      if($l < $antagLine + 1) continue;
-      if('GAME' != $log[1]){
-        break;
-      }
-      $antagLines[] = $log;
-    }
-    foreach ($antagLines as $log){
-      $antags[] = (object) $this->parseAntags($log);
-    }
+  public function extractDataFromLogs($explosions, $antags){
     $db = new database(TRUE);
 
     //Save explosions
-    $db->query("INSERT INTO explosion_log
+    $db->query("INSERT IGNORE INTO explosion_log
       (round, `time`, devestation, heavy, light, flash, area, x, y, z, added)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
     foreach($explosions as $e){
@@ -224,7 +222,7 @@ class GameLogs{
     }
 
     //Save antags
-    $db->query("INSERT INTO antag_log
+    $db->query("INSERT IGNORE INTO antag_log
       (round, `time`, role, ckey, name, added)
       VALUES (?, ?, ?, ?, ?, NOW())");
     foreach($antags as $role){
@@ -244,10 +242,8 @@ class GameLogs{
   }
 
   public function parseExplosion($log){
-    $date = new dateTime($this->round->start_datetime);
-    $date = $date->format('Y-m-d');
     $e['round'] = $this->round->id;
-    $e['time'] = $date." ".$log[0];
+    $e['time'] = $log[0];
     $exp = str_replace('Explosion with size (', '', $log[2]);
     $exp = explode(') in area ',$exp);
     $exp[0] = explode(', ',$exp[0]);
@@ -266,13 +262,12 @@ class GameLogs{
   }
 
   public function parseAntags($log){
-    $date = new dateTime($this->round->start_datetime);
-    $date = $date->format('Y-m-d');
     $a['round'] = $this->round->id;
-    $a['time'] = $date." ".$log[0];
+    $a['time'] = $log[0];
     $log = explode(':',$log[2]);
     $a['role'] = $log[0];
-    // $a['antag'] = $log[0];
+    // if('Blackbox sealed.' == $a['role']) return;
+    $a['antag'] = $log[0];
     $antags = trim(rtrim($log[1]));
     $antags = str_replace('.', '', $antags);
     $antags = str_replace(')', '', $antags);

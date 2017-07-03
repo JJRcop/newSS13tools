@@ -26,7 +26,6 @@
     if('remote' == $app->auth_method && isset($_SESSION['byond_ckey'])){
       if(isset($_SESSION['expiry']) && $_SESSION['expiry'] < time()){
         $app->setMessage($this->reAuth());
-        return;
       }
       $user = $this->getUser($_SESSION['byond_ckey']);
       if(!$user) return false;

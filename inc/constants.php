@@ -1,8 +1,14 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.5.1');
+define('VERSION','1.5.3');
 
 define('CHANGELOG',array(
+  '1.5.2 - 3-07-2017'=>array(
+    array('mod'=>"Fixed death coords"),
+    array('add'=>"Individual death views now have a small minimap that should roughly show the spot on the map where the death occurred!"),
+    array('mod'=>"Still poking game log parsing to make it better and better!"),
+    array('mod'=>"There's an SQL chagnelog. Please make a note of it!"),
+  ),
   '1.5.2 - 17-06-2017'=>array(
     array('mod'=>"tgdb now shows admin badges! Hooray!"),
   ),

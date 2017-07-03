@@ -359,8 +359,9 @@
 
   public function getAntags($round){
     $db = new database(TRUE);
+    $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
     $db->query("SELECT antag_log.role,
-      group_concat(concat(antag_log.name,'(',antag_log.ckey,')') SEPARATOR ', ') AS antags
+      group_concat(concat(antag_log.name,' (',antag_log.ckey,')') SEPARATOR ', ') AS antags
       FROM antag_log
       WHERE antag_log.round = ?
       GROUP BY antag_log.role;");
@@ -460,6 +461,7 @@
   public function addComment($round, $text) {
     $flag = 'P';
     $user = new user();
+    $app = new app();
     if(!$user->legit){
       die("You must be a known user in order to submit comments");
     }
@@ -480,11 +482,13 @@
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
+    $app->logEvent("ARC","Added a round comment to round #$this->id");
     return returnSuccess("Your comment has been submitted and is pending approval");
   }
 
   public function flipCommentFlag($id, $flag) {
     $user = new user();
+    $app = new app();
     $db = new database(TRUE); //Alt DB
     if(!$user->legit){
       return returnError("You must be a known user in order to flag comments");
@@ -535,6 +539,7 @@
     $db->bind(3, $id);
     try {
       $db->execute();
+      $app->logEvent("RCS","$flagText, comment #$id on round #$this->id");
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }

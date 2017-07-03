@@ -113,4 +113,10 @@ class codebase {
     return $project;
   }
 
+  public function getCodebaseDBVersion(){
+    $defines = file_get_contents(DMEDIR."/code/_compile_options.dm");
+    
+    return $defines;
+  }
+
 }

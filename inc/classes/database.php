@@ -55,6 +55,9 @@ class database {
   // }
 
   public function query($query) {
+    if(strpos($query,TBL_PREFIX) && DEBUG) {
+      trigger_error("Non-prefixed table in query: $query");
+    }
     $query = str_replace('tbl_', TBL_PREFIX, $query);
     $this->stmt = $this->dbh->prepare($query);
   }

@@ -299,6 +299,11 @@ tr.perma,
 .tablesorter-headerDesc {
   background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); }
 
+#map {
+  display: block;
+  margin: 0 auto;
+}
+
 .tgui * {
   border-radius: 0 !important;
 }

@@ -201,15 +201,13 @@ class death {
       $death->cause.= "$death->laname";
     }
 
-    //Coordinates
-    //These are !! TRANSLATED !!
-    $coords = explode(',',str_replace(' ', '', $death->coord));
-    $death->x = (int) $coords[0];
-    $death->y = (int) abs(255-$coords[1]);
-    $death->z = (int) $coords[2];
+    //TRANSLATED (Upper-left = 0,0)
+    $death->x = (int) $death->x_coord;
+    $death->y = (int) abs(255-$death->y_coord);
+    $death->z = (int) $death->z_coord;
 
     //Map
-    $death->mapfile = APP_URL."tgstation/icons/minimaps/".$death->mapname."_1.png";
+    $death->mapfile = APP_URL."tgstation/icons/minimaps/".$death->mapname."_2.png";
 
     //Server
     if($death->server_port){

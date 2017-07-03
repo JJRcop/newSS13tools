@@ -66,9 +66,7 @@ class ban {
       WHERE tbl_ban.id = ?");
     $db->bind(1, $id);
     try {
-      $user = new user();
       $ban = $db->single();
-      $ban->admin = $user->getPlayerByCkey($ban->a_ckey);
       return $ban;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
@@ -113,12 +111,10 @@ class ban {
       $db->bind(2, $count);
     }
     try {
-      $user = new user();
       $bans = $db->resultSet();
       foreach ($bans as &$ban){
         // $ban = $user->parseUser($ban); //Avoiding more queries SHUTUP I KNOW
         $ban = $this->parseBan($ban);
-        $ban->admin = $user->getPlayerByCkey($ban->a_ckey);
       }
       return $bans;
     } catch (Exception $e) {
@@ -446,6 +442,7 @@ class ban {
   public function addComment($ban, $text) {
     $flag = 'P';
     $user = new user();
+    $app = new app();
     if(!$user->legit){
       die("You must be a known user in order to submit comments");
     }
@@ -469,11 +466,14 @@ class ban {
     if (2 <= $user->level){
       return returnSuccess("Your comment has been submitted.");
     }
-    return returnSuccess("Your comment has been submitted and is pending approval");
+    $app->logEvent("ABC","Added a comment to ban #$this->id");
+
+    return returnSuccess("Your comment has been submitted.");
   }
 
   public function flipCommentFlag($id, $flag) {
     $user = new user();
+    $app = new app();
     $db = new database(TRUE); //Alt DB
     if(!$user->legit){
       return returnError("You must be a known user in order to flag comments");
@@ -524,6 +524,7 @@ class ban {
     $db->bind(3, $id);
     try {
       $db->execute();
+      $app->logEvent("BCS","$flagText, comment #$id on ban #$this->id");
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
