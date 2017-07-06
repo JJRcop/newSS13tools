@@ -11,6 +11,10 @@
     </thead>
     <tbdoy>
     <?php foreach ($stat->details as $k => $v):?>
+      <?php if (strpos($k, '|')){
+        $k = explode('|', $k);
+        $k = $k[0];
+      }?>
       <?php $link = "https://github.com/".PROJECT_GITHUB."/issues/$k";?>
       <tr>
         <td>

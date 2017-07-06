@@ -105,7 +105,6 @@ tr.inverse {
 }
 .logs td {
   vertical-align: top !important;
-  min-width: 100px;
 }
 .logs td:first-child {
   background: rgb(225,225,225);
@@ -116,6 +115,7 @@ tr.inverse {
 .logs tr:hover {
   background: rgba(255,255,0,.5);
 }
+
 .ln,
 .ts,
 .lt {
@@ -259,6 +259,14 @@ tr.perma,
   height: 128px;
   width: 128px;
   background-size: 256px 256px;
+}
+
+.media.medal .media-heading a {
+  display: none;
+}
+
+.media.medal .media-heading:hover a {
+  display: inline;
 }
 
 .say          {}

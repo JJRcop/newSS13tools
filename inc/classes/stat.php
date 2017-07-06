@@ -518,6 +518,7 @@ class stat {
               $d->graphic = 'plasma';
             break;
           }
+          $d->id = substr(sha1(json_encode($d)), 0, 7);
         }
         $stat->include = "commendation";
         // var_dump($stat);

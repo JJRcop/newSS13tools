@@ -101,7 +101,7 @@ if($reset){
          // if (strpos($ld[2],' has renamed the station as ') !== FALSE){
          //   $this->attachStationNameToRoundID($ld[2],$round);
          // }
-         $log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>#$i</a></td><td class='ts'>[".date("H:i:s",strtotime($ld[0]))."]";
+         $log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>$i</a></td><td class='ts'>[".date("H:i:s",strtotime($ld[0]))."]";
          $log.= "</td><td class='lt'>".$ld[1].": </td><td>";
          $log.= strip_tags($ld[2]);
          $log.="</td></tr>";
