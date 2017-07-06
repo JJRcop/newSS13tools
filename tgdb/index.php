@@ -42,6 +42,9 @@
   <h3>See also:</h3>
   <ul class="list-group">
     <li class="list-group-item">
+      <a href="newCkeys.php">New ckeys in the last 48 hours</a>
+    </li>
+    <li class="list-group-item">
       <a href="live.php">Deaths <span class="label label-danger">Live!</span></a>
     </li>
     <li class="list-group-item">

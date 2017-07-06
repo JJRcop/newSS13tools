@@ -1,13 +1,21 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.5.3');
+define('VERSION','1.5.5');
 
 define('CHANGELOG',array(
-  '1.5.2 - 3-07-2017'=>array(
+  '1.5.5 - 06-07-2017'=>array(
+    array('mod'=>"Cleaned up a ton of stuff related to viewing deaths."),
+    array('add'=>"Added support for explaining how some statistics are shown."),
+    array('mod'=>"Only the first 20 datapoints will be shown for donut charts on stats pages. This should make these charts more readable."),
+  ),
+  '1.5.4 - 05-07-2017'=>array(
+    array('add'=>"Players can now view their notes on their profile page once they've authenticated."),
+  ),
+  '1.5.3 - 03-07-2017'=>array(
     array('mod'=>"Fixed death coords"),
     array('add'=>"Individual death views now have a small minimap that should roughly show the spot on the map where the death occurred!"),
     array('mod'=>"Still poking game log parsing to make it better and better!"),
-    array('mod'=>"There's an SQL chagnelog. Please make a note of it!"),
+    array('mod'=>"There's an SQL changelog. Please make a note of it!"),
   ),
   '1.5.2 - 17-06-2017'=>array(
     array('mod'=>"tgdb now shows admin badges! Hooray!"),

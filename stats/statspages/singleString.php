@@ -1,5 +1,4 @@
 <?php require_once("statsHeader.php");?>
-
 <div class="row">
   <div class="col-md-6">
   <table class="table sticky  table-condensed table-bordered">
@@ -24,13 +23,12 @@
     </div>
   </div>
 </div>
-
 <script>
 
 var chart = c3.generate({
     bindto: '#c',
     data: {
-      json: <?php echo json_encode($stat->details); ?>,
+      json: <?php echo json_encode(array_chunk($stat->details, 20, TRUE)[0]); ?>,
       type: 'donut',
     },
 });

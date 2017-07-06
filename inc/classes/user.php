@@ -344,7 +344,7 @@
     if($db->abort){
       return FALSE;
     }
-    $where = "WHERE `datetime` > (SELECT DISTINCT(ss13round.start_datetime) FROM ss13round ORDER BY ss13round.start_datetime DESC LIMIT 1,1)";
+    $where = "WHERE `datetime` > (SELECT DISTINCT(tbl_round.start_datetime) FROM tbl_round ORDER BY tbl_round.start_datetime DESC LIMIT 1,1)";
     if ($filterby && $filter) {
       switch ($filterby){
         case 'IP':
@@ -361,8 +361,8 @@
       }
       $where = "WHERE $where = ?";
     }
-    $db->query("SELECT DISTINCT ss13connection_log.*
-    FROM ss13connection_log
+    $db->query("SELECT DISTINCT tbl_connection_log.*
+    FROM tbl_connection_log
       $where;");
     if($where){
       $db->bind(1, $filter);
@@ -540,6 +540,25 @@
     }
   }
 
-
+  public function getNewCkeys(){
+    $db = new database();
+    $db->query("SELECT tbl_player.*,
+    COUNT(tbl_connection_log.id) AS connections,
+    IF(dupe.ckey != tbl_player.ckey, GROUP_CONCAT(DISTINCT dupe.ckey), NULL) AS dupes
+    FROM tbl_player
+    LEFT JOIN tbl_connection_log ON tbl_player.ckey = tbl_connection_log.ckey
+    LEFT JOIN tbl_player AS dupe ON tbl_player.ip = dupe.ip OR tbl_player.computerid = dupe.computerid AND tbl_player.ckey != dupe.ckey
+    WHERE tbl_player.firstseen BETWEEN NOW() - INTERVAL 2 DAY AND NOW()
+    GROUP BY tbl_player.ckey
+    ORDER BY dupes ASC, connections DESC;");
+    try {
+      foreach ($players = $db->resultSet() as &$player){
+        $player = $this->parseUser($player);
+      }
+      return $players;
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+  }
 
 }

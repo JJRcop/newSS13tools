@@ -88,6 +88,10 @@ $round = new round($round,array('data','deaths','explosions','antags'));
     <td colspan="2"><?php
     $stat = $round->data->testmerged_prs;
     foreach ($stat->details as $k => $v){
+      if (strpos($k, '|')){
+        $k = explode('|', $k);
+        $k = $k[0];
+      }
       echo "<a target='_blank'";
       echo "href='https://github.com/".PROJECT_GITHUB."/issues/$k'>#$k</a> ";
     }?>
@@ -198,43 +202,8 @@ $total = $dead + $survivors; ?>
      aria-controls="deaths">Deaths from this round</a></h2>
   </div>
   <div id="deaths" class="collapse">
-    <table class="table table-bordered table-condensed">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Job</th>
-          <th>Location & Map</th>
-          <th>Damage & Attacker (if set)<br>
-            <span title="Brute" class="label label-dam label-brute">BRU</span>
-            <span title="Brain" class="label label-dam label-brain">BRA</span>
-            <span title="Fire" class="label label-dam label-fire">FIR</span>
-            <span title="Oxygen" class="label label-dam label-oxy">OXY</span>
-            <span title="Toxin" class="label label-dam label-tox">TOX</span>
-            <span title="Clone" class="label label-dam label-clone">CLN</span>
-            <span title="Stamina" class="label label-dam label-stamina">STM</span>
-          </th>
-          <th>Time & Server</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($round->deaths as $d):?>
-          <tr data-id="<?php echo $d->id;?>" class="<?php echo $d->server;?>">
-            <td><?php echo $d->link;?></td>
-            <td><?php echo "$d->name<br><small>$d->byondkey</small>";?></td>
-            <td><?php echo "$d->job <br><small class='text-danger'>".ucfirst($d->special)."</small>";?></td>
-            <td><?php echo "$d->pod <br><small>$d->mapname  ($d->coord)</small>";?></td>
-            <td>
-              <?php echo $d->labels;?><br>
-              <?php if('' != $d->laname):?>
-                <?php echo "By $d->laname <small>($d->lakey)</small>";?>        <?php if($d->suicide) echo " <small class='text-danger'>(Probable Suicide)</small>";?>
-              <?php endif;?>
-            </td>
-            <td><?php echo "$d->tod";?></td>
-          </tr>
-        <?php endforeach;?>
-      </tbody>
-    </table>
+    <?php $deaths = $round->deaths;
+    include(ROOTPATH."/inc/view/deathTable.php");?>
     <hr>
   </div>
 <?php endif;?>

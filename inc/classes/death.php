@@ -209,13 +209,15 @@ class death {
     //Map
     $death->mapfile = APP_URL."tgstation/icons/minimaps/".$death->mapname."_2.png";
 
+    $round = new round();
     //Server
     if($death->server_port){
-      $round = new round();
       $death->server = $round->mapServer($death->server_port);
     } else {
       $round->server = 'Unknown';
     }
+
+    $death->roundLink = $round->getRoundLink($death->round_id);
 
     return $death;
   }
@@ -293,6 +295,26 @@ class death {
     $db->bind(1,$days);
     try {
       return $db->resultSet();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+  }
+
+  public function getDeathsSinceID($id=null){
+    $where = null;
+    if($id){
+      $where = "WHERE id > $id";
+    }
+    $db = new database();
+    $db->query("SELECT * FROM tbl_death
+      $where
+      ORDER BY tod
+      DESC LIMIT 0,30");
+    try {
+      foreach ($deaths = $db->resultset() as &$death) {
+        $this->parseDeath($death);
+      }
+      return $deaths;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }

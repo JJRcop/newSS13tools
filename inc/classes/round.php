@@ -77,10 +77,20 @@
     }
   }
 
+  public function getRoundHref($id){
+    return APP_URL."round.php?round=$id";
+  }
+
+  public function getRoundLink($id){
+    $href = $this->getRoundHref($id);
+    return "<a href='$href'>#$id</a>";
+  }
+
   public function parseRound(&$round){
     //Links
-    $round->href = APP_URL."round.php?round=$round->id";
-    $round->link = "<a href='$round->href'>#$round->id</a>";
+    $round->href = $this->getRoundHref($round->id);
+    $round->link = $this->getRoundLink($round->id);
+
 
     //Mode
     $round = $this->modeIcon($round);

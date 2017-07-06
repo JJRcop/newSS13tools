@@ -12,3 +12,7 @@
   <?php endif;?>
 </div>
 <?php endif;?>
+
+<?php if($stat->splain):?>
+  <div class="alert alert-info"><?php echo $stat->splain;?></div>
+<?php endif;?>

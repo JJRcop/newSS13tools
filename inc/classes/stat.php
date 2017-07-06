@@ -227,6 +227,8 @@ class stat {
     //`var_name`
     //`var_value`
     //`details`
+    
+    $stat->splain = null;
 
     switch ($stat->var_name){
 
@@ -314,6 +316,13 @@ class stat {
         $stat->var_value = array_sum($stat->details);
         arsort($stat->details);
         $stat->include = 'singleString';
+
+        switch($stat->var_name){
+          case 'item_used_for_combat':
+            $stat->splain = "Showing item name and damage after the | character.";
+          break;
+        }
+
       break;
 
       //Long string stats with values
