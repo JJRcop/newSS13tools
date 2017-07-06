@@ -49,13 +49,19 @@ class message {
     }
   }
 
-  public function getPlayerMessages($ckey) {
+  public function getPlayerMessages($ckey,$secret=true) {
     $db = new database();
     if($db->abort){
       return FALSE;
     }
+    $and = null;
+    if($secret){
+      $and = "AND tbl_messages.secret = 0";
+    }
     $db->query("SELECT * FROM tbl_messages
-      WHERE tbl_messages.targetckey = ? ORDER BY `timestamp` DESC");
+      WHERE tbl_messages.targetckey = ?
+      $and
+      ORDER BY `timestamp` DESC");
     $db->bind(1, $ckey);
     try {
       foreach ($messages = $db->resultSet() as &$message){
