@@ -98,6 +98,12 @@ $round = new round($round,array('data','deaths','explosions','antags'));
     </td></tr>
   <?php endif;?>
 
+  <?php if(isset($round->data->shuttle_reason)):?>
+    <tr><th colspan="2">Escape Shuttle Called for Reason</th>
+    <td colspan="2"><?phpecho $round->data->shuttle_reason->details;?></td>
+    </tr>
+  <?php endif;?>
+
   <?php if(isset($round->data->shuttle_purchase)):
   $data = $round->data->shuttle_purchase->details;?>
     <tr>
