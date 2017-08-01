@@ -3,6 +3,6 @@
 <div class="jumbotron">
   <h1>
     <small><?php echo $stat->var_name;?>:</small><br>
-    <?php echo $stat->details;?>
+    <?php echo str_replace('_', ' ', $stat->details);?>
   </h1>
 </div>
