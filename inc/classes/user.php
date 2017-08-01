@@ -543,14 +543,18 @@
   public function getNewCkeys(){
     $db = new database();
     $db->query("SELECT tbl_player.*,
-    COUNT(tbl_connection_log.id) AS connections,
-    IF(dupe.ckey != tbl_player.ckey, GROUP_CONCAT(DISTINCT dupe.ckey), NULL) AS dupes
-    FROM tbl_player
-    LEFT JOIN tbl_connection_log ON tbl_player.ckey = tbl_connection_log.ckey
-    LEFT JOIN tbl_player AS dupe ON tbl_player.ip = dupe.ip OR tbl_player.computerid = dupe.computerid AND tbl_player.ckey != dupe.ckey
-    WHERE tbl_player.firstseen BETWEEN NOW() - INTERVAL 2 DAY AND NOW()
-    GROUP BY tbl_player.ckey
-    ORDER BY dupes ASC, connections DESC;");
+      (SELECT GROUP_CONCAT(DISTINCT ckey) FROM tbl_connection_log AS dupe WHERE dupe.datetime BETWEEN tbl_player.firstseen - INTERVAL 3 DAY AND tbl_player.firstseen AND dupe.computerid IN (SELECT DISTINCT tbl_connection_log.computerid FROM tbl_connection_log WHERE tbl_connection_log.ckey = tbl_player.ckey) AND dupe.ckey != tbl_player.ckey) AS cid_recent_connection_matches,
+       
+      (SELECT GROUP_CONCAT(DISTINCT ckey) FROM tbl_connection_log AS dupe WHERE dupe.datetime BETWEEN tbl_player.firstseen - INTERVAL 3 DAY AND tbl_player.firstseen AND dupe.ip IN (select DISTINCT tbl_connection_log.ip FROM tbl_connection_log WHERE tbl_connection_log.ckey = tbl_player.ckey) AND dupe.ckey != tbl_player.ckey) AS ip_recent_connection_matches,
+       
+      (SELECT GROUP_CONCAT(DISTINCT ckey) FROM tbl_player AS dupe WHERE dupe.computerid IN (SELECT DISTINCT tbl_connection_log.computerid FROM tbl_connection_log WHERE tbl_connection_log.ckey = tbl_player.ckey) AND dupe.ckey != tbl_player.ckey) AS cid_last_connection_matches,
+       
+      (SELECT GROUP_CONCAT(DISTINCT ckey) FROM tbl_player AS dupe WHERE dupe.ip IN (select DISTINCT tbl_connection_log.ip FROM tbl_connection_log WHERE tbl_connection_log.ckey = tbl_player.ckey) AND dupe.ckey != tbl_player.ckey) AS ip_list_connection_matches
+       
+      FROM tbl_player
+      WHERE tbl_player.firstseen > NOW() - INTERVAL 3 DAY
+      GROUP BY tbl_player.ckey
+      ORDER BY tbl_player.firstseen DESC;");
     try {
       foreach ($players = $db->resultSet() as &$player){
         $player = $this->parseUser($player);

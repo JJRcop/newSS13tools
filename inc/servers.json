@@ -1,0 +1,6 @@
+{
+  "Badger":
+    {"address":"game.tgstation13.org","port":2337,"servername":"SS13: Server 1 (Basil)","name":"Basil"},
+  "Sybil":
+    {"address":"game.tgstation13.org","port":1337,"servername":"SS13: Server 2 (Sybil)","name":"Sybil"}
+}

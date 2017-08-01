@@ -15,7 +15,10 @@ $players = $user->getNewCkeys();?>
       <th>ckey</th>
       <th>IP</th>
       <th>CID</th>
-      <th>Matching ckeys</th>
+      <th>Recent CIDs</th>
+      <th>Last CID</th>
+      <th>Recent IPs</th>
+      <th>Last IP</th>
     </tr>
   </thead>
   <tbody>
@@ -24,7 +27,10 @@ $players = $user->getNewCkeys();?>
       <td><?php echo $p->link;?></td>
       <td class="ipaddr"><?php echo $p->ip;?><?php echo $p->ipql;?></td>
       <td class="cid"><?php echo $p->computerid;?><?php echo $p->cidql;?></td>
-      <td><?php echo str_replace(',', ', ', $p->dupes);?></td>
+      <td><?php echo str_replace(',', ', ', $p->cid_recent_connection_matches);?></td>
+      <td><?php echo str_replace(',', ', ', $p->cid_last_connection_matches);?></td>
+      <td><?php echo str_replace(',', ', ', $p->ip_recent_connection_matches);?></td>
+      <td><?php echo str_replace(',', ', ', $p->ip_list_connection_matches);?></td>
     </tr>
   <?php endforeach; ?>
   </tbody>

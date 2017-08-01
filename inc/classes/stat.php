@@ -251,6 +251,7 @@ class stat {
       case 'shuttle_manipulator':
       case 'shuttle_purchase':
       case 'station_renames':
+      case 'shuttle_reason':
         if($aggregate){
           $stat->details = explode('#-#',$stat->details);
           $stat->details = array_count_values($stat->details);
@@ -321,6 +322,11 @@ class stat {
           case 'item_used_for_combat':
             $stat->splain = "Showing item name and damage after the | character.";
           break;
+          case 'traitor_uplink_items_bought':
+            $stat->splain = "Item cost after the | character";
+          break;
+          case 'vending_machine_usage':
+            $stat->splain = "Machine used | item vended";
         }
 
       break;
@@ -459,6 +465,7 @@ class stat {
           }
           $stat->details = $objs;
         }
+        $stat->splain = "/datum/objective are custom objectives";
         $stat->include = 'objs';
       break;
 

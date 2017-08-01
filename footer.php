@@ -12,6 +12,7 @@
         <div id="clock"><?php echo date("G:i:s d.m.Y");?></div>
       </div>
       <div class="col-md-4">
+      <h3>Disclaimer</h3>
       <p>
         Data should be considered preliminary and non-operational.
       </p>

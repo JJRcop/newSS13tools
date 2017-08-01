@@ -52,18 +52,29 @@ endforeach;
   <ul class="list-unstyled">
   <?php foreach ($icons as $i):?>
     <li>
-      <a href="<?php echo $app->APP_URL."tools/icons.php?view=$i";?>">
+      <a href="<?php echo $app->APP_URL."tools/icons.php?view=$i";?>"  class="view">
         <i class="fa fa-eye fa-fw" data-toggle="tooltip" title="View"></i>
       </a>
 
-      <a href="<?php echo $app->APP_URL."tools/icons.php?view=$i&render=true";?>">
+      <a href="<?php echo $app->APP_URL."tools/icons.php?view=$i&render=true";?>" class="render">
         <i class="fa fa-download fa-fw" data-toggle="tooltip" title="Render"></i>
       </a>
-
       <?php echo str_replace(ICONS_DIR, '', $i);?>
     </li>
   <?php endforeach;?>
   </ul>
+  <script>
+  $('.render').click(function(e){
+    $.ajax({
+      url: $(this).attr('href'),
+      dataType: 'json'
+    })
+    .done(function(e){
+      console.log(e);
+      // $(this).children('.pngs').addClass('success');
+    })
+  })
+  </script>
 <?php
 
 }?>

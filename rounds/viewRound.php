@@ -146,10 +146,6 @@ $total = $dead + $survivors; ?>
   <strong>RARE ENDING</strong></div>
 <?php endif;?>
 
-<?php if($round->status == 'Restart vote'):?>
-  <div class="alert alert-success"><?php echo iconStack('certificate','hand-paper-o','fa-inverse', TRUE);?> <strong>RARE VOTE</strong> Democracy works!</div>
-<?php endif;?>
-
 <div class="row">
   <?php if(isset($round->data->traitor_objective)):?>
     <div class="col-md-4">

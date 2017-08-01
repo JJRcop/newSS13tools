@@ -1,4 +1,5 @@
 <?php
+$round = new round();
 $total = $round->countRounds();
 $pages = floor($total/30);
 

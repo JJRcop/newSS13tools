@@ -173,10 +173,17 @@
 
   }
 
-  public function getRemoteFile($url){
+  public function getRemoteFile($url,$append=null){
     $client = new GuzzleHttp\Client();
-    $res = $client->request('GET',$url,[
+    $res = $client->request('GET',$url.$append,[
       'headers' => ['Accept-Encoding' => 'gzip'],
+      'curl' => [
+        CURLOPT_USERAGENT => APP_NAME.' || '.APP_URL,
+        CURLOPT_SSL_VERIFYPEER => FALSE,
+        CURLOPT_SSL_VERIFYHOST => FALSE,
+        CURLOPT_FOLLOWLOCATION => TRUE,
+        CURLOPT_REFERER => "atlantaned.space",
+      ]
       ]);
     return $res->getBody()->getContents();
   }

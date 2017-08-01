@@ -1,6 +1,5 @@
 <?php 
 if (!isset($_GET['round'])) die("No round ID specified!");
-$round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);
 $reset = FALSE;
 if(1 <= $user->level){
   $reset = filter_input(INPUT_GET, 'reset', FILTER_VALIDATE_BOOLEAN);
@@ -14,7 +13,6 @@ if($reset){
 } else {
   $round = new round($round,array('logs'));
 }
-
 
 ?>
 
@@ -95,18 +93,21 @@ if($reset){
     <tbody>
       <?php
       $i = 0;
-       foreach ($round->logs as &$log){
-         $i++;
-         $ld = $log;
-         // if (strpos($ld[2],' has renamed the station as ') !== FALSE){
-         //   $this->attachStationNameToRoundID($ld[2],$round);
-         // }
-         $log = "<tr id='L-$i' class='".$ld[1]."'><td class='ln'><a href='#L-$i'>$i</a></td><td class='ts'>[".date("H:i:s",strtotime($ld[0]))."]";
-         $log.= "</td><td class='lt'>".$ld[1].": </td><td>";
-         $log.= strip_tags($ld[2]);
-         $log.="</td></tr>";
-         echo $log;   
-       }
+      foreach ($round->logs as $log){
+        $i++;
+        $l = "<tr id='L-$i' class='".$log[1]."'>";
+        $l.= "<td class='ln'><a href='#L-$i'>$i</a></td>";
+        $l.= "<td class='ts'>[".date("H:i:s",strtotime($log[0]))."]</td>";
+        if(isset($log['coord_x'])){
+          $l.= "<td>".$log['coord_x'].",".$log['coord_y'].",".$log['coord_z']."</td>";
+        } else {
+          $l.= "<td></td>";
+        }
+        $l.= "<td class='lt'>".$log[1].": </td>";
+        $l.= "<td>".strip_tags($log[2])."</td>";
+        $l.="</tr>";
+        echo $l;
+      }
    
        ?>
     </tbody>
