@@ -100,7 +100,7 @@ $round = new round($round,array('data','deaths','explosions','antags'));
 
   <?php if(isset($round->data->shuttle_reason)):?>
     <tr><th colspan="2">Escape Shuttle Called for Reason</th>
-    <td colspan="2"><?phpecho $round->data->shuttle_reason->details;?></td>
+    <td colspan="2"><?php echo str_replace('_',' ',$round->data->shuttle_reason->details);?></td>
     </tr>
   <?php endif;?>
 
