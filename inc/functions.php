@@ -182,3 +182,16 @@ function resetURL($url){
   echo "}";
   echo "</script>";
 }
+
+function rotate90($mat) {
+  $height = count($mat);
+  $width = count($mat[0]);
+  $mat90 = array();
+
+  for ($i = 0; $i < $width; $i++) {
+    for ($j = 0; $j < $height; $j++) {
+      $mat90[$height - $i - 1][$j] = $mat[$height - $j - 1][$i];
+    }
+  }
+  return $mat90;
+}

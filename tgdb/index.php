@@ -1,7 +1,15 @@
 <?php require_once("../header.php");?>
 <?php require_once('tgdb_nav.php');?>
 
-<?php echo alert('## CLASSIFIED ## GA+//NA</strong> This page is classified. This page should not shared with non-admins.',3);?>
+<div class="jumbotron">
+  <div class="page-header">
+    <h1 class="text-center">RESTRICTED AREA <br> AUTHORIZED PERSONNEL ONLY</h1>
+  </div>
+  <p class="text-center">You are accessing a /tg/station13 information system, which includes: 1) this computer network, 2) all computers connected to this network, and 3) all devices and storage media attached to this network or to a computer on this network. You understand and consent to the following: you may access this information system for authorized use only; you have no reasonable expectation of privacy regarding any communication of data transiting or stored on this information system; at any time and for any lawful administrative purpose, the administration may monitor, intercept, and search and seize any communication or data transiting or stored on this information system; and any communications or data transiting or stored on this information system may be disclosed or used for any lawful administration purpose.</p>
+
+  <p class="text-center"><a href="#" class="btn btn-lg btn-primary">I agree</a> <a href="#" class="btn btn-lg btn-default">I do not agree</a></p>
+
+</div>
 
 <?php $activeBans = $app->getActiveBanCount();?>
 <div class="page-header">

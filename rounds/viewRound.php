@@ -34,8 +34,14 @@ $round = new round($round,array('data','deaths','explosions','antags'));
 </nav>
 
 <div class="page-header">
-  <h1>Round #<?php echo $round->id;?></h1>
+  <h1><?php echo $round->title;?></h1>
 </div>
+
+<?php if($round->rare):?>
+  <div class="alert alert-warning">
+    <?php echo iconStack('certificate','trophy','fa-inverse', TRUE);?>
+  <strong>RARE ENDING</strong></div>
+<?php endif;?>
 
 <table class="table table-bordered table-condensed">
   <tr>
@@ -145,12 +151,6 @@ $total = $dead + $survivors; ?>
 </div>
 <small><p class="text-muted text-right">(This is an approximation and may not reflect actual station population)</p></small>
 
-<hr>
-
-<?php if($round->rare):?>
-  <div class="alert alert-warning"><?php echo iconStack('certificate','trophy','fa-inverse', TRUE);?>
-  <strong>RARE ENDING</strong></div>
-<?php endif;?>
 
 <div class="row">
   <?php if(isset($round->data->traitor_objective)):?>
@@ -274,17 +274,21 @@ $total = $dead + $survivors; ?>
 
 <div id="rawdata">
   <h3>Raw data</h3>
-  <ul class="list-inline">
-    <?php foreach ($round->data as $d) :?>
-      <li>
-        <code>
-          <a href='<?php echo $app->APP_URL;?>round.php?stat=<?php echo $d->var_name;?>&round=<?php echo $round->id;?>'>
-            <?php echo $d->var_name;?>
-          </a>
-        </code>
-      </li>
-    <?php endforeach;?>
+  <?php if(!$round->data):?>
+    <div class="alert alert-info">No stats found for this round</div>
+  <?php else:?>
+    <ul class="list-inline">
+      <?php foreach ($round->data as $d) :?>
+        <li>
+          <code>
+            <a href='<?php echo $app->APP_URL;?>round.php?stat=<?php echo $d->var_name;?>&round=<?php echo $round->id;?>'>
+              <?php echo $d->var_name;?>
+            </a>
+          </code>
+        </li>
+      <?php endforeach;?>
     </ul>
+  <?php endif;?>
 </div>
 
 <nav>

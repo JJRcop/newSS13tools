@@ -2,20 +2,22 @@
 require_once('../header.php');?>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-12">
     <div class="page-header">
       <h1>Job Popularity <small>Jobularity?</small></h1>
     </div>
 
     <?php $db = new database();
-    $db->query("SELECT sum(ss13role_time.minutes) AS minutes,
-      ss13role_time.job
-    FROM ss13role_time
-    WHERE ss13role_time.job != 'Living'
-    AND ss13role_time.job != 'Ghost'
-    AND ss13role_time.job != 'Special'
-    AND ss13role_time.job != 'Exempt'
-    GROUP BY ss13role_time.job
+    $db->query("SELECT sum(tbl_role_time.minutes) AS minutes,
+      tbl_role_time.job
+    FROM tbl_role_time
+    WHERE tbl_role_time.job != 'Living'
+    AND tbl_role_time.job != 'Ghost'
+    AND tbl_role_time.job != 'Special'
+    AND tbl_role_time.job != 'Exempt'
+    AND tbl_role_time.job != 'Traitor'
+    AND tbl_role_time.job != 'Unknown'
+    GROUP BY tbl_role_time.job
     ORDER BY minutes DESC;");
     try {
       $db->execute();
@@ -67,7 +69,7 @@ require_once('../header.php');?>
     });
     </script>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-12">
     <div class="page-header">
       <h1>Deadliest Jobs <small>In the last 60 days</small></h1>
     </div>

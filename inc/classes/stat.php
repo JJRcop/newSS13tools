@@ -222,7 +222,125 @@ class stat {
     return "Added $i stats for ".$date->format("F, Y");
   }
 
-  public function parseFeedback(&$stat,$aggregate=FALSE,$skip=FALSE){
+  public function parseFeedback(&$stat, $aggregate = FALSE, $skip = FALSE){
+
+    $stat->key = 'Key';
+    $stat->value = 'Value';
+    $stat->total = 'Total';
+
+    $stat->splain = null;
+    $stat->details = trim(rtrim($stat->details));
+    $stat->details = trim($stat->details,'"');
+    $stat->details = rtrim($stat->details,'"');
+
+    if($aggregate){
+      $stat->details = str_replace('#-#', '" | "', $stat->details);
+    }
+    $stat->details = explode('" | "', $stat->details);
+
+    if(is_array($stat->details)){
+      $stat->details = array_count_values($stat->details);
+      if(count($stat->details) == 1) {
+        $key = array_keys($stat->details)[0];
+        $stat->details = $key;
+      }
+    }
+    if('' === $stat->details) $stat->details = null;
+
+    $stat->include = 'singleString';
+
+    if (!is_array($stat->details) && !$stat->var_value){
+      $stat->include = 'bigText';
+    } else if (!$stat->details) {
+      $stat->include = 'bigNum';
+    } else {
+      $stat->include = 'singleString';
+      $stat->var_value = array_sum($stat->details);
+    }
+
+    switch($stat->var_name){
+      //Special cases below this point
+      case 'test_testmerged_prs':
+      case 'testmerged_prs':
+        $keys = array_keys($stat->details);
+        unset($stat->details);
+        foreach($keys as &$s){
+          $s = explode('|',$s);
+          $stat->details[$s[0]] = $s[1];
+        }
+        $stat->include = 'PRs';
+      break;
+
+      case 'test_radio_usage':
+      case 'radio_usage':
+        $tmp = array_keys($stat->details);
+        unset($stat->details);
+        foreach ($tmp as $s){
+          $s = explode('-',$s);
+          $stat->details[$s[0]] = (int) $s[1];
+        }
+        arsort($stat->details);
+        $stat->var_value = array_sum($stat->details);
+        $stat->include = 'singleString';
+      break;
+
+      case 'test_food_harvested':
+      case 'test_chemical_reaction':
+      case 'food_harvested':
+      case 'chemical_reaction':
+      case 'export_sold_amount':
+      case 'export_sold_cost':
+        $tmp = array_keys($stat->details);
+        unset($stat->details);
+        foreach ($tmp as $s){
+          $s = explode('|',$s);
+          if(isset($stat->details[$s[0]])){
+            $stat->details[$s[0]] += $s[1];
+          } else {
+            $stat->details[$s[0]] = $s[1];
+          }
+        }
+        arsort($stat->details);
+        $stat->include = 'singleString';
+        if('chemical_reaction' === $stat->var_name){
+          $stat->key = 'Chemical';
+          $stat->value = 'Number of units created';
+          $stat->total = 'Total units of chemicals created';
+        }
+        
+      break;
+
+      case 'test_item_used_for_combat':
+      case 'item_used_for_combat':
+        $stat->include = 'combat';
+        $stat->splain = '/obj/item was removed from item names for'; 
+        $stat->splain.= ' readability purposes.';
+      break;
+
+      case 'test_admin_verb':
+      case 'admin_verb':
+        $stat->key = 'Admin Verb';
+        $stat->value = 'Times Used';
+        $stat->total = 'Total verbs used';
+      break;
+
+      case 'circuit_printed':
+        $stat->key = 'Circuit board';
+        $stat->value = 'Printed';
+        $stat->total = 'Total circuit boards printed';
+      break;
+
+      case 'event_ran':
+        $stat->key = 'Event';
+        $stat->value = 'Number of times run';
+        $stat->total = 'Total random events run';
+      break;
+
+    }
+    return $stat;
+  }
+
+  public function parseFeedbackDEPRECATED(&$stat,$aggregate=FALSE,$skip=FALSE){
     //AT THE MINIMUM, `stat` needs to be an object with properties:
     //`var_name`
     //`var_value`
@@ -433,7 +551,7 @@ class stat {
             if($aggregate){
               @$tmp[$s[0]]+= (int) $s[1];
             } else {
-              $tmp[$s[0]] = (int) $s[1];
+              @$tmp[$s[0]] = (int) $s[1];
             }
           }
           $stat->details = $tmp;

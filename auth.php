@@ -81,7 +81,6 @@ switch ($step){
     // consoleLog($location);
     //Send the user packing
     header("Location: $location");
-
   break;
 
   //Step 2: User approved us!

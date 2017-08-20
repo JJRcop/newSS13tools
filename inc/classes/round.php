@@ -36,8 +36,13 @@
 
             //Get and parse round stats(feedback)
             case 'data':
+            case 'stats':
+            case 'feedback':
               $data = $this->getRoundFeedback($round->id);
               $data = $this->parseRoundFeedback($data);
+              usort($data, function($a, $b) {
+                  return strcmp($a->var_name, $b->var_name);
+              });
               $round->data = new StdClass();
               foreach ($data as $d){
                 $round->data->{$d->var_name} = $d;
@@ -77,20 +82,27 @@
     }
   }
 
+  public function getRoundTitle($id, $short = true){
+    return "<i class='fa fa-circle-o'></i> $id";
+  }
+
   public function getRoundHref($id){
     return APP_URL."round.php?round=$id";
   }
 
   public function getRoundLink($id){
     $href = $this->getRoundHref($id);
-    return "<a href='$href'>#$id</a>";
+    return "<a href='$href'>".$this->getRoundTitle($id)."</a>";
   }
 
   public function parseRound(&$round){
+
+    //Title
+    $round->title = $this->getRoundTitle($round->id);
+
     //Links
     $round->href = $this->getRoundHref($round->id);
     $round->link = $this->getRoundLink($round->id);
-
 
     //Mode
     $round = $this->modeIcon($round);
@@ -209,6 +221,12 @@
       $round->rare = TRUE;
     }
 
+    if('Restart vote' == $round->result){
+      $round->statusIcon = "<i class='fa fa-fw fa-hand-stop-o'></i>";
+      $round->statusClass = "vote";
+      $round->rare = TRUE;
+    }
+
     if(!$round->result){
       $round->result = "[No round result found]";
       $round->statusIcon = "<i class='fa fa-fw fa-question'></i>";
@@ -247,7 +265,7 @@
 
   }
 
-  public function listRounds($page=1, $count=30){
+  public function listRounds($page=1, $count=ROUNDS_PER_PAGE){
     $page = ($page*$count) - $count;
     $db = new database();
     if($db->abort){
@@ -311,13 +329,28 @@
 
   }
 
+  // public function parseRoundFeedback(&$feedback){
+  //   $stat = new stat();
+  //   foreach($feedback as &$data){
+  //     $data = $stat->parseFeedback($data);
+  //   }
+  //   return $feedback;
+  // }
+
   public function parseRoundFeedback(&$feedback){
     $stat = new stat();
-    foreach($feedback as &$data){
-      $data = $stat->parseFeedback($data);
+    if(defined('STAT_CHANGE_ID') && $this->id > STAT_CHANGE_ID){
+      foreach($feedback as &$data){
+        $data = $stat->parseFeedback($data);
+      }
+    } else {
+      foreach($feedback as &$data){
+        $data = $stat->parseFeedbackDEPRECATED($data);
+      }
     }
     return $feedback;
   }
+
 
   public function getRoundStat($round, $stat){
     $db = new database();

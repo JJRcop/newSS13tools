@@ -1,6 +1,13 @@
 <?php
 define('APPLICATION','NewSS13Tools');
-define('VERSION','1.5.5');
+
+define('VERSION_MAJOR', 1);
+define('VERSION_MINOR', 5);
+define('VERSION_PATCH', 5);
+define('VERSION',VERSION_MAJOR.'.'.VERSION_MINOR.'.'.VERSION_PATCH);
+
+define('PER_PAGE', 60); //Default # of results per page
+define('ROUNDS_PER_PAGE', PER_PAGE); //If we need to change from the default
 
 define('CHANGELOG',array(
   '1.5.5 - 06-07-2017'=>array(

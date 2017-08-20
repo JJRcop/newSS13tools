@@ -76,6 +76,11 @@ tr.inverse {
   color: white;
   background: black;
 }
+
+tr.vote {
+  background: orange;
+}
+
 .text-brute {color: orange;}
 .text-brain {color: green;}
 .text-fire  {color: red;}
@@ -84,16 +89,18 @@ tr.inverse {
 .brain {background-color: green;}
 .fire  {background-color: red;}
 .oxy   {background-color: blue;}
-.censored { color: #bbbbbb; font-size: small; }
-.OOC      { color: #002eb8; }
-.ADMIN    { color: #b82e00; font-weight: bold; }
-.SAY      { color: #008000; }
-.ACCESS   { color: #ff5050; }
-.WHISPER  { font-style: italic; }
-.EMOTE    { font-style: italic; }
-.GAME     { color: #00c000; font-weight: bold; }
-.PDA      { color: #800000; }
-.GHOST    { color: #5c00e6; }
+.censored, .censored td{ color: #bbbbbb; font-size: small; }
+.OOC     , .OOC      td{ color: #002eb8; }
+.ADMIN   , .ADMIN    td{ color: #b82e00; font-weight: bold; }
+.SAY     , .SAY      td{ color: #008000; }
+.ACCESS  , .ACCESS   td{ color: #ff5050; }
+.WHISPER , .WHISPER  td{ font-style: italic; }
+.EMOTE   , .EMOTE    td{ font-style: italic; }
+.GAME    , .GAME     td{ color: #00c000; font-weight: bold; }
+.PDA     , .PDA      td{ color: #800000; }
+.GHOST   , .GHOST    td{ color: #5c00e6; }
+.ATTACK  , .ATTACK   td{ color: red; font-weight: bold; }
+
 
 .log-wrap {
   overflow-x: scroll;

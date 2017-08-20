@@ -1,6 +1,7 @@
 <?php
 
 if(empty($_GET) || isset($_GET['page'])){
+  $wide = true;
   $include = 'rounds/listRounds.php';
 } elseif (isset($_GET['round']) && isset($_GET['stat'])){
   $round = filter_input(INPUT_GET, 'round', FILTER_SANITIZE_NUMBER_INT);

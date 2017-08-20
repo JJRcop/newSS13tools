@@ -36,6 +36,9 @@
             <li>
               <a href="<?php echo $app->APP_URL;?>tools/icons.php">Icons</a>
             </li>
+            <li>
+              <a href="<?php echo $app->APP_URL;?>tools/maps.php">Maps</a>
+            </li>
           </ul>
         </li>
         <?php endif; ?>

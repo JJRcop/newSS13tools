@@ -24,7 +24,7 @@ $player = $user->getPlayerByCkey($ckey,TRUE);
 </div>
 
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-6">
     <ul class="list-group">
       <li class="list-group-item" style="background: <?php echo $player->backColor;?>; color: <?php echo $player->foreColor;?>;">
         <strong class="list-group-item-heading">Last rank</strong>
@@ -54,7 +54,7 @@ $player = $user->getPlayerByCkey($ckey,TRUE);
       </li>
     </ul>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-6">
     <ul class="list-group">
 <!--       <li class="list-group-item list-group-item-success">
         <strong class="list-group-item-heading">(<i class="fa fa-flask"></i>) Grief Index™</strong>

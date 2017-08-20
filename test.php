@@ -1,13 +1,7 @@
-<?php $skip = true;
-$wide = true;
-require_once('header.php');?>
+<?php require_once('header.php');?>
 
-<?php
-
-$logs = new AltGameLogs();
-var_dump($logs->getLogs("https://tgstation13.org/parsed-logs/sybil/data/logs/2017/07/02/round-72731/game.txt.gz"));
-
-
+<?php $round = new round(74474,array('data'));
+var_dump($round);
 ?>
 
-<?php require_once('footer.php');
+<?php require_once('footer.php');?>

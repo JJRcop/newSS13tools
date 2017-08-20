@@ -5,16 +5,12 @@
   <table class="table sticky  table-condensed table-bordered">
     <thead>
       <tr>
-        <th>Key</th>
-        <th>Value</th>
+        <th>PR #</th>
+        <th>Commit Hash</th>
       </tr>
     </thead>
     <tbdoy>
     <?php foreach ($stat->details as $k => $v):?>
-      <?php if (strpos($k, '|')){
-        $k = explode('|', $k);
-        $k = $k[0];
-      }?>
       <?php $link = "https://github.com/".PROJECT_GITHUB."/issues/$k";?>
       <tr>
         <td>

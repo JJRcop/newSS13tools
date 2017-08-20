@@ -83,13 +83,13 @@ class ban {
       switch ($filterby){
         case 'IP':
         case 'ip':
-          $where = "ip";
+          $where = "tbl_ban.ip";
           $filter = ip2long($filter);
         break;
 
         case 'CID':
         case 'cid':
-          $where = "computerid";
+          $where = "tbl_ban.computerid";
           $filter = $filter;
         break;
       }

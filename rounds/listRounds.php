@@ -15,7 +15,8 @@ $rounds = $round->listRounds($page);
 ?>
 
 <div class="page-header">
-  <h1>Rounds</h1>
+  <h1><small class="pull-right">Between <?php echo $rounds[0]->start;?> and <?php echo end($rounds)->end;?></small>
+  Rounds</h1>
 </div>
 <?php $link = "round"; include(ROOTPATH."/inc/view/pagination.php");?>
 <table class="table sticky  table-bordered table-condensed">
@@ -34,7 +35,7 @@ $rounds = $round->listRounds($page);
   <tbody>
     <?php 
     if (!$rounds) {
-      echo "<tr><td colspan='5'>No rounds found</td></tr>";
+      echo "<tr><td colspan='7'>No rounds found</td></tr>";
     } else{
       foreach($rounds as $round): ?>
         <tr class="<?php echo $round->statusClass;?>">

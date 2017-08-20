@@ -4,20 +4,27 @@
   <table class="table sticky  table-condensed table-bordered">
     <thead>
       <tr>
-        <th><?php echo $stat->key;?></th>
-        <th><?php echo $stat->value;?></th>
+        <th>Item</th>
+        <th>Damage</th>
+        <th>Times used</th>
+        <th>Total Damage</th>
       </tr>
     </thead>
     <tbdoy>
-    <?php foreach ($stat->details as $k => $v):?>
+    <?php $used = 0; $totalDam = 0; foreach ($stat->details as $k => $v):?>
+      <?php $k = str_replace('/obj/item', '', $k); $k = explode('|',$k);?>
       <tr>
-        <td><?php echo $k;?></td>
+        <td><?php echo $k[0];?></td>
+        <td><?php echo $k[1]; $used += $k[1];?></td>
         <td><?php echo $v;?></td>
+        <td><?php echo $k[1]*$v; $totalDam += $k[1]*$v;?></td>
       </tr>
     <?php endforeach;?>
       <tr>
-        <th><?php echo $stat->total;?></th>
+        <th>Total</th>
         <th><?php echo $stat->var_value;?></th>
+        <th><?php echo $used;?></th>
+        <th><?php echo $totalDam;?></th>
       </tr>
     </tbdoy>
   </table>
