@@ -623,6 +623,8 @@ class stat {
         foreach ($stat->details as $m => &$i){
           $i = array_count_values($i);
         }
+        $stat->key = "Item Path";
+        $stat->value = "Number of Times Vended";
         $stat->include = 'vending';
       break;
 
