@@ -106,12 +106,16 @@ $round = new round($round,array('data','deaths','explosions','antags'));
 
   <?php if(isset($round->data->shuttle_reason)):?>
     <tr><th colspan="2">Escape Shuttle Called for Reason(s)</th>
-    <td colspan="2">
-      <?php
-          $stat = $round->data->shuttle_reason;
-          $smol = true;
-          include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
-    </td>
+      <td colspan="2">
+        <?php
+        $stat = $round->data->shuttle_reason;
+        if(is_array($stat->details)):
+          echo implode($stat->details,"<br>");
+         else:?>
+          <?php echo str_replace('_', ' ', $stat->details);?>
+        <?php endif;?>
+         <i class="fa fa-check" data-toggle="tooltip" title="Shuttle Call Successful"></i>
+      </td>
     </tr>
   <?php endif;?>
 

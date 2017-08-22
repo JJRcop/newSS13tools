@@ -382,7 +382,7 @@ class stat {
       // case 'emergency_shuttle':
       // case 'end_error':
       // case 'end_proper':
-      // case 'engine_started':
+      case 'engine_started':
       // case 'escaped_human':
       // case 'escaped_total':
       case 'event_admin_cancelled':
