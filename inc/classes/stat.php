@@ -223,120 +223,446 @@ class stat {
   }
 
   public function parseFeedback(&$stat, $aggregate = FALSE, $skip = FALSE){
-
+    //Defaults
     $stat->key = 'Key';
     $stat->value = 'Value';
     $stat->total = 'Total';
-
     $stat->splain = null;
+
+    //Clear out unneeded cruft
     $stat->details = trim(rtrim($stat->details));
     $stat->details = trim($stat->details,'"');
     $stat->details = rtrim($stat->details,'"');
+    $stat->details = rtrim($stat->details,'" |');
 
+    //Start parsing
     if($aggregate){
       $stat->details = str_replace('#-#', '" | "', $stat->details);
     }
+
     $stat->details = explode('" | "', $stat->details);
 
-    if(is_array($stat->details)){
-      $stat->details = array_count_values($stat->details);
-      if(count($stat->details) == 1) {
-        $key = array_keys($stat->details)[0];
-        $stat->details = $key;
-      }
-    }
-    if('' === $stat->details) $stat->details = null;
-
-    $stat->include = 'singleString';
-
-    if (!is_array($stat->details) && !$stat->var_value){
-      $stat->include = 'bigText';
-    } else if (!$stat->details) {
-      $stat->include = 'bigNum';
-    } else {
-      $stat->include = 'singleString';
-      $stat->var_value = array_sum($stat->details);
-    }
-
     switch($stat->var_name){
-      //Special cases below this point
-      case 'test_testmerged_prs':
-      case 'testmerged_prs':
-        $keys = array_keys($stat->details);
-        unset($stat->details);
-        foreach($keys as &$s){
-          $s = explode('|',$s);
-          $stat->details[$s[0]] = $s[1];
-        }
-        $stat->include = 'PRs';
+      //Almost every var name seen in the last year or so 
+      
+      //Simple number stats
+      case 'admin_cookies_spawned':
+      case 'ahelp_close':
+      case 'ahelp_icissue':
+      case 'ahelp_reject':
+      case 'ahelp_reopen':
+      case 'ahelp_resolve':
+      case 'ahelp_unresolved':
+      case 'alert_comms_blue':
+      case 'alert_comms_green':
+      case 'alert_keycard_auth_bsa':
+      case 'alert_keycard_auth_maint':
+      case 'alert_keycard_auth_red':
+      case 'arcade_loss_hp_emagged':
+      case 'arcade_loss_hp_normal':
+      case 'arcade_loss_mana_emagged':
+      case 'arcade_loss_mana_normal':
+      case 'arcade_win_emagged':
+      case 'arcade_win_normal':
+      case 'ban_appearance':
+      case 'ban_appearance_unban':
+      case 'ban_job':
+      case 'ban_job_tmp':
+      case 'ban_job_unban':
+      case 'ban_perma':
+      case 'ban_tmp':
+      case 'ban_tmp_mins':
+      case 'cyborg_ais_created':
+      case 'cyborg_birth':
+      case 'cyborg_engineering':
+      case 'cyborg_frames_built':
+      case 'cyborg_janitor':
+      case 'cyborg_medical':
+      case 'cyborg_miner':
+      case 'cyborg_mmis_filled':
+      case 'cyborg_peacekeeper':
+      case 'cyborg_security':
+      case 'cyborg_service':
+      case 'cyborg_standard':
+      case 'disposal_auto_flush':
+      case 'escaped_human':
+      case 'escaped_total':
+      case 'mecha_durand_created':
+      case 'mecha_firefighter_created':
+      case 'mecha_gygax_created':
+      case 'mecha_honker_created':
+      case 'mecha_odysseus_created':
+      case 'mecha_phazon_created':
+      case 'mecha_ripley_created':
+      case 'newscaster_channels':
+      case 'newscaster_newspapers_printed':
+      case 'newscaster_stories':
+      case 'nuclear_challenge_mode':
+      case 'round_end_clients':
+      case 'round_end_ghosts':
+      case 'survived_human':
+      case 'survived_total':
+        $stat->include = 'bigNum';
       break;
 
-      case 'test_radio_usage':
-      case 'radio_usage':
-        $tmp = array_keys($stat->details);
-        unset($stat->details);
-        foreach ($tmp as $s){
-          $s = explode('-',$s);
-          $stat->details[$s[0]] = (int) $s[1];
+      //big text stuff
+      
+      case 'chaplain_weapon':
+      case 'religion_book':
+      case 'religion_deity':
+      case 'religion_name':
+      case 'shuttle_fasttravel':
+      case 'shuttle_manipulator':
+      case 'shuttle_purchase':
+      case 'shuttle_reason':
+      case 'station_renames':
+        if(is_array($stat->details) && 1 == count($stat->details)){
+          $stat->details = $stat->details[0];
         }
-        arsort($stat->details);
+        $stat->include = 'bigText';
+      break;
+
+      // case 'admin_cookies_spawned':
+      case 'admin_secrets_fun_used':
+      case 'admin_toggle':
+      case 'admin_verb':
+      // case 'ahelp_close':
+      // case 'ahelp_icissue':
+      // case 'ahelp_reject':
+      // case 'ahelp_reopen':
+      // case 'ahelp_resolve':
+      // case 'ahelp_unresolved':
+      // case 'alert_comms_blue':
+      // case 'alert_comms_green':
+      // case 'alert_keycard_auth_bsa':
+      // case 'alert_keycard_auth_maint':
+      // case 'alert_keycard_auth_red':
+      // case 'arcade_loss_hp_emagged':
+      // case 'arcade_loss_hp_normal':
+      // case 'arcade_loss_mana_emagged':
+      // case 'arcade_loss_mana_normal':
+      // case 'arcade_win_emagged':
+      // case 'arcade_win_normal':
+      case 'assembly_made':
+      // case 'ban_appearance':
+      // case 'ban_appearance_unban':
+      // case 'ban_job':
+      // case 'ban_job_tmp':
+      // case 'ban_job_unban':
+      // case 'ban_perma':
+      // case 'ban_tmp':
+      // case 'ban_tmp_mins':
+      // case 'cargo_imports':
+      case 'cell_used':
+      // case 'changeling_objective':
+      case 'changeling_powers':
+      case 'changeling_power_purchase':
+      case 'changeling_success':
+      // case 'chaplain_weapon':
+      // case 'chemical_reaction':
+      case 'circuit_printed':
+      case 'clockcult_scripture_recited':
+      case 'colonies_dropped':
+      // case 'commendation':
+      // case 'cult_objective':
+      case 'cult_runes_scribed':
+      // case 'cyborg_ais_created':
+      // case 'cyborg_birth':
+      // case 'cyborg_engineering':
+      // case 'cyborg_frames_built':
+      // case 'cyborg_janitor':
+      // case 'cyborg_medical':
+      // case 'cyborg_miner':
+      // case 'cyborg_mmis_filled':
+      // case 'cyborg_peacekeeper':
+      // case 'cyborg_security':
+      // case 'cyborg_service':
+      // case 'cyborg_standard':
+      // case 'disposal_auto_flush':
+      // case 'emergency_shuttle':
+      // case 'end_error':
+      // case 'end_proper':
+      // case 'engine_started':
+      // case 'escaped_human':
+      // case 'escaped_total':
+      case 'event_admin_cancelled':
+      case 'event_ran':
+      // case 'export_sold_amount':
+      // case 'export_sold_cost':
+      // case 'food_harvested':
+      case 'food_made':
+      // case 'game_mode':
+      case 'gun_fired':
+      case 'handcuffs':
+      case 'high_research_level':
+      case 'hivelord_core':
+      case 'immortality_talisman':
+      case 'item_deconstructed':
+      // case 'item_printed':
+      // case 'item_used_for_combat':
+      case 'jaunter':
+      case 'job_preferences':
+      case 'lazarus_injector':
+      case 'map_name':
+      // case 'mecha_durand_created':
+      // case 'mecha_firefighter_created':
+      // case 'mecha_gygax_created':
+      // case 'mecha_honker_created':
+      // case 'mecha_odysseus_created':
+      // case 'mecha_phazon_created':
+      // case 'mecha_ripley_created':
+      case 'megafauna_kills':
+      // case 'mining_equipment_bought':
+      case 'mining_voucher_redeemed':
+      case 'mobs_killed_mining':
+      // case 'newscaster_channels':
+      // case 'newscaster_newspapers_printed':
+      // case 'newscaster_stories':
+      // case 'nuclear_challenge_mode':
+      case 'object_crafted':
+      case 'ore_mined':
+      case 'pick_used_mining':
+      case 'preferences_verb':
+      // case 'radio_usage':
+      // case 'religion_book':
+      // case 'religion_deity':
+      // case 'religion_name':
+      // case 'revision':
+      // case 'round_end':
+      // case 'round_end_clients':
+      // case 'round_end_ghosts':
+      // case 'round_end_result':
+      // case 'round_start':
+      // case 'server_ip':
+      // case 'shuttle_fasttravel':
+      case 'shuttle_gib':
+      case 'shuttle_gib_unintelligent':
+      // case 'shuttle_manipulator':
+      // case 'shuttle_purchase':
+      // case 'shuttle_reason':
+      case 'slime_babies_born':
+      case 'slime_cores_used':
+      case 'slime_core_harvested':
+      // case 'station_renames':
+      case 'surgeries_completed':
+      // case 'survived_human':
+      // case 'survived_total':
+      // case 'testmerged_prs':
+      // case 'traitor_objective':
+      case 'traitor_random_uplink_items_gott':
+      case 'traitor_success':
+      // case 'traitor_uplink_items_bought':
+      // case 'vending_machine_usage':
+      case 'warp_cube':
+      case 'wisp_lantern':
+      // case 'wizard_objective':
+      case 'wizard_spell_improved':
+      case 'wizard_spell_learned':
+      case 'wizard_success':
+      case 'zone_targeted':
+        $stat->details = array_count_values($stat->details);
         $stat->var_value = array_sum($stat->details);
         $stat->include = 'singleString';
+
+        if('traitor_uplink_items_bought' == $stat->var_name){
+          $stat->key = "Path | TC Cost";
+          $stat->value = "Times Purchased";
+        }
       break;
 
-      case 'test_food_harvested':
-      case 'test_chemical_reaction':
-      case 'food_harvested':
+      case 'cargo_imports':
+        $i = 0;
+        $stat->totalOrdered = 0;
+        $stat->totalSpent = 0;
+        $stat->details = array_count_values($stat->details);
+        foreach ($stat->details as $d => $c){
+          $t = explode('|',$d);
+          $import['crate'] = $t[0];
+          $import['name'] = $t[1];
+          $import['cost'] = (int) $t[2]; $stat->totalSpent+= $t[2];
+          $import['count'] = $c; $stat->totalOrdered+= $c;
+          unset($stat->details[$d]);
+          $stat->details[] = $import;
+        }
+        $stat->include = 'imports';
+      break;
+
+      case 'changeling_objective':
+      case 'cult_objective':
+      case 'traitor_objective':
+      case 'wizard_objective':
+        $stat->details = array_count_values($stat->details);
+        $objs = array();
+        foreach ($stat->details as $obj => $count){
+          $obj = explode('|',$obj);
+          $objective = str_replace('/datum/objective/', '',$obj[0]);
+          $status = str_replace(',', '', $obj[1]);
+          @$objs[$objective][$status]+= $count;
+        }
+        unset($stat->details);
+        $stat->details = $objs;
+        $stat->splain = '/datum/objective removed from path for readablity purposes';
+        $stat->include = 'objs';
+      break;
+
       case 'chemical_reaction':
       case 'export_sold_amount':
-      case 'export_sold_cost':
-        $tmp = array_keys($stat->details);
-        unset($stat->details);
-        foreach ($tmp as $s){
-          $s = explode('|',$s);
-          if(isset($stat->details[$s[0]])){
-            $stat->details[$s[0]] += $s[1];
-          } else {
-            $stat->details[$s[0]] = $s[1];
-          }
+      case 'food_harvested':
+      case 'item_printed':
+      // case 'export_sold_cost':
+        $stat->key = "Chemical";
+        $stat->value = "Units Produced";
+        $stat->total = "Total Units Produced";
+        $tmp = array();
+        foreach ($stat->details as $d){
+          $d = explode('|',$d);
+          @$tmp[$d[0]]+= $d[1];
         }
-        arsort($stat->details);
+        $stat->details = $tmp;
+        $stat->var_value = array_sum($stat->details);
         $stat->include = 'singleString';
-        if('chemical_reaction' === $stat->var_name){
-          $stat->key = 'Chemical';
-          $stat->value = 'Number of units created';
-          $stat->total = 'Total units of chemicals created';
+        if('export_sold_amount' == $stat->var_name) {
+          $stat->key = "Object";
+          $stat->value = "Units Exported";
+          $stat->total = "Total Units Exported";
         }
-        
+
+        if('food_harvested' == $stat->var_name) {
+          $stat->key = "Crop";
+          $stat->value = "Units Harvested";
+          $stat->total = "Total Units Harvested";
+        }
+
+        if('item_printed' == $stat->var_name) {
+          $stat->key = "Path";
+          $stat->value = "Units Printed";
+          $stat->total = "Total Units Printed";
+        }
       break;
 
-      case 'test_item_used_for_combat':
+      case 'commendation':
+        $tmp = array();
+        foreach ($stat->details as $c){
+          $tmp[] = json_decode($c);
+        }
+        $stat->details = $tmp;
+        foreach ($stat->details as &$d){
+          $d = (object) $d;
+          switch ($d->medal){
+            default: 
+              $d->graphic = 'bronze';
+            break;
+            case 'The robust security award': 
+              $d->graphic = 'silver';
+            break;
+            case 'The medal of valor': 
+              $d->graphic = 'gold';
+            break;
+            case 'The nobel sciences award': 
+              $d->graphic = 'plasma';
+            break;
+          }
+          $d->id = substr(sha1(json_encode($d)), 0, 7);
+        }
+        $stat->include = 'commendation';
+      break;
+
+      case 'export_sold_cost':
+      case 'traitor_uplink_items_bought':
+
+        $stat->path = "Path";
+        $stat->cost = "Value/Item";
+        $stat->totalItems = "Items Exported";
+        $stat->totalValue = "Total Value of Items";
+
+        $stat->totalExports = 0;
+        $stat->totalEarned = 0;
+        $stat->details = array_count_values($stat->details);
+        foreach ($stat->details as $d => $c){
+          $t = explode('|',$d);
+          $export['crate'] = $t[0];
+          $export['cost'] = (int) $t[1]; 
+          $export['count'] = $c; $stat->totalExports+= $c;
+          $export['value'] = $c * $t[1]; $stat->totalEarned+= $c * $t[1];
+          unset($stat->details[$d]);
+          $stat->details[] = $export;
+        }
+        if('traitor_uplink_items_bought' == $stat->var_name){
+          $stat->path = "Name";
+          $stat->cost = "TC Cost";
+          $stat->totalItems = "Total Items Purchased";
+          $stat->totalValue = "Total Spent";
+        }
+        $stat->include = 'exports';
+      break;
+
       case 'item_used_for_combat':
         $stat->include = 'combat';
         $stat->splain = '/obj/item was removed from item names for'; 
         $stat->splain.= ' readability purposes.';
+        $stat->details = array_count_values($stat->details);
       break;
 
-      case 'test_admin_verb':
-      case 'admin_verb':
-        $stat->key = 'Admin Verb';
-        $stat->value = 'Times Used';
-        $stat->total = 'Total verbs used';
+      case 'vending_machine_usage':
+      case 'mining_equipment_bought':
+        $machines = array();
+        foreach ($stat->details as $d){
+          $d = explode('|',$d);
+          if(isset($machines[$d[0]])){
+            $machines[$d[0]].=', '.$d[1];
+          } else {
+            $machines[$d[0]] = $d[1];
+          }
+        }
+        foreach ($machines as $m => &$i){
+          $i = explode(', ',$i);
+          $i = array_filter($i);
+        }
+        unset($stat->details);
+        $stat->details = $machines;
+        foreach ($stat->details as $m => &$i){
+          $i = array_count_values($i);
+        }
+        $stat->include = 'vending';
       break;
 
-      case 'circuit_printed':
-        $stat->key = 'Circuit board';
-        $stat->value = 'Printed';
-        $stat->total = 'Total circuit boards printed';
+      case 'testmerged_prs':
+        $deets = $stat->details;
+        unset($stat->details);
+        foreach ($deets as &$d){
+          $d = explode('|',$d);
+          $stat->details[$d[0]] = $d[1];
+        }
       break;
 
-      case 'event_ran':
-        $stat->key = 'Event';
-        $stat->value = 'Number of times run';
-        $stat->total = 'Total random events run';
+      case 'radio_usage':
+        $channels = $stat->details;
+        unset($stat->details);
+        foreach ($channels as $chan){
+          $t = explode('-',$chan);
+          if(isset($stat->details[$t[0]])){
+            $stat->details[$t[0]]+= $t[1];
+          } else {
+            $stat->details[$t[0]] = $t[1];
+          }
+        }
+        $stat->var_value = array_sum($stat->details);
+        $stat->key = "Radio Channel";
+        $stat->value = "Messages Transmitted";
+        $stat->total = "Total Messages";
+        $stat->include = 'singleString';
       break;
 
+      default:
+        echo alert("<strong>ERROR 501:</strong> $stat->var_name is untracked. Pelease tell Ned.",'danger');
+      break;
     }
+
+
+    if(is_array($stat->details)){
+      arsort($stat->details);
+    }
+    // var_dump($stat);
     return $stat;
   }
 
@@ -346,10 +672,9 @@ class stat {
     //`var_value`
     //`details`
     
+    $stat->deprecated = TRUE;
     $stat->splain = null;
-
     switch ($stat->var_name){
-
       //Single string stats
       //These can just be reported. When aggregated, they need to be
       //concatenated carefully
@@ -378,7 +703,6 @@ class stat {
         if(is_array($stat->details)) $stat->var_value = array_sum($stat->details);
         $stat->include = 'singleString';
       break;
-
       //Long string stats
       //Need to be exploded and grouped. This does NOT handle | value appended
       //stats
@@ -435,7 +759,6 @@ class stat {
         $stat->var_value = array_sum($stat->details);
         arsort($stat->details);
         $stat->include = 'singleString';
-
         switch($stat->var_name){
           case 'item_used_for_combat':
             $stat->splain = "Showing item name and damage after the | character.";
@@ -446,13 +769,10 @@ class stat {
           case 'vending_machine_usage':
             $stat->splain = "Machine used | item vended";
         }
-
       break;
-
       //Long string stats with values
       //Strings that have a value piped (|) onto the end of the string.
       //We need to group and add these values
-
       case 'admin_toggle':
       case 'cargo_imports':
       case 'chemical_reaction':
@@ -485,10 +805,8 @@ class stat {
         arsort($stat->details);
         $stat->include = 'singleString';
       break;
-
       //Edge cases
       //Stats that have to be specially handled
-
       //Job bans
       case 'ban_job':
       case 'ban_job_tmp':
@@ -506,7 +824,6 @@ class stat {
         $stat->var_value = array_sum($stat->details);
         $stat->include = 'singleString';
       break;
-
       //Job preferences
       case 'job_preferences':
         if($aggregate){
@@ -537,7 +854,6 @@ class stat {
         }
         $stat->include = 'jobPrefs';
       break;
-
       //Radio usage
       case 'radio_usage':
         if($aggregate){
@@ -560,7 +876,6 @@ class stat {
         $stat->var_value = array_sum($stat->details);
         $stat->include = 'singleString';
       break;
-
       case 'changeling_objective':
       case 'traitor_objective':
       case 'wizard_objective':
@@ -586,7 +901,6 @@ class stat {
         $stat->splain = "/datum/objective are custom objectives";
         $stat->include = 'objs';
       break;
-
       case 'round_end':
       case 'round_start':
         if($aggregate){
@@ -598,7 +912,6 @@ class stat {
         }
         $stat->include = 'bigNum';
       break;
-
       case 'server_ip':
         if($aggregate){
           $stat->details = explode('#-#',$stat->details);
@@ -608,7 +921,6 @@ class stat {
         if(is_array($stat->details)) $stat->var_value = array_sum($stat->details);
         $stat->include = 'singleString';
       break;
-
       case 'testmerged_prs':
         if($aggregate){
           $stat->details = str_replace('#-#',' ',$stat->details);
@@ -639,15 +951,12 @@ class stat {
             default: 
               $d->graphic = 'bronze';
             break;
-
             case 'The robust security award': 
               $d->graphic = 'silver';
             break;
-
             case 'The medal of valor': 
               $d->graphic = 'gold';
             break;
-
             case 'The nobel sciences award': 
               $d->graphic = 'plasma';
             break;
@@ -657,7 +966,6 @@ class stat {
         $stat->include = "commendation";
         // var_dump($stat);
       break;
-
       //Value stats
       //Where the value just needs to be displayed
       //Or summed when aggregating
@@ -745,7 +1053,6 @@ class stat {
         $stat->var_value = (int) $stat->var_value;
         $stat->include = 'bigNum';
       break;
-
       default:
         echo alert("<strong>ERROR 501:</strong> $stat->var_name is untracked. Tell Ned. TELL NED!!",'danger');
       break;
@@ -756,6 +1063,7 @@ class stat {
     }
     return $stat;
   }
+
 
   public function getRoundStatsForMonth($year=null, $month=null){
     if (!$month && !$year){

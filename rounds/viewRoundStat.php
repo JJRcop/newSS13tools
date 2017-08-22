@@ -7,7 +7,6 @@ $viewStat = filter_input(INPUT_GET, 'stat', FILTER_SANITIZE_STRING,FILTER_FLAG_S
 
 $round = new round($id,FALSE);
 $stat = $round->getRoundStat($round->id,$viewStat);
-var_dump($stat);
 ?>
 
 <nav>

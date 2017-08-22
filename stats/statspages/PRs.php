@@ -5,8 +5,8 @@
   <table class="table sticky  table-condensed table-bordered">
     <thead>
       <tr>
-        <th>PR #</th>
-        <th>Commit Hash</th>
+        <th><?php echo $stat->key;?></th>
+        <th><?php echo $stat->value;?></th>
       </tr>
     </thead>
     <tbdoy>

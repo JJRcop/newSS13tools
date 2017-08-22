@@ -15,11 +15,13 @@
         <td><?php echo $v;?></td>
       </tr>
     <?php endforeach;?>
+    </tbdoy>
+    <tfoot>
       <tr>
         <th><?php echo $stat->total;?></th>
         <th><?php echo $stat->var_value;?></th>
       </tr>
-    </tbdoy>
+    </tfoot>
   </table>
   </div>
   <div class="col-md-6">

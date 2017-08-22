@@ -96,7 +96,7 @@ $round = new round($round,array('data','deaths','explosions','antags'));
     foreach ($stat->details as $k => $v){
       if (strpos($k, '|')){
         $k = explode('|', $k);
-        $k = $k[0];
+        $k = str_replace('"', '', $k[0]);
       }
       echo "<a target='_blank'";
       echo "href='https://github.com/".PROJECT_GITHUB."/issues/$k'>#$k</a> ";
@@ -105,8 +105,13 @@ $round = new round($round,array('data','deaths','explosions','antags'));
   <?php endif;?>
 
   <?php if(isset($round->data->shuttle_reason)):?>
-    <tr><th colspan="2">Escape Shuttle Called for Reason</th>
-    <td colspan="2"><?php echo str_replace('_',' ',$round->data->shuttle_reason->details);?></td>
+    <tr><th colspan="2">Escape Shuttle Called for Reason(s)</th>
+    <td colspan="2">
+      <?php
+          $stat = $round->data->shuttle_reason;
+          $smol = true;
+          include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');?>
+    </td>
     </tr>
   <?php endif;?>
 

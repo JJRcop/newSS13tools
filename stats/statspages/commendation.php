@@ -1,7 +1,8 @@
 <?php require_once("statsHeader.php");?>
  
 <?php foreach ($stat->details as $c):?>
-  <div class="media medal" id="<?php echo $c->id;?>">
+  <a name="<?php echo $c->id;?>" class="anchor"></a>
+  <div class="media medal">
     <div class="media-left">
         <img class="media-object" src="<?php echo $app->APP_URL;?>icons/obj/clothing/accessories/<?php echo $c->graphic;?>-0.png" alt="<?php echo $c->medal;?>" width="64" height="64">
     </div>

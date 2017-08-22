@@ -39,7 +39,7 @@
             case 'stats':
             case 'feedback':
               $data = $this->getRoundFeedback($round->id);
-              $data = $this->parseRoundFeedback($data);
+              $data = $this->parseRoundFeedback($data, $round->id);
               usort($data, function($a, $b) {
                   return strcmp($a->var_name, $b->var_name);
               });
@@ -337,9 +337,9 @@
   //   return $feedback;
   // }
 
-  public function parseRoundFeedback(&$feedback){
+  public function parseRoundFeedback(&$feedback,$round){
     $stat = new stat();
-    if(defined('STAT_CHANGE_ID') && $this->id > STAT_CHANGE_ID){
+    if($round > STAT_CHANGE_ID){
       foreach($feedback as &$data){
         $data = $stat->parseFeedback($data);
       }
@@ -364,7 +364,11 @@
     try {
       $stat = new stat();
       $data = $db->single();
-      $stat = $stat->parseFeedback($data);
+      if(defined('STAT_CHANGE_ID') && $round > STAT_CHANGE_ID){
+        $stat = $stat->parseFeedback($data);
+      } else {
+        $stat = $stat->parseFeedbackDEPRECATED($data);
+      }
       return $stat;
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
