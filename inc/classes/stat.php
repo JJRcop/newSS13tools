@@ -635,6 +635,7 @@ class stat {
           $d = explode('|',$d);
           $stat->details[$d[0]] = $d[1];
         }
+        $stat->include = 'PRs';
       break;
 
       case 'radio_usage':

@@ -107,7 +107,9 @@
 
     if('remote'== $app->auth_method || 'text' == $app->auth_method){
       $user->rank = $this->verifyAdminRank($user->ckey);
-      $user->permissions = $this->getAdminPermissions($user->rank);
+      foreach ($this->getAdminPermissions($user->rank) as $p){
+        $user->permissions[$p] = TRUE;
+      }
       $user->txtVerify = TRUE;
     }
 
@@ -330,7 +332,7 @@
         $ban = new ban();
         $player->bans = $ban->getPlayerBans($player->ckey);
         $message = new message();
-        $player->messages = $message->getPlayerMessages($player->ckey,TRUE);
+        $player->messages = $message->getPlayerMessages($player->ckey);
       }
       $player = $this->parseUser($player,TRUE);
       return $player;
@@ -439,7 +441,7 @@
     return false;
   }
 
-  public function doAdminsPlay(){
+  public function doAdminsPlay($interval = 30){
     $db = new database();
     if($db->abort){
       return FALSE;
@@ -448,9 +450,10 @@
       count(DISTINCT tbl_connection_log.id) AS connections
       FROM tbl_connection_log
       LEFT JOIN tbl_player ON tbl_connection_log.ckey = tbl_player.ckey
-      WHERE tbl_connection_log.datetime >= DATE(NOW()) - INTERVAL 30 DAY
+      WHERE tbl_connection_log.datetime >= DATE(NOW()) - INTERVAL ? DAY
       GROUP BY tbl_player.ckey
       ORDER BY connections DESC;");
+    $db->bind(1,$interval);
     try {
       $result = $db->resultset();
       $admins = array();

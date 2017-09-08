@@ -30,8 +30,6 @@ if (isset($_GET['death'])) {
     <?php echo $death->pod;?> on <?php echo $death->mapname;?> (<?php echo "$death->x, $death->y, $death->z"?>)<br>
     <small><?php echo $death->tod;?> on <?php echo $death->server;?> (Round <?php echo $death->roundLink;?>)</small>
   </div>
-</div>
-<div class="row">
   <canvas id="map" width="300" height="300"></canvas>
 </div>
 

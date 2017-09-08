@@ -118,3 +118,14 @@ define('CHANGELOG',array(
     array('del'=>"Another refactor changed how logs work and thusly, public logs are no longer available. This may change at some point in the future")
   ),
 ));
+
+if(DEBUG){
+  ini_set('xdebug.var_display_max_depth',-1);
+  ini_set('xdebug.var_display_max_data',-1);
+  ini_set('xdebug.var_display_max_children',-1);
+  set_time_limit(240);
+}
+
+ini_set('session.gc_maxlifetime', 86400); //24 hours
+session_set_cookie_params(86400); //24 hours
+session_start();
