@@ -92,6 +92,11 @@
               </a>
             </li>
             <li>
+              <a href="<?php echo $app->APP_URL;?>stats/serverPop.php">
+                Server Population Charts
+              </a>
+            </li>
+            <li>
               <a href="<?php echo $app->APP_URL;?>stats/globalModeStats.php">
                 Global Mode Stats
               </a>

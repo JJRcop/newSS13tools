@@ -1,4 +1,4 @@
-<?php require_once('header.php');?>
+<?php require_once('../header.php');?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <?php 
@@ -14,7 +14,7 @@ MAX(playercount) AS maxplayers,
 MIN(playercount) AS minplayers,
 MAX(admincount) AS maxadmins,
 MIN(admincount) AS minadmins
-FROM ss13legacy_population
+FROM tbl_legacy_population
 GROUP BY DAY(`time`), MONTH(`time`), YEAR(`time`), server_port
 ORDER BY `TIME` DESC
 LIMIT 0,60;");
@@ -57,7 +57,7 @@ var myChart = new Chart(ctx, {
     data: {
         labels: dates,
         datasets: [{
-            label: 'Basil - Players',
+            label: 'Basil - Avg. Players',
             data: ["<?php echo implode('", "',array_column($basil, 'players'));?>"],
             borderWidth: 1,
             fill: false,
@@ -65,7 +65,7 @@ var myChart = new Chart(ctx, {
             backgroundColor: "#01F"
         },
         {
-            label: 'Basil - Admins',
+            label: 'Basil - Avg. Admins',
             data: ["<?php echo implode('", "',array_column($basil, 'admins'));?>"],
             borderWidth: 1,
             fill: false,
@@ -89,7 +89,7 @@ var myChart = new Chart(ctx, {
           backgroundColor: "#79F"
       },
         {
-          label: 'Sybil - Players',
+          label: 'Sybil - Avg. Players',
           data: ["<?php echo implode('", "',array_column($sybil, 'players'));?>"],
           borderWidth: 1,
           fill: false,
@@ -98,7 +98,7 @@ var myChart = new Chart(ctx, {
           backgroundColor: "#F01"
       },
         {
-          label: 'Sybil - Admins',
+          label: 'Sybil - Avg. Admins',
           data: ["<?php echo implode('", "',array_column($sybil, 'admins'));?>"],
           borderWidth: 1,
           fill: false,
@@ -145,4 +145,4 @@ var myChart = new Chart(ctx, {
 });
 </script>
 
-<?php require_once('footer.php');?>
+<?php require_once('../footer.php');?>

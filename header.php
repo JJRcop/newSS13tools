@@ -56,7 +56,11 @@ if (defined('NOTICE')){
 if(!$skip):
   $die = $app->restrictionCheck($user);
   if ($app->die) exit($die); //Application will exit if user is not auth'd
-  $deathGraph = $death->countDeathsByDays();?>
+  $deathGraph = $death->countDeathsByDays();
+  if(7 > count($deathGraph)){
+    echo alert("<strong>ALERT</strong> No recent deaths detected! Something might be wrong with the database!",FALSE);
+  }
+  ?>
 
 <script>
 var chart = c3.generate({
