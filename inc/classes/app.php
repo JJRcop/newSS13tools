@@ -9,6 +9,9 @@
   public $APP_URL = APP_URL;
   public $app_url = APP_URL; //Just in case
 
+  public $currentURL;
+  public $currentPage;
+
   //User defined authentication method
   public $auth_method = FALSE;
 
@@ -41,6 +44,7 @@
   public $message = null;
 
   public function __construct($data=false) {
+    $this->getCurrentURL();
     if(defined('OAUTHREMOTE')){
       $this->auth_method = 'remote';
     } elseif (defined('TXT_RANK_VERIFY')){
@@ -64,6 +68,12 @@
       }
     }
   }
+
+  public function getCurrentURL(){
+    $this->currentURL = str_replace(ROOTPATH."/", $this->APP_URL, $_SERVER['SCRIPT_FILENAME']);
+    $this->currentPage = str_replace(ROOTPATH."/", '', $_SERVER['SCRIPT_FILENAME']);
+  }
+
 
   public function setMessage($message){
     $this->message = $message;
