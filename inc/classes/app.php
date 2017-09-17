@@ -368,35 +368,47 @@
     return true;
   }
 
-  public function getURL($url, $cacheTime=5, $skipCache = false){
+  public function getURL($url, $cacheTime = 5, $skipCache = false, $debug = false){
     $urlHash = hash('sha256',$url);
     $cacheFile = ROOTPATH."/tmp/$urlHash";
     if(file_exists($cacheFile)){
       $json = file_get_contents($cacheFile);
       $data = json_decode($json);
-      if($data->timestamp - time() > $data->lifetime * 60){
-        $this->setMessage("$url was reloaded");
-        return $this->cacheURL($url,$cacheTime);
+      if(time() - $data->timestamp > $data->lifetime * 60){
+        return $this->cacheURL($url,$cacheTime, $debug);
       } else {
-        return base64_decode($data->data);
+        if($debug){
+          $data->data = $data->data;
+          return $data;
+        } else {
+          return $data->data;
+        }
       }
     } else {
       $this->setMessage("$url was loaded from cache");
-      return $this->cacheURL($url,$cacheTime);
+      return $this->cacheURL($url,$cacheTime, $debug);
     }
   }
 
-  public function cacheURL($url,$cacheTime=5) {
+  public function cacheURL($url,$cacheTime=5, $debug = false) {
     $data = $this->getRemoteFile($url);
     $remote = new stdclass;
     $remote->timestamp = time();
     $remote->lifetime = $cacheTime;
-    $remote->data = base64_encode($data);
+    if(!$debug){
+      $remote->data = $data;
+    } else {
+      $remote->data = $data;
+    }
     $urlHash = hash('sha256',$url);
     $cacheFile = ROOTPATH."/tmp/$urlHash";
     $tmp = fopen($cacheFile,'w+');
     fwrite($tmp,json_encode($remote));
-    return $data;
+    if(!$debug){
+      return $data;
+    } else {
+      return $remote;
+    }
   }
 
 

@@ -5,7 +5,8 @@
 </div>
 
 <?php
-$gbp = json_decode($app->getURL('https://tools.tgstation13.org/pr_balances.json'));?>
+$gbp = $app->getURL('https://tools.tgstation13.org/pr_balances.json',1, false, true);
+?>
 
 <table class="table sticky table-bordered table-condensed sort">
   <thead>
@@ -16,7 +17,7 @@ $gbp = json_decode($app->getURL('https://tools.tgstation13.org/pr_balances.json'
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($gbp as $g => $n): ?>
+    <?php foreach (json_decode($gbp->data) as $g => $n): ?>
     <tr>
       <th>
         <?php echo $g;?>
@@ -28,6 +29,29 @@ $gbp = json_decode($app->getURL('https://tools.tgstation13.org/pr_balances.json'
     </tr>
     <?php endforeach; ?>
   </tbody>
+</table>
+
+<div class="page-header">
+  <h4>Cache debug info</h4>
+</div>
+
+<table class="table table-bordered table-condensed">
+  <tr>
+    <th>Cache Saved at</th>
+    <td><?php echo date('r',$gbp->timestamp);?></td>
+  </tr>
+  <tr>
+    <th>Cache Lifetime</th>
+    <td><?php echo single($gbp->lifetime*60,'second','seconds');?></td>
+  </tr>
+  <tr>
+    <th>Cache Expires at</th>
+    <td><?php echo date('r',$gbp->timestamp+($gbp->lifetime*60));?></td>
+  </tr>
+  <tr>
+    <th>Cache Age</th>
+    <td><?php echo single(time() - $gbp->timestamp,'second','seconds');?></td>
+  </tr>
 </table>
 
 <?php require_once('../footer.php');?>
