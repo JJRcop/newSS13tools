@@ -12,7 +12,6 @@ $gbp = $app->getURL('https://tools.tgstation13.org/pr_balances.json',5,false, tr
   <thead>
     <tr>
       <th>Username</th>
-      <th>GitHub</th>
       <th>Balance</th>
     </tr>
   </thead>
@@ -20,11 +19,8 @@ $gbp = $app->getURL('https://tools.tgstation13.org/pr_balances.json',5,false, tr
     <?php foreach (json_decode($gbp->data) as $g => $n): ?>
     <tr>
       <th>
-        <?php echo $g;?>
+        <a href='https://github.com/tgstation/tgstation/pulls?utf8=%E2%9C%93&q=is%3Apr%20author%3A<?php echo urlencode($g);?>' target="_blank"><?php echo $g;?> <i class='fa fa-external-link'></i></a> 
       </th>
-      <td>
-        <a href='https://github.com/tgstation/tgstation/pulls?utf8=%E2%9C%93&q=is%3Apr%20author%3A<?php echo urlencode($g);?>' target="_blank">Github <i class='fa fa-external-link'></i></a> 
-      </td>
       <td><?php echo $n;?></td>
     </tr>
     <?php endforeach; ?>
