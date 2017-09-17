@@ -5,7 +5,7 @@
 </div>
 
 <?php
-$gbp = $app->getURL('https://tools.tgstation13.org/pr_balances.json',1, false, true);
+$gbp = $app->getURL('https://tools.tgstation13.org/pr_balances.json',5,false, true);
 ?>
 
 <table class="table sticky table-bordered table-condensed sort">
