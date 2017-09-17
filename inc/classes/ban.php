@@ -101,11 +101,11 @@ class ban {
     FROM tbl_ban
     LEFT JOIN tbl_player ON tbl_ban.ckey = tbl_player.ckey
     $where
-    ORDER BY tbl_ban.id DESC LIMIT ?, ?");
+    ORDER BY tbl_ban.bantime DESC LIMIT ?, ?");
     if($where){
+      $db->bind(1, $filter);
       $db->bind(2, $page);
       $db->bind(3, $count);
-      $db->bind(1,$filter);
     } else {
       $db->bind(1, $page);
       $db->bind(2, $count);

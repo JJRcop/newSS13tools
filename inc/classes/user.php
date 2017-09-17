@@ -332,7 +332,7 @@
         $ban = new ban();
         $player->bans = $ban->getPlayerBans($player->ckey);
         $message = new message();
-        $player->messages = $message->getPlayerMessages($player->ckey);
+        $player->messages = $message->getPlayerMessages($player->ckey,TRUE);
       }
       $player = $this->parseUser($player,TRUE);
       return $player;

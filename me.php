@@ -1,8 +1,5 @@
 <?php require_once('header.php');?>
 <?php if ($user->ckey):?>
-  <?php
-  $message = new message();
-  $user->messages = $message->getPlayerMessages($user->ckey);?>
   <div class="page-header">
     <h1><small>You are</small> <?php echo $user->label;?></h1>
   </div>
@@ -14,7 +11,11 @@
   <?php $hours = $user->getActiveHours($user->ckey);?>
   <?php $roles = $user->getActiveRoles($user->ckey);?>
   <?php require_once(ROOTPATH."/inc/view/UserGraphs.php");?>
+
   <?php $public = true;?>
+  <?php
+  $message = new message();
+  $user->messages = $message->getPlayerMessages($user->ckey);?>
   <div class="row">
   <div class="col-md-12">
     <?php if ($user->messages):?>

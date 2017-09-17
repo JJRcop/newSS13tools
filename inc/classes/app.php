@@ -34,6 +34,8 @@
     'tools' => 1 //Icon tools
   );
 
+  public $debug = array();
+
   //Log files we need to delete regularly
   private $cleanUpTargets = array(
     ROOTPATH.'/logs/admintxt.log',
@@ -365,4 +367,37 @@
     }
     return true;
   }
+
+  public function getURL($url, $cacheTime=5, $skipCache = false){
+    $urlHash = hash('sha256',$url);
+    $cacheFile = ROOTPATH."/tmp/$urlHash";
+    if(file_exists($cacheFile)){
+      $json = file_get_contents($cacheFile);
+      $data = json_decode($json);
+      if($data->timestamp - time() > $data->lifetime * 60){
+        $this->setMessage("$url was reloaded");
+        return $this->cacheURL($url,$cacheTime);
+      } else {
+        return base64_decode($data->data);
+      }
+    } else {
+      $this->setMessage("$url was loaded from cache");
+      return $this->cacheURL($url,$cacheTime);
+    }
+  }
+
+  public function cacheURL($url,$cacheTime=5) {
+    $data = $this->getRemoteFile($url);
+    $remote = new stdclass;
+    $remote->timestamp = time();
+    $remote->lifetime = $cacheTime;
+    $remote->data = base64_encode($data);
+    $urlHash = hash('sha256',$url);
+    $cacheFile = ROOTPATH."/tmp/$urlHash";
+    $tmp = fopen($cacheFile,'w+');
+    fwrite($tmp,json_encode($remote));
+    return $data;
+  }
+
+
 }

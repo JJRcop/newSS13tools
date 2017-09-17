@@ -44,11 +44,11 @@
         <?php endif; ?>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-          role="button" aria-expanded="false">Image Generators
+          role="button" aria-expanded="false">Coderbus
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="<?php echo $app->APP_URL;?>generators/bio.php">Bio</a></li>
+            <li><a href="<?php echo $app->APP_URL;?>coderbus/gbp.php">PR Balance</a></li>
           </ul>
         </li>
         <li class="dropdown">

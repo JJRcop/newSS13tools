@@ -16,10 +16,5 @@ if(empty($_GET) || isset($_GET['page'])){
 }
 
 require_once('header.php');
-
-
 include($include);
-
-
-
 require_once('footer.php');

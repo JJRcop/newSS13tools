@@ -21,6 +21,7 @@ class message {
     }
     $db->query("SELECT * FROM tbl_messages
       WHERE tbl_messages.type != 'memo'
+      AND tbl_messages.deleted = 0
       ORDER BY id DESC LIMIT ?, ?");
     $db->bind(1, $page);
     $db->bind(2, $count);
@@ -49,17 +50,19 @@ class message {
     }
   }
 
-  public function getPlayerMessages($ckey,$secret=true) {
+  public function getPlayerMessages($ckey,$secret=false) {
     $db = new database();
     if($db->abort){
       return FALSE;
     }
-    $and = null;
+    $and = "AND tbl_messages.secret = 0";
     if($secret){
-      $and = "AND tbl_messages.secret = 0";
+      $and = null;
     }
+
     $db->query("SELECT * FROM tbl_messages
       WHERE tbl_messages.targetckey = ?
+      AND tbl_messages.deleted = 0
       $and
       ORDER BY `timestamp` DESC");
     $db->bind(1, $ckey);
@@ -146,6 +149,7 @@ class message {
     }
     $db->query("SELECT * FROM tbl_messages
       WHERE tbl_messages.type = 'watchlist entry'
+      AND tbl_messages.deleted = 0
       ORDER BY id DESC LIMIT ?, ?");
     $db->bind(1, $page);
     $db->bind(2, $count);
