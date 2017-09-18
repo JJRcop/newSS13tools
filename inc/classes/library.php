@@ -35,7 +35,8 @@ class library {
       FROM tbl_library
       LEFT JOIN tbl_library AS `next` ON next.id = tbl_library.id + 1
       LEFT JOIN tbl_library AS `prev` ON prev.id = tbl_library.id - 1
-      WHERE tbl_library.id= ?");
+      WHERE tbl_library.id = ?
+      AND tbl_library.deleted != 1");
     $db->bind(1,$book);
     try {
       return $db->single();
@@ -94,7 +95,8 @@ class library {
       FROM tbl_library
       LEFT JOIN tbl_library AS `next` ON next.id = tbl_library.id + 1
       LEFT JOIN tbl_library AS `prev` ON prev.id = tbl_library.id - 1
-      WHERE tbl_library.id=?");
+      WHERE tbl_library.id = ?
+      AND tbl_library.deleted != 1");
     $db->bind(1,$book);
     try {
     return $db->single();
@@ -115,6 +117,7 @@ class library {
     $db->query("SELECT id, author, title, category
       FROM tbl_library
       WHERE content != ''
+      AND tbl_library.deleted = 0
       $query
       ORDER BY `datetime` DESC
       LIMIT ?,?");
@@ -140,6 +143,7 @@ class library {
     $db->query("SELECT count(DISTINCT id) AS count, group_concat(id) as ids, title
       FROM tbl_library
       WHERE content != ''
+      AND tbl_library.deleted != 1
       GROUP BY content
       ORDER BY count DESC;");
     try {
@@ -157,7 +161,8 @@ class library {
     }
     $db->query("SELECT count(DISTINCT id) AS total
       FROM tbl_library
-      WHERE content != ''");
+      WHERE content != ''
+      AND tbl_library.deleted != 1");
     try {
       return $db->single()->total;
     } catch (Exception $e) {
@@ -185,6 +190,17 @@ class library {
       return alert("Database error: ".$e->getMessage(),FALSE);
     }
     return alert("$book->title has been flagged for deletion.",0);
+  }
+
+  public function deleteBook($book){
+    $db = new database(TRUE);
+    if($db->abort){
+      return FALSE;
+    }
+    $user = new user();
+    if($user->level < 2){
+      die("You do not have the proper access credentials to flag books.");
+    }
   }
 
   public function bb2HTML($bbcode){
