@@ -9,6 +9,7 @@ class library {
   public $category;
   public $ckey;
   public $datetime;
+  public $deleted;
 
   public function __construct($book=null){
     if ($book){
@@ -36,7 +37,7 @@ class library {
       LEFT JOIN tbl_library AS `next` ON next.id = tbl_library.id + 1
       LEFT JOIN tbl_library AS `prev` ON prev.id = tbl_library.id - 1
       WHERE tbl_library.id = ?
-      AND tbl_library.deleted != 1");
+      OR tbl_library.deleted = 0");
     $db->bind(1,$book);
     try {
       return $db->single();
@@ -96,7 +97,7 @@ class library {
       LEFT JOIN tbl_library AS `next` ON next.id = tbl_library.id + 1
       LEFT JOIN tbl_library AS `prev` ON prev.id = tbl_library.id - 1
       WHERE tbl_library.id = ?
-      AND tbl_library.deleted != 1");
+      OR tbl_library.deleted = 0");
     $db->bind(1,$book);
     try {
     return $db->single();
@@ -117,7 +118,7 @@ class library {
     $db->query("SELECT id, author, title, category
       FROM tbl_library
       WHERE content != ''
-      AND tbl_library.deleted = 0
+      AND tbl_library.deleted IS NULL
       $query
       ORDER BY `datetime` DESC
       LIMIT ?,?");
@@ -143,7 +144,7 @@ class library {
     $db->query("SELECT count(DISTINCT id) AS count, group_concat(id) as ids, title
       FROM tbl_library
       WHERE content != ''
-      AND tbl_library.deleted != 1
+      OR tbl_library.deleted = 0
       GROUP BY content
       ORDER BY count DESC;");
     try {
@@ -162,7 +163,7 @@ class library {
     $db->query("SELECT count(DISTINCT id) AS total
       FROM tbl_library
       WHERE content != ''
-      AND tbl_library.deleted != 1");
+      OR tbl_library.deleted = 0");
     try {
       return $db->single()->total;
     } catch (Exception $e) {
@@ -171,7 +172,7 @@ class library {
 
   }
 
-  public function flagBook($book){
+  public function flagBook($deleted=false){
     $db = new database(TRUE);
     if($db->abort){
       return FALSE;
@@ -180,27 +181,36 @@ class library {
     if($user->level < 2){
       die("You do not have the proper access credentials to flag books.");
     }
-    $book = new library($book);
-    $db->query("INSERT INTO f451 (book, flagger, `date`) VALUES (?, ?, NOW())");
-    $db->bind(1,$book->id);
+    $db->query("INSERT INTO f451 (book, flagger, `date`, deleted) VALUES (?, ?, NOW(), deleted)");
+    $db->bind(1,$this->id);
     $db->bind(2,$user->ckey);
+    $db->bind(3,$deleted);
     try {
       $db->execute();
     } catch (Exception $e) {
       return alert("Database error: ".$e->getMessage(),FALSE);
     }
-    return alert("$book->title has been flagged for deletion.",0);
+    return alert("$this->title has been flagged for deletion.",0);
   }
 
   public function deleteBook($book){
-    $db = new database(TRUE);
+    $db = new database();
     if($db->abort){
       return FALSE;
     }
     $user = new user();
     if($user->level < 2){
-      die("You do not have the proper access credentials to flag books.");
+      die("You do not have the proper access credentials to delete books.");
     }
+    $db->query("UPDATE tbl_library SET deleted = 1 WHERE id = ?");
+    $db->bind(1,$this->id);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return alert("Database error: ".$e->getMessage(),FALSE);
+    }
+    $this->flagBook(1);
+    return alert("$this->title has been deleted (hidden).",0);
   }
 
   public function bb2HTML($bbcode){

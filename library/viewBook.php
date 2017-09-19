@@ -12,9 +12,9 @@
 if (!isset($_GET['book'])) die("No book specified!");
 $book = filter_input(INPUT_GET, 'book', FILTER_SANITIZE_NUMBER_INT);
 $book = new library($book,TRUE);
-$flag = false;
-$flag = filter_input(INPUT_GET, 'flag', FILTER_VALIDATE_BOOLEAN);
-if($flag) echo $book->flagBook($book->id);
+$delete = false;
+$delete = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_BOOLEAN);
+if($delete) echo $book->deleteBook($book->id);
 
 ?>
 
@@ -29,7 +29,7 @@ if($flag) echo $book->flagBook($book->id);
   <?php endif;?>
   <li><a href="catalog.php">&uarr; Catalog</a></li>
   <?php if ($user->legit):?>
-    <li><a href="viewBook.php?book=<?php echo $book->id;?>&flag=true"><span class="glyphicon glyphicon-flag"></span> Flag for deletion</a></li>
+    <li><a href="viewBook.php?book=<?php echo $book->id;?>&delete=true"><span class="glyphicon glyphicon-remove"></span> Delete Book</a></li>
   <?php endif;?>
 
   <?php if ($book->next): ?>
@@ -77,7 +77,7 @@ if($flag) echo $book->flagBook($book->id);
   <?php endif;?>
   <li><a href="catalog.php">&uarr; Catalog</a></li>
   <?php if ($user->legit):?>
-    <li><a href="viewBook.php?book=<?php echo $book->id;?>&flag=true"><span class="glyphicon glyphicon-flag"></span> Flag for deletion</a></li>
+    <li><a href="viewBook.php?book=<?php echo $book->id;?>&delete=true"><span class="glyphicon glyphicon-remove"></span> Delete Book</a></li>
   <?php endif;?>
 
   <?php if ($book->next): ?>
