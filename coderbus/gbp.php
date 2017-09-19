@@ -2,7 +2,8 @@
 
 <?php
 $gbp = $app->getURL('https://tools.tgstation13.org/pr_balances.json',5,false, true);
-$labels = $app->getURL('https://api.github.com/repos/tgstation/tgstation/labels');
+$labels1 = $app->getURL('https://api.github.com/repos/tgstation/tgstation/labels');
+$labels2 = $app->getURL('https://api.github.com/repos/tgstation/tgstation/labels?page=2');
 ?>
 
 <div class="row">
@@ -67,7 +68,9 @@ $labels = $app->getURL('https://api.github.com/repos/tgstation/tgstation/labels'
       </tr>
     </thead>
     <tbody>
-  <?php $labels = json_decode($labels);
+  <?php $labels1 = json_decode($labels1);
+  $labels2 = json_decode($labels2);
+  $labels = array_merge($labels1,$labels2);
   $label_values = array(
       'Fix' => 2,
       'Refactor' => 2,
