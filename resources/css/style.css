@@ -233,8 +233,10 @@ tr.perma,
   border: 1px solid #eee;
 }
 
-.label.label-player a {
+.label.label-player a,
+.label.label-gh a {
   color: inherit;
+  text-shadow: 0 0 1px #000;
 }
 
 .panel-heading a.label {
