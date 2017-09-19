@@ -28,7 +28,7 @@ if($delete) echo $book->deleteBook($book->id);
     <?php endif;?>
   <?php endif;?>
   <li><a href="catalog.php">&uarr; Catalog</a></li>
-  <?php if ($user->legit):?>
+  <?php if ($user->level >= 2):?>
     <li><a href="viewBook.php?book=<?php echo $book->id;?>&delete=true"><span class="glyphicon glyphicon-remove"></span> Delete Book</a></li>
   <?php endif;?>
 
@@ -76,7 +76,7 @@ if($delete) echo $book->deleteBook($book->id);
     <?php endif;?>
   <?php endif;?>
   <li><a href="catalog.php">&uarr; Catalog</a></li>
-  <?php if ($user->legit):?>
+  <?php if ($user->level >= 2):?>
     <li><a href="viewBook.php?book=<?php echo $book->id;?>&delete=true"><span class="glyphicon glyphicon-remove"></span> Delete Book</a></li>
   <?php endif;?>
 
