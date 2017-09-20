@@ -4,6 +4,9 @@
 $gbp = $app->getURL('https://tools.tgstation13.org/pr_balances.json',5,false, true);
 $labels1 = $app->getURL('https://api.github.com/repos/tgstation/tgstation/labels');
 $labels2 = $app->getURL('https://api.github.com/repos/tgstation/tgstation/labels?page=2');
+
+$gbp->data = json_decode($gbp->data,TRUE);
+arsort($gbp->data);
 ?>
 
 <div class="row">
@@ -19,7 +22,7 @@ $labels2 = $app->getURL('https://api.github.com/repos/tgstation/tgstation/labels
       </tr>
     </thead>
     <tbody>
-      <?php foreach (json_decode($gbp->data) as $g => $n): ?>
+      <?php foreach ($gbp->data as $g => $n): ?>
       <tr>
         <th>
           <a href='https://github.com/tgstation/tgstation/pulls?utf8=%E2%9C%93&q=is%3Apr%20author%3A<?php echo urlencode($g);?>' target="_blank"><?php echo $g;?>
@@ -89,7 +92,7 @@ $labels2 = $app->getURL('https://api.github.com/repos/tgstation/tgstation/labels
   <tr>
     <td>
       <span class="label label-gh" style="background: #<?php echo $label->color;?>">
-          <a href="https://github.com/tgstation/tgstation/issues?utf8=✓&q=label%3A<?php echo $label->name;?>" target="_blank"><?php echo $label->name;?>
+          <a href="https://github.com/tgstation/tgstation/labels/<?php echo $label->name;?>" target="_blank"><?php echo $label->name;?>
           </a>
         </span>
     </td>
