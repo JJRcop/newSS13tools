@@ -568,4 +568,13 @@
     }
   }
 
+  public function logout(){
+    $_SESSION = null;
+    session_destroy();
+    foreach ($this as &$value){
+      $value = null;
+    }
+    return returnSuccess("You have been logged out");
+  }
+
 }

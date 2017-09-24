@@ -1,7 +1,16 @@
 <?php require_once('header.php');?>
+<?php 
+  $logout = filter_input(INPUT_GET, 'logout', FILTER_VALIDATE_BOOLEAN);
+  if($logout) {
+    echo parseReturn($user->logout());
+    return;
+  }?>
 <?php if ($user->ckey):?>
+
   <div class="page-header">
-    <h1><small>You are</small> <?php echo $user->label;?></h1>
+    <h1><span class="pull-right">
+      <a href="?logout=true" class="btn btn-danger">Log out</a></span>
+      <small>You are</small> <?php echo $user->label;?></h1>
   </div>
 
   <p class='lead'>Between your first connection on <strong><?php echo $user->firstseen;?></strong> and your most recent connection on <strong><?php echo $user->lastseen;?></strong>, you have connected <?php echo $user->connections;?> times.</p>
