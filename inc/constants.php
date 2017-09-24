@@ -119,6 +119,17 @@ define('CHANGELOG',array(
   ),
 ));
 
+$session = new session();
+
+session_set_save_handler(array($session, 'open'),
+                         array($session, 'close'),
+                         array($session, 'read'),
+                         array($session, 'write'),
+                         array($session, 'destroy'),
+                         array($session, 'gc'));
+register_shutdown_function('session_write_close');
+session_start();
+
 if(DEBUG){
   ini_set('xdebug.var_display_max_depth',-1);
   ini_set('xdebug.var_display_max_data',-1);
@@ -126,6 +137,4 @@ if(DEBUG){
   set_time_limit(240);
 }
 
-ini_set('session.gc_maxlifetime', 86400); //24 hours
-session_set_cookie_params(86400); //24 hours
-session_start();
+
