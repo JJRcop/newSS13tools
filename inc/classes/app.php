@@ -411,6 +411,7 @@
     }
   }
 
+  //With credit to MSO
   public function generateToke($secure=FALSE){
     $r_bytes = openssl_random_pseudo_bytes(5120, $secure);
     if (!$secure) {

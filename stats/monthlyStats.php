@@ -14,13 +14,8 @@ if ($year && $month):?>
   <?php
   $date = new dateTime("$month/01/$year");
 
-  $stat = $stat->getMonthlyStat($date->format("Y"),$date->format("m"),$viewStat);?>
+  $stat = $stat->getStatForMonth($viewStat, $date->format("m"), $date->format("Y"));?>
     <?php
-    // $stat->details = json_decode($stat->data,TRUE);
-    if(is_array($stat->details) && $stat->include == 'bigText') {
-      $stat->include = 'singleString';
-    }
-
     include(ROOTPATH.'/stats/statspages/'.$stat->include.'.php');
     ?>
 
@@ -39,16 +34,34 @@ if ($year && $month):?>
       <h1>Stats for <?php echo $date->format("F Y");?></h1>
     </div>
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-4">
+        <table class="table sort table-bordered table-condensed">
+          <thead>
+            <tr>
+              <th>Stat</th>
+              <th>Times Recorded</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach($stats as $s):?>
+              <tr>
+              <?php $link = APP_URL."stats/monthlyStats.php?year=".$date->format('Y');
+              $link.= "&month=".$date->format('m')."&stat=$s->var_name";?>
+                <td>
+                  <a href="<?php echo $link;?>">
+                    <?php echo $s->var_name;?>
+                  </a>
+                </td>
+                <td><?php echo $s->times;?></td>
+              </tr>
+            <?php endforeach;?>
+          </tbody>
+        </table>
         <ul class="list-unstyled">
-        <?php foreach($stats as $s):?>
-          <?php $link = APP_URL."stats/monthlyStats.php?year=".$date->format('Y');
-          $link.= "&month=".$date->format('m')."&stat=$s->var_name";?>
-          <li><a href="<?php echo $link;?>"><code><?php echo $s->var_name;?></code></a></li>
-        <?php endforeach;?>
+        
         </ul>
       </div>
-      <div class="col-md-9">
+      <div class="col-md-8">
         <table class="table sort table-bordered table-condensed">
           <thead>
             <tr>

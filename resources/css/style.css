@@ -314,13 +314,13 @@ tr.perma,
 .label-clone   {background: #ab63d8; color: white;}
 .label-stamina {background: #0e22aa; color: white;}
 
-.tablesorter-headerUnSorted {
+thead .tablesorter-headerUnSorted {
   background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); }
 
-.tablesorter-headerAsc {
+thead .tablesorter-headerAsc {
   background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); }
 
-.tablesorter-headerDesc {
+thead .tablesorter-headerDesc {
   background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); }
 
 #map {

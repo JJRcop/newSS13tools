@@ -2,6 +2,57 @@
 
 class stat {
 
+  public function getStatForMonth($stat, $month = null, $year = null) {
+    $db = new database();
+    if($db->abort){
+      return FALSE;
+    }
+    $db->query("SET SESSION group_concat_max_len = 1000000;"); //HONK
+    // $db->query("SELECT tbl_feedback.var_name,
+    //   count(distinct tbl_feedback.round_id) as rounds,
+    //   SUM(tbl_feedback.var_value) AS `var_value`,
+    //   IF (tbl_feedback.details = '', NULL, GROUP_CONCAT(tbl_feedback.details SEPARATOR '#-#')) AS details
+    //   FROM tbl_feedback
+    //   WHERE var_name = ?
+    //   AND MONTH(`time`) = ?
+    //   AND YEAR(`time`) = ?
+    //   ORDER BY tbl_feedback.time desc");
+    $db->query("SELECT tbl_feedback.var_name,
+      tbl_feedback.round_id,
+      tbl_feedback.var_value,
+      tbl_feedback.details
+      FROM tbl_feedback
+      WHERE var_name = ?
+      AND MONTH(`time`) = ?
+      AND YEAR(`time`) = ?
+      ORDER BY tbl_feedback.time DESC");
+    $db->bind(1, $stat);
+    $db->bind(2, $month);
+    $db->bind(3, $year);
+    $return = new stdclass();
+    try {
+      $f = $db->resultset();
+      // var_dump($f);
+      $return->var_name = $f{0}->var_name;
+      $return->var_value = 0;
+      $return->details = null;
+      $return->rounds = count($f);
+      foreach ($f as &$t) {
+        $return->details.= '" | "'.$t->details;
+        $return->var_value += $t->var_value;
+      }
+      $return->details = str_replace(' /', '" | "', $return->details);
+      $return->details = str_replace('_', ' ', $return->details);
+      // array_filter($return->details);
+      // $return->details = explode('#-#',$return->details);
+      $return = $this->parseFeedback($return, TRUE);
+      // var_dump($return);
+      return $return;
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+  }
+
   public function getAggregatedFeedback($stat){
     //This is a very expensive method to call. Please try to avoid it.
     $db = new database();
@@ -58,11 +109,20 @@ class stat {
   }
 
   public function getMonthsWithStats(){
-    $db = new database(TRUE);
+    $db = new database();
     if($db->abort){
       return FALSE;
     }
-    $db->query("SELECT * FROM tracked_months ORDER BY year DESC, month DESC");
+    $db->query("SELECT
+      COUNT(DISTINCT var_name) AS stats,
+      MONTH(`time`) AS `month`,
+      YEAR(`time`) AS `year`,
+      count(DISTINCT round_id) AS rounds,
+      MAX(round_id) AS lastround,
+      MIN(round_id) AS firstround
+      FROM tbl_feedback
+      GROUP BY MONTH(`time`), YEAR(`time`)
+      ORDER BY `time` DESC;");
     try {
       return $db->resultSet();
     } catch (Exception $e) {
@@ -72,36 +132,20 @@ class stat {
   }
 
   public function getMonthlyStat($year, $month, $stat=false){
-    $db = new database(TRUE);
-    if($db->abort){
-      return FALSE;
-    }
-    $findStat = '';
-    $select = 'var_name';
-
-    if($stat){
-      $findStat = "AND var_name = ?";
-      $select = '*';
-    }
-    $db->query("SELECT $select
-      FROM monthly_stats
-      WHERE month = ? AND year = ?
-      $findStat;");
-    $db->bind(1,$month);
-    $db->bind(2,$year);
-    if($stat) $db->bind(3, $stat);
+    $db = new database();
+    $db->query("SELECT DISTINCT(var_name) AS var_name,
+      count(var_name) AS times
+      FROM tbl_feedback
+      WHERE MONTH(`time`) = ?
+      AND YEAR(`time`) = 2017
+      GROUP BY var_name;");
+    $db->bind(1, $month);
+    $db->bind(2, $year);
     try {
-      if($stat){
-        $result = $db->single();
-        $result->details = json_decode($result->details,TRUE);
-        return $this->parseFeedback($result,FALSE,TRUE);
-      } else {
-        return $db->resultset();
-      }
+      return $db->resultSet();
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
-    
   }
 
   public function getRoundsForMonth($start, $end){
@@ -231,16 +275,18 @@ class stat {
 
     //Clear out unneeded cruft
     $stat->details = trim(rtrim($stat->details));
-    $stat->details = trim($stat->details,'"');
-    $stat->details = rtrim($stat->details,'"');
     $stat->details = rtrim($stat->details,'" |');
-
+    $stat->details = trim($stat->details,' | "');
+    $stat->details = explode('" | "', $stat->details);
     //Start parsing
     if($aggregate){
-      $stat->details = str_replace('#-#', '" | "', $stat->details);
+      foreach ($stat->details as &$d){
+        $d = trim($d,'"');
+        $d = rtrim($d,'"');
+      }
     }
+    // var_dump($stat->details);
 
-    $stat->details = explode('" | "', $stat->details);
 
     switch($stat->var_name){
       //Almost every var name seen in the last year or so 
@@ -509,6 +555,7 @@ class stat {
       case 'export_sold_amount':
       case 'food_harvested':
       case 'item_printed':
+      var_dump($stat);
       // case 'export_sold_cost':
         $stat->key = "Chemical";
         $stat->value = "Units Produced";

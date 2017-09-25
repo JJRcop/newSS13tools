@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-md-12">
-  <table class="table sticky  table-condensed table-bordered">
+  <table class="table sticky table-condensed table-bordered sort">
     <thead>
       <tr>
         <th><?php echo $stat->path;?></th>
