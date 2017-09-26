@@ -66,12 +66,8 @@ $round = new round($round,array('data','deaths','explosions','antags'));
     <th>Round Duration</th>
     <td><?php echo $round->duration;?></td>
     <th>Logs available</th>
-    <td>
-      <?php if($round->logs):?>
-        <a href="<?php echo $round->href;?>&logs=true">View</a>
-      <?php else:?>
-        <em>Not available</em>
-      <?php endif;?>
+    <td id="logStatus">
+      <em>Checking...</em>
     </td>
   </tr>
   <tr>
@@ -322,3 +318,44 @@ $total = $dead + $survivors; ?>
   <?php endif;?>
   </ul>
 </nav>
+
+<script>
+$(document).ready(function() {
+  var viewBtn = "<a href='<?php echo $round->href;?>&logs=true' class='btn btn-success btn-xs'>View</a>";
+  $.ajax({
+    url: '<?php echo APP_URL."/auto/getRoundLogStatus.php";?>',
+    data: {
+      round: <?php echo $round->id;?>
+    },
+    method: 'GET'
+  })
+  .success(function(e){
+    console.log(e);
+    if(true == e.status){
+      var html = "<strong>Yes</strong> "+viewBtn;
+      $('#logStatus').toggleClass('success').html(html);
+    } else {
+      var generateBtn = "<strong>Not yet</strong> <span id='generate' class='btn btn-success btn-xs'>Generate</span>";
+      var html = generateBtn;
+      $('#logStatus').toggleClass('warning').html(html);
+    }
+  });
+  $(document).on('click', '#generate', function(e){
+    e.preventDefault();
+    console.log(e);
+    var html = "<i class='fa fa-refresh fa-spin'></i> Generating logs...";
+    $('#logStatus').html(html);
+    $.ajax({
+      url: '<?php echo APP_URL."/auto/generateRoundLogs.php";?>',
+      data: {
+        round: <?php echo $round->id;?>
+      },
+      method: 'GET'
+    })
+    .success(function(d){
+      var html = d.message + ' ' + viewBtn;
+      $('#logStatus').toggleClass('warning').toggleClass('success').html(html);
+    });
+  });
+});
+</script>

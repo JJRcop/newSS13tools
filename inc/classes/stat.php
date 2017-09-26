@@ -362,10 +362,17 @@ class stat {
       case 'shuttle_purchase':
       case 'shuttle_reason':
       case 'station_renames':
-        if(is_array($stat->details) && 1 == count($stat->details)){
-          $stat->details = $stat->details[0];
+
+        if($aggregate){
+          $stat->details = array_count_values($stat->details);
+          $stat->var_value = array_sum($stat->details);
+          $stat->include = 'singleString';
+        } else {
+          if(is_array($stat->details) && 1 == count($stat->details)){
+            $stat->details = $stat->details[0];
+          }
+          $stat->include = 'bigText';
         }
-        $stat->include = 'bigText';
       break;
 
       // case 'admin_cookies_spawned':
@@ -555,7 +562,6 @@ class stat {
       case 'export_sold_amount':
       case 'food_harvested':
       case 'item_printed':
-      var_dump($stat);
       // case 'export_sold_cost':
         $stat->key = "Chemical";
         $stat->value = "Units Produced";

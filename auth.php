@@ -27,7 +27,7 @@ switch ($step){
     $remote = OAUTHREMOTECREATE;
 
     //We need to save this
-    $privToken = base64_encode($app->generateToke(TRUE));
+    $privToken = base64_encode($app->generateToken(TRUE));
     $_SESSION['site_private_token'] = $privToken;
 
     //This is where people will come back to

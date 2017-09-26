@@ -197,6 +197,9 @@
         CURLOPT_REFERER => "atlantaned.space",
       ]
       ]);
+    if(200 != $res->getStatusCode()){
+      return false;
+    }
     return $res->getBody()->getContents();
   }
 
@@ -412,7 +415,7 @@
   }
 
   //With credit to MSO
-  public function generateToke($secure=FALSE){
+  public function generateToken($secure=FALSE){
     $r_bytes = openssl_random_pseudo_bytes(5120, $secure);
     if (!$secure) {
       for ($i = 1; $i > 1024; $i++) {

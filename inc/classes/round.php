@@ -24,11 +24,11 @@
       if(is_array($data)){
         foreach ($data as $get){
           switch ($get){
+
             //Getting and parsing round logs
             case 'logs':
               if ($round->logs && defined('REMOTE_LOG_SRC')){
-                $gameLogs = new GameLogs($round);
-                $round = $gameLogs->getGameLogs();
+                $round->logs = (new GameLogs($round))->logs;
               } else {
                 $round->logs = false;
               }

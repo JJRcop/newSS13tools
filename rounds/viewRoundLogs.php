@@ -4,14 +4,11 @@ $reset = FALSE;
 if(1 <= $user->level){
   $reset = filter_input(INPUT_GET, 'reset', FILTER_VALIDATE_BOOLEAN);
 }
-
 if($reset){
-  $round = new round($round);
-  $log = new GameLogs($round);
-  echo parseReturn($log->resetLog());
-  $round = new round($round->id,array('logs'));
-} else {
+  $log = new GameLogs($round, TRUE);
   $round = new round($round,array('logs'));
+} else {
+  $round = new round($round, array('logs'));
 }
 
 ?>
@@ -93,23 +90,19 @@ if($reset){
     <tbody>
       <?php
       $i = 0;
-      foreach ($round->logs as $log){
-        $i++;
-        $l = "<tr id='L-$i' class='".$log[1]."'>";
-        $l.= "<td class='ln'><a href='#L-$i'>$i</a></td>";
-        $l.= "<td class='ts'>[".date("H:i:s",strtotime($log[0]))."]</td>";
-        if(isset($log['coord_x'])){
-          $l.= "<td>".$log['coord_x'].",".$log['coord_y'].",".$log['coord_z']."</td>";
-        } else {
-          $l.= "<td></td>";
-        }
-        $l.= "<td class='lt'>".$log[1].": </td>";
-        $l.= "<td>".strip_tags($log[2])."</td>";
-        $l.="</tr>";
-        echo $l;
-      }
-   
-       ?>
+      foreach($round->logs as $log): $i++;?>
+<tr id="L-<?php echo $i;?>" class="<?php echo $log->type;?>">
+<td class="ln"><a href="#L-<?php echo $i;?>"><?php echo $i;?></a></td>
+<?php if($log->x):?>
+<td class="ts">[<?php echo date("H:i:s", strtotime($log->timestamp));?>]</td>
+<td class="coord">[<?php echo "$log->x, $log->y, $log->z";?>]</td>
+<?php else:?>
+<td class="ts" colspan="2">[<?php echo date("H:i:s", strtotime($log->timestamp));?>]</td>
+<?php endif;?>
+<td class="lt"><?php echo $log->type;?></td>
+<td class="lc"><?php echo strip_tags($log->text);?></td>
+</tr>
+      <?php endforeach; ?>
     </tbody>
   </table>
 </div>
