@@ -303,7 +303,8 @@
         FROM tbl_round
         LEFT JOIN tbl_round AS next ON next.id = tbl_round.id + 1
         LEFT JOIN tbl_round AS prev ON prev.id = tbl_round.id - 1 
-        WHERE tbl_round.id = ?");
+        WHERE tbl_round.id = ?
+        AND tbl_round.end_datetime IS NOT NULL");
     $db->bind(1, $id);
     try {
       return $db->single();

@@ -6,6 +6,8 @@ class GameLogs {
 
   public $logs;
 
+  public $explosions;
+
   public $status;
 
   public $remoteZip;
@@ -82,6 +84,7 @@ class GameLogs {
       $this->status = FALSE; 
       if($this->getRemoteLogs()){
         $this->commitLogsToDB();
+        $this->commitExplosionsToDB();
       } else {
         echo parseReturn(returnError("Unable to locate remote logs. They might not be available yet. Pleae wait a few minutes and try again."));
         return false;
@@ -128,6 +131,7 @@ class GameLogs {
   }
 
   public function parseLogs(){
+    $this->explosions = array();
     $lines = array();
     $date = date('Y-m-d',strtotime($this->round->start_datetime));
 
@@ -180,6 +184,10 @@ class GameLogs {
           $line['y'] = (int) $coords[1];
           $line['z'] = (int) $coords[2];
           unset($line[3]);
+        }
+        if('GAME' == $line['type']
+          && strpos($line['text'], 'Explosion with size') !== FALSE){
+          $this->parseExplosion($line);
         }
         //Append to the lines array
         $lines[] = (object) $line;
@@ -268,9 +276,40 @@ class GameLogs {
     }
   }
 
+  public function commitExplosionsToDB(){
+    $db = new database(TRUE);
+    $db->query("INSERT IGNORE INTO explosion_log
+      (round, `time`, devestation, heavy, light, flash, area, x, y, z, added)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    foreach($this->explosions as $e){
+      $db->bind(1, $this->round->id);
+      $db->bind(2, $e->time);
+      $db->bind(3, $e->devestation);
+      $db->bind(4, $e->heavy);
+      $db->bind(5, $e->light);
+      $db->bind(6, $e->flash);
+      $db->bind(7, $e->area);
+      $db->bind(8, $e->x);
+      $db->bind(9, $e->y);
+      $db->bind(10,$e->z);
+      try {
+        $db->execute();
+      } catch (Exception $e) {
+        return returnError("Database error: ".$e->getMessage());
+      }
+    }
+  }
+
   public function resetLogs(){
     $db = new database(TRUE);
     $db->query("DELETE FROM round_logs WHERE round = ?");
+    $db->bind(1, $this->round->id);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+    $db->query("DELETE FROM explosion_log WHERE round = ?");
     $db->bind(1, $this->round->id);
     try {
       $db->execute();
@@ -320,6 +359,23 @@ class GameLogs {
     $return->status = true;
     $return->message = "Generated $count lines of logs";
     return $return;
+  }
+
+  public function parseExplosion($line){
+    $e = new stdclass;
+    $e->time = $line['timestamp'];
+    $e->x = $line['x'];
+    $e->y = $line['y'];
+    $e->z = $line['z'];
+    $line['text'] = str_replace('Explosion with size (', '', $line['text']);
+    $line['text'] = explode(") in area ", $line['text']);
+    $e->area = $line['text'][1];
+    $dam = explode(',',$line['text'][0]);
+    $e->devestation = (int) $dam[0];
+    $e->heavy       = (int) $dam[1];
+    $e->light       = (int) $dam[2];
+    $e->flash       = (int) $dam[3];
+    $this->explosions[] = $e;
   }
 
 }
