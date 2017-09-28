@@ -127,7 +127,7 @@ class GameLogs {
       $name = str_replace("phar://$this->zipCache/", '', $name);
       $this->listing[$name] = $file;
       //We'll deal with you later!
-    } 
+    }
   }
 
   public function parseLogs(){
@@ -226,8 +226,15 @@ class GameLogs {
 
         //Converts ckeyless mobs into just the name of the mob
         $line['text'] = str_replace('*no key*/', '', $line[2]);
-        $line['text'] = trim(rtrim($line['text']));
         unset($line[2]);
+
+        //Remove leading and trailing whitespace
+        $line['text'] = trim(rtrim($line['text']));
+
+        //Strip HTML tags
+        $line['text'] = filter_var($line['text'],
+          FILTER_SANITIZE_STRING,
+          FILTER_FLAG_STRIP_HIGH);
 
         //Set defaults for line coordinates
         $line['x'] = null;
@@ -256,12 +263,13 @@ class GameLogs {
   }
 
   public function commitLogsToDB(){
+    $status = 'E';
     $db = new database(TRUE);
     $db->query("INSERT INTO round_logs
       (round, `timestamp`, type, `text`, x, y, z, added)
       VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-    $db->bind(1, $this->round->id);
     foreach($this->logs as $log){
+      $db->bind(1, $this->round->id);
       $db->bind(2, $log->timestamp);
       $db->bind(3, $log->type);
       $db->bind(4, $log->text);
@@ -273,6 +281,30 @@ class GameLogs {
       } catch (Exception $e) {
         return returnError("Database error: ".$e->getMessage());
       }
+      if(strpos($log->text,"Rebooting World.") !== FALSE 
+        && 'GAME' == $log->type) {
+       $status = 'T';
+      }
+    }
+    $this->addTrackedRound($status, count($this->logs));
+  }
+
+  public function addTrackedRound($status="N", $lines=0){
+    $db = new database(TRUE);
+    $db->query("INSERT INTO tracked_rounds
+      (round, status, `lines`, `timestamp`)
+      VALUES (?, ?, ?, NOW())
+      ON DUPLICATE KEY 
+      UPDATE status = ?, `lines` = ?");
+    $db->bind(1, $this->round->id);
+    $db->bind(2, $status);
+    $db->bind(3, $lines);
+    $db->bind(4, $status);
+    $db->bind(5, $lines);
+    try {
+      $db->execute();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
     }
   }
 
@@ -316,6 +348,7 @@ class GameLogs {
     } catch (Exception $e) {
       return returnError("Database error: ".$e->getMessage());
     }
+    unlink($this->zipCache);
     echo parseReturn(returnSuccess("Logs reset for ".$this->round->id));
   }
 

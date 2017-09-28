@@ -350,7 +350,8 @@ $(document).ready(function() {
       data: {
         round: <?php echo $round->id;?>
       },
-      method: 'GET'
+      method: 'GET',
+      timeout: 0
     })
     .success(function(d){
       var html = d.message + ' ' + viewBtn;
