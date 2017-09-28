@@ -378,4 +378,30 @@ class GameLogs {
     $this->explosions[] = $e;
   }
 
+  public function query(array $query, $page = 0, $count=PER_PAGE){
+    // if(!$query['context'] || 100 < $query['context']){
+    //   $query['context'] = 10;
+    // }
+    $count = 100; //Bypassing DEFINE
+    $page = $page * $count;
+    $and = null;
+    if($query['type']) {
+      $and = "AND `type` = ?";
+    }
+    $db = new database(TRUE);
+    $db->query("SELECT * FROM round_logs
+    WHERE `text` LIKE ?
+    $and
+    LIMIT $page, $count");
+    $db->bind(1, '%'.$query['content'].'%');
+    if($and){
+      $db->bind(2, $query['type']);
+    }
+    try {
+      return $db->resultset();
+    } catch (Exception $e) {
+      return returnError("Database error: ".$e->getMessage());
+    }
+  }
+
 }

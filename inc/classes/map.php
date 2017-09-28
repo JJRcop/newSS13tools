@@ -162,23 +162,13 @@
     $image = imagecreatetruecolor(1016,1016);
     imagesavealpha($image, true);
     $alpha = imagecolorallocatealpha($image, 0, 0, 0, 127);
+    // imagecolortransparent($image, $alpha);
     imagefill($image,0,0,$alpha);
 
     // $this->mapTranslated = array_reverse($this->mapTranslated);
     foreach($this->map as $r => $row){
       // $row = array_reverse($row);
       foreach($row as $c => $col){
-        // if(strpos($this->definitions[$col]['turf']['path'], 'closed') !== FALSE){
-        //   $color = "000000";
-        // } else {
-        //   $color = substr(sha1($this->definitions[$col]['area']['path']), 0, 6);
-        // }
-        $color = substr(sha1(json_encode($this->definitions[$col])), 0, 6);
-        $hex = str_split($color, 2);
-        foreach ($hex as &$h){
-          $h = hexdec($h);
-        }
-        $fill = imagecolorallocate($image, $hex[0], $hex[1], $hex[2]);
 
         $ex = $r * 4;
         $ey = $c * 4;
@@ -186,11 +176,17 @@
         $sx = $ex - 4;
         $sy = $ey - 4;
 
-        try {
-          imagefilledrectangle($image, $sx, $sy, $ex, $ey, $fill);
-        } catch (Exception $e) {
-          die(returnError("Database error: ".$e->getMessage()));
-        }
+        //WAAAAAAAAAAAAALLS
+        if (strpos($this->definitions[$col]['turf']['path'], 'closed') !== FALSE){
+          $fill = imagecolorallocatealpha($image, 0, 0, 0, 0);
+          try {
+            imagefilledrectangle($image, $sx, $sy, $ex, $ey, $fill);
+          } catch (Exception $e) {
+            die(returnError("Database error: ".$e->getMessage()));
+          }
+        } 
+        // $color = substr(sha1(json_encode($this->definitions[$col])), 0, 6);
+
         $c++;
       }
       $r++;

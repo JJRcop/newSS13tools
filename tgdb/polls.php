@@ -1,6 +1,6 @@
 <?php
 require_once("../header.php");
-require_once('tgdb_nav.php'); var_dump($user);?>
+require_once('tgdb_nav.php'); ?>
 
 <div class="page-header">
   <h1>PollDB</h1>

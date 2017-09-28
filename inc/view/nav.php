@@ -117,6 +117,11 @@
                 What do people play?
               </a>
             </li>
+            <li>
+              <a href="<?php echo $app->APP_URL;?>rounds/logSearch.php">
+                Search round logs
+              </a>
+            </li>
           </ul>
         </li>
         <li class="dropdown">
