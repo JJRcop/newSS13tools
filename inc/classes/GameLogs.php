@@ -266,8 +266,8 @@ class GameLogs {
     $status = 'E';
     $db = new database(TRUE);
     $db->query("INSERT INTO round_logs
-      (round, `timestamp`, type, `text`, x, y, z, added)
-      VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+      (round, `timestamp`, type, `text`, x, y, z, map, added)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
     foreach($this->logs as $log){
       $db->bind(1, $this->round->id);
       $db->bind(2, $log->timestamp);
@@ -276,6 +276,7 @@ class GameLogs {
       $db->bind(5, $log->x);
       $db->bind(6, $log->y);
       $db->bind(7, $log->z);
+      $db->bind(8, $this->round->map);
       try {
         $db->execute();
       } catch (Exception $e) {
